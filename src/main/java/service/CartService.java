@@ -1,12 +1,13 @@
 package service;
 
-
 import model.CartItem;
+import model.Product; // đảm bảo tồn tại
 import org.springframework.stereotype.Service;
 import repositories.CartRepository;
+import repositories.ProductRepository; // đảm bảo tồn tại
 
-import java.util.ArrayList;
 import java.util.List;
+
 @Service
 public class CartService {
 
@@ -24,8 +25,9 @@ public class CartService {
     }
 
     public boolean addToCart(Integer userId, Integer productId, int quantity) {
+        // đã có trong giỏ
         if (cartRepository.existsByUserIdAndProductId(userId, productId)) {
-            return false; // đã tồn tại
+            return false;
         }
 
         Product product = productRepository.findById(productId).orElse(null);
@@ -33,7 +35,13 @@ public class CartService {
             return false; // sản phẩm không tồn tại
         }
 
-        CartItem item = new CartItem(userId, product.getId(), product.getName(), product.getPrice(), quantity);
+        CartItem item = new CartItem(
+                userId,
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                quantity
+        );
         cartRepository.save(item);
         return true;
     }
@@ -46,15 +54,9 @@ public class CartService {
         }
         return false;
     }
-}
 
-    // Kiểm tra sản phẩm đã có trong DB hay chưa
+    // Nếu cần hàm check riêng, đặt trong class
     public boolean existsInDB(Integer userId, Integer productId) {
         return cartRepository.existsByUserIdAndProductId(userId, productId);
-    }
-
-    // Lưu sản phẩm vào DB
-    public void addToCart(Integer userId, Integer productId, int quantity) {
-        cartRepository.addToCart(userId, productId, quantity);
     }
 }
