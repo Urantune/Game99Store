@@ -1,10 +1,10 @@
 package service;
 
 import model.CartItem;
-import model.Product; // đảm bảo tồn tại
+import model.Product;
 import org.springframework.stereotype.Service;
 import repositories.CartRepository;
-import repositories.ProductRepository; // đảm bảo tồn tại
+import repositories.ProductRepository;
 
 import java.util.List;
 
