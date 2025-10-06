@@ -1,0 +1,2535 @@
+
+<!-- Converted from JSP to a Thymeleaf-friendly HTML template.
+     Review TODO comments and th:* attributes.
+     Place this file under src/main/resources/templates/index.html
+     and render from a Spring MVC controller returning "index". -->
+<!--
+    Document   : Index
+    Created on : Aug 23, 2025, 9:40:53 AM
+    Author     : Do Trong Tri - CE190397
+ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Game-Store</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+
+    <link href="css/styles1.css" rel="stylesheet" />
+</head>
+
+<body>
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999"></div>
+<!-- TODO: Converted from JSP scriptlet, review logic:
+String loginError = (String) request.getAttribute("loginError");
+String enteredUsername = (String) request.getAttribute("enteredUsername");
+-->
+
+<!-- Modal Login (single source of truth) -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <!-- remove data-bs-dismiss so we control close behavior -->
+                <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="loginAlertArea">
+                    <!-- TODO: Converted from JSP scriptlet, review logic:
+if (loginError != null) {
+-->
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-message">[[${loginError}]]</span>
+                        <span class="countdown"> (<span class="seconds">3</span>s)</span>
+                    </div>
+                    <!-- TODO: Converted from JSP scriptlet, review logic:
+}
+-->
+                </div>
+
+                <form action="login" method="post" id="loginForm" autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username"
+                               value="[[${enteredUsername != null ? enteredUsername : ""}]]"  autocomplete="off" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <button type="submit" class="btn btn-primary me-3">Login</button>
+                        <a href="ForgotPassword" class="text-decoration-none">Forgot password?</a> <!-- mapping URL -->
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS form Login -->
+<style>
+    #loginModal .modal-header {
+        background: linear-gradient(135deg, #0d47a1, #1a237e);
+        color: #fff;
+        border-bottom: none;
+        padding: 1rem 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    /* nút close trắng cho nổi bật */
+    #loginModal .modal-header .btn-close {
+        filter: invert(1);
+        position: absolute;
+        right: 1rem;
+    }
+
+    /* Thu nhỏ modal tổng thể */
+    #loginModal .modal-dialog {
+        max-width: 380px;   /* gọn lại */
+        margin: 1.75rem auto;
+    }
+
+    /* Modal content */
+    #loginModal .modal-content {
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        border: none;
+        background: rgba(13, 71, 161, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+
+    /* Modal body */
+    #loginModal .modal-body {
+        padding: 1.5rem;
+        text-align: center; /* căn giữa nội dung */
+    }
+
+    /* Input */
+    #loginModal .form-control {
+        background: #2c3e50;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 14px;
+        padding: 10px;
+        margin-bottom: 1rem;
+        text-align: left; /* text trong input vẫn trái */
+    }
+
+    #loginModal .form-control:focus {
+        border: 1px solid #ff9800;
+        box-shadow: 0 0 6px rgba(255, 152, 0, 0.5);
+    }
+
+    /* Label */
+    #loginModal .form-label {
+        font-weight: 500;
+        color: white;
+        display: block;
+        text-align: left; /* label canh trái */
+    }
+
+    /* Nút Login */
+    #loginModal .btn-primary {
+        border-radius: 10px;
+        padding: 0.5rem 1.2rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #0d47a1, #1a237e);
+        border: none;
+        transition: 0.3s;
+    }
+
+    #loginModal .btn-primary:hover {
+        background: linear-gradient(135deg, #1565c0, #0d47a1);
+        transform: translateY(-2px);
+    }
+
+    /* Căn giữa hàng nút và link */
+    #loginModal .d-flex {
+        justify-content: center;  /* căn giữa */
+        gap: 1rem; /* khoảng cách nút và link */
+    }
+
+    /* Link Forgot */
+    #loginModal a.text-decoration-none {
+        font-size: 0.9rem;
+        color: white;
+        transition: color 0.3s;
+    }
+
+    #loginModal a.text-decoration-none:hover {
+        color: #ff9800;
+        text-decoration: underline;
+    }
+
+</style>
+<!-- Modal Đăng ký -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Register</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+
+                <!-- Alert hiển thị lỗi -->
+                <div id="registerAlert">
+                    <!-- TODO: Converted from JSP scriptlet, review logic:
+String registerError = (String) request.getAttribute("registerError");
+                        if (registerError != null) {
+-->
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <span class="alert-message">[[${registerError}]]</span>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                            registerModal.show();
+                        });
+                    </script>
+                    <!-- TODO: Converted from JSP scriptlet, review logic:
+}
+-->
+                </div>
+
+                <!-- Form đăng ký -->
+                <form id="registerForm" action="register" method="post" autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username"
+                               value="${enteredUsername != null ? enteredUsername : ''}" autocomplete="off" required>
+                    </div>
+                    <label class="form-label">Email</label>
+                    <div class="mb-3 d-flex align-items-center gap-2">
+
+                        <input type="email" class="form-control" id="email" name="email"
+                               value="${enteredEmail != null ? enteredEmail : ''}" required>
+                        <button type="button" class="btn btn-sendcode" id="sendOtpBtn">Send code</button>
+                    </div>
+
+
+                    <div class="mb-3" id="otpSection" style="display:${enteredEmail != null ? 'block' : 'none'};">
+                        <label class="form-label">OTP</label>
+                        <input type="text" class="form-control" id="otp" name="otp">
+                        <div class="form-text">Please enter the 6-digit code sent to your email</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        <div id="passwordMessage" class="form-text text-danger"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CSS form Register -->
+<style>
+    /* Modal chung */
+    #registerModal .modal-content {
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+        border: none;
+        background: rgba(13, 71, 161, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+
+    /* Header Register */
+    #registerModal .modal-header {
+        background: linear-gradient(135deg, #0d47a1, #1a237e);
+        /*background: rgba(27, 56, 92, 0.95); */
+        color: white;
+        border-bottom: none;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    #registerModal .modal-title {
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    #registerModal .modal-header .btn-close {
+        position: absolute;
+        right: 1rem;
+        filter: brightness(0) invert(1);
+    }
+
+    /* Body */
+    #registerModal .modal-body {
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 0 0 20px 20px;
+    }
+
+    /* Input */
+    #registerModal .form-control {
+        background: #2c3e50;   /* màu nền tối */
+        border: none;
+        border-radius: 6px;
+        color: #fff;           /* chữ trắng */
+        font-size: 14px;
+        padding: 10px;
+        transition: all 0.3s ease;
+    }
+
+    #registerModal .form-control:focus {
+        border: 1px solid #ff9800; /* viền cam khi focus */
+        box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
+    }
+
+    /* Label */
+    #registerModal .form-label {
+        font-weight: 500;
+    }
+
+    /* Nút Register */
+    #registerModal .btn-success {
+        border-radius: 12px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #0d47a1, #1a237e);
+        border: none;
+        transition: 0.3s;
+    }
+
+    #registerModal .btn-success:hover {
+        background: linear-gradient(135deg, #1565c0, #0d47a1);
+        transform: translateY(-2px);
+    }
+
+    /* Alert Register */
+    #registerAlert .alert {
+        border-radius: 12px;
+        font-size: 0.95rem;
+        padding: 0.8rem 1rem;
+    }
+
+    /* Ô email*/
+    #registerModal .form-control {
+        border-radius: 12px;
+        padding: 0.7rem 1rem;
+        border: 1px solid #cfd8dc;
+        background: #2c3e50;
+        transition: all 0.3s ease;
+    }
+
+    #registerModal .form-control:focus {
+        border-color: #0d47a1;
+        box-shadow: 0 0 8px rgba(13, 71, 161, 0.3);
+    }
+
+    /*Send code */
+    #registerModal .btn-sendcode {
+        border-radius: 12px;
+        padding: 0.6rem 1rem;
+        font-weight: 500;
+        background: linear-gradient(135deg, #1565c0, #0d47a1);
+        border: none;
+        color: #fff;
+        transition: 0.3s;
+        white-space: nowrap;   /* giữ chữ không xuống dòng */
+    }
+
+    #registerModal .btn-sendcode:hover {
+        background: linear-gradient(135deg, #1e88e5, #1565c0);
+        transform: translateY(-2px);
+    }
+</style>
+
+<!-- JS check form -->
+<script>
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const message = document.getElementById("passwordMessage");
+    const form = document.getElementById("registerForm");
+    const otpInput = document.getElementById("otp");
+    const otpSection = document.getElementById("otpSection");
+    const sendOtpBtn = document.getElementById("sendOtpBtn");
+
+    function checkPasswordMatch() {
+        if (confirmPasswordInput.value !== "" && passwordInput.value !== confirmPasswordInput.value) {
+            message.textContent = "❌ Mật khẩu không khớp!";
+        } else {
+            message.textContent = "";
+        }
+    }
+    passwordInput.addEventListener("input", checkPasswordMatch);
+    confirmPasswordInput.addEventListener("input", checkPasswordMatch);
+
+    form.addEventListener("submit", function (e) {
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            e.preventDefault();
+            alert("Mật khẩu nhập lại không khớp!");
+            return;
+        }
+        if (otpSection.style.display === "none") {
+            e.preventDefault();
+            alert("Bạn cần gửi OTP trước khi đăng ký!");
+            return;
+        }
+        if (otpInput.value.trim() === "") {
+            e.preventDefault();
+            alert("Vui lòng điền mã OTP được gửi đến email của bạn!");
+            return;
+        }
+    });
+
+    // Gửi OTP
+    sendOtpBtn.addEventListener("click", function () {
+        const email = document.getElementById("email").value;
+        if (!email) {
+            alert("Vui lòng nhập email!");
+            return;
+        }
+
+        fetch("sendOtp", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: "email=" + encodeURIComponent(email)
+        })
+            .then(res => res.text())
+            .then(data => {
+                if (data === "success") {
+                    alert("Mã OTP đã được gửi đến email của bạn!");
+                    otpSection.style.display = "block";
+                    otpInput.setAttribute("required", "true");
+
+                    // Disable nút 60s
+                    let countdown = 60;
+                    sendOtpBtn.disabled = true;
+                    sendOtpBtn.textContent = "Gửi lại (" + countdown + "s)";
+
+                    const interval = setInterval(() => {
+                        countdown--;
+                        if (countdown > 0) {
+                            sendOtpBtn.textContent = "Gửi mã (" + countdown + "s)";
+                        } else {
+                            clearInterval(interval);
+                            sendOtpBtn.disabled = false;
+                            sendOtpBtn.textContent = "Gửi mã";
+                        }
+                    }, 1000);
+
+                } else {
+                    alert("Không thể gửi OTP, vui lòng thử lại!\n" + data);
+                }
+            });
+    });
+</script>
+
+
+
+
+
+<!-- TODO: Converted from JSP scriptlet, review logic:
+// Lấy user từ session
+User userObj = (User) session.getAttribute("user");
+
+// Lấy cart từ session
+List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+int cartCount = 0;
+if (cart != null) {
+for (CartItem item : cart) {
+cartCount += item.getQuantity();
+}
+}
+-->
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
+        <!-- Logo -->
+        <a href="Index.jsp" class="logo-link text-white fs-4">
+            <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+        </a>
+
+        <!-- Left nav links -->
+        <ul class="navbar-nav d-flex flex-row mb-0">
+            <!-- TODO: Converted from JSP scriptlet, review logic:
+if (userObj != null && "admin".equalsIgnoreCase(userObj.getRole())) {
+-->
+            <li class="nav-item"><a class="nav-link" href="manageProducts.jsp">Quản lý sản phẩm</a></li>
+            <!-- TODO: Converted from JSP scriptlet, review logic:
+}
+-->
+        </ul>
+
+        <!-- Right: Cart + User info -->
+        <div class="d-flex align-items-center">
+
+            <form class="d-flex me-2" action="Cart">
+                <button class="btn btn-outline-dark" type="submit">
+                    <i class="bi-cart-fill me-1"></i>
+                    <a href="Cart.jsp" style="text-decoration: none; color: inherit;">Cart</a>
+                    <span class="badge bg-dark text-white ms-1 rounded-pill">[[${cartCount}]]</span>
+                </button>
+            </form>
+
+            <!-- TODO: Converted from JSP scriptlet, review logic:
+if (userObj == null) {
+-->
+            <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                Đăng nhập
+            </button>
+            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">
+                Đăng ký
+            </button>
+            <!-- TODO: Converted from JSP scriptlet, review logic:
+} else {
+String username = userObj.getUserName();
+-->
+            <div class="d-flex align-items-center">
+                <div class="text-center me-3">
+                    <a href="ProfileUser.jsp" class="profile-link">
+                        <!-- Avatar -->
+                        <img src="https://i.pravatar.cc/50?u=[[${username}]]"
+                             alt="avatar"
+                             class="rounded-circle profile-avatar">
+                        <div class="profile-name">
+                            <b>[[${username}]]</b>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <!-- TODO: Converted from JSP scriptlet, review logic:
+}
+-->
+        </div>
+    </div>
+</nav>
+<style>
+    /* Link tổng thể */
+    .profile-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+    }
+
+    /* Avatar */
+    .profile-avatar {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    /* Hover hiệu ứng avatar */
+    .profile-link:hover .profile-avatar {
+        border-color:#FFD700; /* viền xanh đậm */
+        box-shadow: 0 0 8px rgba(13, 71, 161, 0.5);
+    }
+
+    /* Tên user */
+    .profile-name {
+        font-size: 14px;
+        color: #333;
+        margin-top: 5px;
+        transition: color 0.3s ease;
+    }
+
+    /* Hover hiệu ứng tên */
+    .profile-link:hover .profile-name {
+        color: #FFD700;
+    }
+</style>
+<!-- Banner + Menu -->
+<header class="banner">
+    <!-- Menu nằm trong banner -->
+    <div class="steam-menu">
+        <div class="steam-menu-inner">
+            <a href="Index.jsp">Cửa hàng của bạn</a>
+            <a href="About.jsp">About</a>
+            <a href="NewGame.jsp">Sắp phát hành</a>
+            <!-- Nút Danh mục -->
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle">Danh mục</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-column">
+                        <h4>Thể loại</h4>
+                        <a href="#">Hành động</a>
+                        <a href="#">Phiêu lưu</a>
+                        <a href="#">Nhập vai (RPG)</a>
+                        <a href="#">Chiến thuật</a>
+                        <a href="#">Mô phỏng</a>
+                        <a href="#">Đua xe</a>
+                        <a href="#">Thể thao</a>
+                        <a href="#">Kinh dị</a>
+                        <a href="#">Puzzle</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Chủ đề</h4>
+                        <a href="#">Anime</a>
+                        <a href="#">Khoa học viễn tưởng</a>
+                        <a href="#">Cyberpunk</a>
+                        <a href="#">Thế giới mở</a>
+                        <a href="#">Sinh tồn</a>
+                        <a href="#">Vũ trụ</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Theo độ phổ biến</h4>
+                        <a href="#">Mới phát hành</a>
+                        <a href="#">Sắp ra mắt</a>
+                        <a href="#">Bán chạy nhất</a>
+                        <a href="#">Được đánh giá cao</a>
+                        <a href="#">Game hot</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Theo nền tảng</h4>
+                        <a href="#">PC</a>
+                        <a href="#">Smart Phone</a>
+                        <a href="#">PlayStation</a>
+                        <a href="#">Xbox</a>
+                        <a href="#">Nintendo Switch</a>
+                        <a href="#">Mobile</a>
+                        <a href="#">VR</a>
+                    </div>
+                </div>
+            </div>
+            <a href="#">Cửa hàng điểm</a>
+            <a href="#">Labs</a>
+
+            <!-- Ô tìm kiếm -->
+            <div class="search-box">
+                <input type="text" id="search" placeholder="Tìm kiếm game...">
+                <button type="button">🔍</button>
+                <div id="suggestions"></div>
+            </div>
+            <div id="no-result" style="display:none; color:red; margin-top:3px;">Không tìm thấy game</div>
+        </div>
+    </div>
+
+    <!--Js search Games and tra ve game search-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchBar = document.getElementById("search");
+            const suggestions = document.getElementById("suggestions");
+            const noResult = document.getElementById("no-result");
+
+            const contextPath = "[[${request.getContextPath()}]]" || "";
+
+            const games = [
+                {name: "Liên Quân Mobile", img: contextPath + "/img/game1.jpg", anchor: "#lienquan"},
+                {name: "Free Fire", img: contextPath + "/img/game2.jpg", anchor: "#freefire"},
+                {name: "Zingspeed Mobile", img: contextPath + "/img/game3.jpg", anchor: "#zingspeed"},
+                {name: "Chiến Cơ Huyền Thoại", img: contextPath + "/img/game4.jpg", anchor: "#chienco"},
+                {name: "Genshin Impact", img: contextPath + "/img/game5.jpg", anchor: "#genshin"},
+                {name: "PUBG Mobile", img: contextPath + "/img/game6.jpg", anchor: "#pubg"},
+                {name: "Cyberpunk", img: contextPath + "/img/game7.jpg", anchor: "#cyberpunk"},
+                {name: "Among Us", img: contextPath + "/img/game8.jpg", anchor: "#amongus"},
+                {name: "Hay Day", img: contextPath + "/img/game10.jpg", anchor: "#hayday"},
+                {name: "Lien Minh Huyen Thoai", img: contextPath + "/img/game11.jpg", anchor: "#lmth"},
+                {name: "Dota", img: contextPath + "/img/game12.jpg", anchor: "#dota"},
+                {name: "Call of Duty", img: contextPath + "/img/game13.jpg", anchor: "#duty"},
+                {name: "Võ Lâm Truyền Kỳ", img: contextPath + "/img/game9.jpg", anchor: "#kiemhiep"}
+            ];
+
+            const placeholder = "data:image/svg+xml;utf8," + encodeURIComponent(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#2b2b2b"/><text x="50%" y="50%" fill="#999" font-size="12" text-anchor="middle" dominant-baseline="middle">No Image</text></svg>'
+            );
+
+            function createSuggestionItem(game) {
+                const div = document.createElement("div");
+                div.className = "suggestion-item";
+
+                const img = document.createElement("img");
+                img.alt = game.name;
+                img.src = game.img;
+                img.onerror = function () {
+                    img.src = placeholder;
+                };
+
+                const span = document.createElement("span");
+                span.textContent = game.name;
+
+                div.appendChild(img);
+                div.appendChild(span);
+
+                div.onclick = () => {
+                    window.location.href = contextPath + "/Index.jsp" + game.anchor;
+                };
+                return div;
+            }
+
+            function searchGames() {
+                const q = searchBar.value.trim().toLowerCase();
+                suggestions.innerHTML = "";
+                noResult.style.display = "none";
+
+                if (!q) {
+                    suggestions.style.display = "none";
+                    return [];
+                }
+
+                const filtered = games.filter(g => g.name.toLowerCase().includes(q));
+
+                if (filtered.length === 0) {
+                    suggestions.style.display = "none";
+                    noResult.style.display = "block";
+                } else {
+                    filtered.forEach(game => {
+                        const item = createSuggestionItem(game);
+                        suggestions.appendChild(item);
+                    });
+                    suggestions.style.display = "block";
+                }
+                return filtered;
+            }
+
+            // input event
+            searchBar.addEventListener("input", searchGames);
+
+            // Enter key event
+            searchBar.addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    const results = searchGames();
+                    if (results.length === 0) {
+                        alert("Không tìm thấy game");
+                    }
+                }
+            });
+
+            // click ra ngoài ẩn suggestions & no-result
+            document.addEventListener("click", (e) => {
+                if (!e.target.closest(".search-box")) {
+                    suggestions.style.display = "none";
+                    noResult.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <!-- Các ảnh banner -->
+    <div class="slides active" style="background-image: url('img/Aboutbanner.jpg');"></div>
+    <div class="slides" style="background-image: url('img/game1.jpg');"></div>
+    <div class="slides" style="background-image: url('img/game2.jpg');"></div>
+    <div class="slides" style="background-image: url('img/game3.jpg');"></div>
+    <div class="slides" style="background-image: url('img/game4.jpg');"></div>
+    <div class="slides" style="background-image: url('img/game5.jpg');"></div>
+    <div class="slides" style="background-image: url('img/game6.jpg');"></div>
+
+    <!-- Chấm tròn -->
+    <div class="dots">
+        <span class="dot active" onclick="currentSlide(0)"></span>
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+        <span class="dot" onclick="currentSlide(4)"></span>
+        <span class="dot" onclick="currentSlide(5)"></span>
+        <span class="dot" onclick="currentSlide(6)"></span>
+    </div>
+</header>
+
+
+<!-- CSS Danh Muc-->
+<style>
+
+    /* Dropdown */
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-toggle {
+        cursor: pointer;
+    }
+
+    /* Menu xổ ra - ẩn mặc định */
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: rgba(27, 56, 92, 0.95); /* màu tối xanh đậm hơn */
+        padding: 20px;
+        border-radius: 4px;
+        min-width: 700px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        z-index: 1000;
+
+        /* grid layout */
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    /* Hover vào Danh mục thì xổ ra */
+    .dropdown:hover .dropdown-menu {
+        display: grid;
+    }
+
+
+    /* Hover vào nút Danh mục thì hiện menu */
+    .dropdown:hover .dropdown-menu {
+        display: grid;
+    }
+
+    /* Cột bên trong */
+    .dropdown-column h4 {
+        margin-bottom: 10px;
+        color: #66c0f4;
+        font-size: 14px;
+        font-weight: bold;
+        border-bottom: 1px solid #2a475e;
+        padding-bottom: 5px;
+    }
+
+    .dropdown-column a {
+        display: block;
+        color: #c7d5e0;
+        font-size: 13px;
+        padding: 4px 0;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .dropdown-column a:hover {
+        color: #ffffff;
+        text-decoration: underline;
+    }
+
+</style>
+
+<!--Js chuyen dong banner-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let slideIndex = 0;
+        const slides = document.querySelectorAll(".slides");
+        const dots = document.querySelectorAll(".dot");
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove("active");
+                dots[i].classList.remove("active");
+                if (i === index) {
+                    slide.classList.add("active");
+                    dots[i].classList.add("active");
+                }
+            });
+        }
+
+        function changeSlide(n) {
+            slideIndex = (slideIndex + n + slides.length) % slides.length;
+            showSlide(slideIndex);
+        }
+
+        function currentSlide(n) {
+            slideIndex = n;
+            showSlide(slideIndex);
+        }
+
+        // Hiển thị slide đầu tiên
+        showSlide(slideIndex);
+
+        // Auto chạy mỗi 3 giây
+        setInterval(() => changeSlide(1), 3000);
+    });
+</script>
+
+
+<style>
+    /* Banner */
+    .banner {
+        position: relative;
+        width: 100%;
+        height: 550px; /* Chiều cao banner */
+        overflow: hidden;
+    }
+
+    /* Ảnh slide */
+    .slides {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        z-index: 0;
+    }
+
+    .slides.active {
+        opacity: 1;
+    }
+
+
+    /* Logo + slogan */
+    .header-text {
+        position: absolute;
+        top: 70px;          /* Cách mép trên */
+        left: 200px;        /* Cách mép trái */
+        z-index: 15;
+        text-align: left;   /* Canh trái */
+        background: rgba(0, 0, 0, 0.5);
+        padding: 20px 40px;
+        border-radius: 10px;
+        color: white;
+    }
+
+    .header-text h1 {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: yellow;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .header-text h1 span {
+        color: #ffcc00;
+    }
+
+    .header-text p {
+        font-size: 1rem;
+        color: yellow;
+        margin: 5px 0 0;
+        font-style: italic;
+    }
+
+    /* Chấm tròn indicator */
+    .dots {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .dot {
+        cursor: pointer;
+        height: 12px;
+        width: 12px;
+        margin: 0 4px;
+        background-color: rgba(255,255,255,0.5);
+        border-radius: 50%;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .dot.active {
+        background-color: #ffd700; /* vàng nổi bật */
+    }
+
+    .dot:hover {
+        background-color: #fff;
+    }
+
+
+</style>
+
+<style>
+    /* Nền ngoài trong suốt */
+    /* Đặt menu dính trong banner */
+    .steam-menu {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10; /* nhỏ hơn header-text nhưng cao hơn ảnh */
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
+    }
+
+
+
+    /* Nền bán trong suốt */
+    .steam-menu-inner {
+        max-width: 1500px;
+        width: 100%;
+        background: rgba(18, 57, 101, 0.8); /* xanh mờ */
+        padding: 8px 12px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+
+
+    /* Link menu */
+    .steam-menu a {
+        color: white;
+        text-decoration: none;
+        margin-right: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 6px 10px;
+        border-radius: 3px;
+    }
+
+    .steam-menu a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Ô tìm kiếm */
+    .search-box {
+        position: relative;
+        width: 300px;
+        margin-left: auto;
+        display:flex;
+        align-items:center;
+        gap:6px;
+    }
+    #search {
+        flex:1;
+        padding:6px 8px;
+        background:#305680;
+        color:#fff;
+        border:none;
+        border-radius:4px;
+    }
+    #suggestions {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        background: rgba(10,18,30,0.95);
+        border: 1px solid rgba(255,255,255,0.06);
+        display: none;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 99999;
+        color: #fff;
+        border-radius: 6px;
+    }
+    .suggestion-item {
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding:8px;
+        cursor:pointer;
+    }
+    .suggestion-item img {
+        width:40px;
+        height:40px;
+        object-fit:cover;
+        border-radius:6px;
+    }
+    .suggestion-item:hover {
+        background: rgba(255,255,255,0.03);
+    }
+
+    .search-box input::placeholder {
+        color: #cfd8dc;
+    }
+
+    .search-box button {
+        border: none;
+        background: #1b3b63;
+        color: white;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    .search-box button:hover {
+        background: #0f274a;
+    }
+
+</style>
+
+
+
+<!-- Product section-->
+<section class="py-5">
+    <!-- TODO: Converted from JSP scriptlet, review logic:
+String role = (String) session.getAttribute("role");
+-->
+
+    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+        <!-- TODO: Converted from JSP scriptlet, review logic:
+if (role == null) {
+-->
+        <!-- Chưa login -->
+
+        <!-- TODO: Converted from JSP scriptlet, review logic:
+} else if ("USER".equals(role)) {
+-->
+        <!-- User login -->
+        <form action="buy" method="post">
+            <input type="hidden" name="gameId" value="123">
+            <button type="submit" class="btn btn-success">Mua</button>
+        </form>
+        <!-- TODO: Converted from JSP scriptlet, review logic:
+} else if ("ADMIN".equals(role)) {
+-->
+        <!-- Admin login -->
+        <a href="manageProducts.jsp" class="btn btn-warning">Quản lý sản phẩm</a>
+        <!-- TODO: Converted from JSP scriptlet, review logic:
+}
+-->
+
+
+    </div>
+
+    <!-- Container -->
+    <div class="container px-4 px-lg-5 my-5">
+
+        <div id="lienquan" class="row gx-4 gx-lg-5 align-items-center game-detail">
+            <div class="col-md-6">
+                <a href="GameDetail.jsp?id=1" style="text-decoration: none; color: inherit;">
+                    <img class="card-img-top mb-4 game-img" src="img/game1.jpg" alt="Sản phẩm mới" />
+                </a>
+                <!-- Khung chứa video + ảnh demo ngang hàng -->
+                <!-- Phần video và ảnh demo -->
+                <!-- --- MEDIA SECTION (thay thế phần hiện tại) --- -->
+                <div class="media-section d-flex align-items-center mb-3">
+                    <!-- Video nhỏ ngoài trang (mở modal video) -->
+                    <div class="demo-video" data-bs-toggle="modal" data-bs-target="#gameTrailerModal">
+                        <div class="video-wrapper">
+                            <video class="w-100 rounded shadow" muted>
+                                <source src="videos/lienquan.mp4" type="video/mp4">
+                            </video>
+                            <div class="play-button"></div>
+                        </div>
+                    </div>
+
+
+                    <!-- Ảnh demo (mở modal ảnh riêng) -->
+                    <div class="demo-images d-flex flex-row gap-2">
+                        <img src="img/demo.jpg" class="img-fluid demo-thumb" alt="Demo 1">
+                        <img src="img/demo1.jpg" class="img-fluid demo-thumb" alt="Demo 2">
+                        <img src="img/demo3.jpg" class="img-fluid demo-thumb" alt="Demo 3">
+                    </div>
+                </div>
+
+                <!-- Modal video (chỉ 1 lần) -->
+                <div class="modal fade" id="gameTrailerModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content bg-dark">
+                            <div class="modal-body p-0">
+                                <video id="gameTrailerModalVideo" class="w-100" controls>
+                                    <source src="videos/lienquan.mp4" type="video/mp4">
+                                    Trình duyệt của bạn không hỗ trợ video.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal ảnh (chỉ 1 lần) -->
+                <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content bg-transparent border-0 p-2">
+                            <img id="modalImage" src="" class="img-fluid rounded shadow" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+
+
+                <script>
+                    // Điều khiển video modal
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var modal = document.getElementById('gameTrailerModal');
+                        var video = document.getElementById('gameTrailerModalVideo');
+
+                        modal.addEventListener('shown.bs.modal', function () {
+                            video.play();
+                        });
+
+                        modal.addEventListener('hidden.bs.modal', function () {
+                            video.pause();
+                            video.currentTime = 0; // tua về đầu
+                        });
+                    });
+
+                    // Điều khiển ảnh demo modal
+                    document.querySelectorAll(".demo-thumb").forEach(img => {
+                        img.addEventListener("click", function () {
+                            document.getElementById("modalImage").src = this.src;
+                            var myModal = new bootstrap.Modal(document.getElementById('imageModal'));
+                            myModal.show();
+                        });
+                    });
+
+                </script>
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="small mb-1">Tencent Games</div>
+                <h1 class="display-5 fw-bolder game-title"
+                    data-bs-toggle="modal"
+                    data-bs-target="#gameTrailerModal">
+                    Liên Quân Mobile
+                </h1>
+
+                <div class="fs-5 mb-5">
+                    <span class="text-decoration-line-through">$999.00</span>
+                    <span>$999.00</span>
+                </div>
+
+                <p class="lead">Liên Quân Mobile là tựa game MOBA nổi tiếng trên di động, nơi người
+                    chơi tham gia các trận chiến 5v5 kịch tính. Game sở hữu hệ thống tướng đa dạng
+                    với nhiều kỹ năng độc đáo, cho phép người chơi thỏa sức lựa chọn chiến thuật. Đồ
+                    họa đẹp mắt, âm thanh sống động mang đến trải nghiệm chân thực và hấp dẫn. Đây là
+                    trò chơi đòi hỏi tinh thần đồng đội, kỹ năng cá nhân và tư duy chiến lược để giành
+                    chiến thắng.</p>
+
+                <!-- Thông tin game -->
+                <div class="game-stats d-flex align-items-center mb-3">
+                    <div class="stat-item text-center">
+                        <strong>3,5 ★</strong>
+                        <div class="small text-muted">6,5 Tr đánh giá</div>
+                    </div>
+                    <div class="stat-item text-center">
+                        <strong>2.5 GB</strong>
+                        <div class="small text-muted">Dung lượng</div>
+                    </div>
+                    <div class="stat-item text-center">
+                        <strong>50 Tr+</strong>
+                        <div class="small text-muted">Lượt tải xuống</div>
+                    </div>
+                    <div class="stat-item text-center">
+                        <span class="age-box">12+</span>
+                        <div class="small text-muted">12 tuổi trở lên</div>
+                    </div>
+                </div>
+
+                <!-- Nút mua -->
+                <div class="d-flex">
+                    <!-- Form Mua -->
+                    <form action="buy" method="post" class="me-2">
+                        <input type="hidden" name="gameId" value="1">
+                        <input type="hidden" name="sourcePage"
+                               value="[[${request.getRequestURI().endsWith("GameDetail.jsp") ? "GameDetail.jsp" : "Index.jsp"}]]">
+                        <button type="submit" class="btn btn-success">Mua</button>
+                    </form>
+
+                    <!-- Form Add to Cart -->
+                    <form action="AddToCart" method="post">
+                        <input type="hidden" name="gameId" value="1">
+                        <input type="hidden" name="sourcePage"
+                               value="[[${request.getRequestURI().endsWith("GameDetail.jsp") ? "GameDetail.jsp" : "Index.jsp"}]]">
+                        <button class="btn btn-outline-dark flex-shrink-0" type="submit">
+                            <i class="bi-cart-fill me-1"></i>
+                            Add to cart
+                        </button>
+                    </form>
+                </div>
+
+
+            </div>
+        </div>
+
+        <script>
+            document.querySelectorAll(".demo-thumb").forEach(img => {
+                img.addEventListener("click", function () {
+                    document.getElementById("modalImage").src = this.src;
+                    var myModal = new bootstrap.Modal(document.getElementById('imageModal'));
+                    myModal.show();
+                });
+            });
+        </script>
+
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-transparent border-0">
+                    <img id="modalImage" src="" class="img-fluid rounded shadow" alt="Preview">
+                </div>
+            </div>
+        </div>
+        <style>
+
+            .media-section {
+                display: flex;
+                gap: 15px;
+                align-items: center;
+            }
+            .demo-video {
+                flex: 4;
+                width: 40%;
+            }
+            .demo-images {
+                display: flex;
+                flex-direction: row; /* các ảnh nằm ngang */
+                gap: 10px;
+            }
+            .demo-thumb {
+                width: 137px;
+                height: auto;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .demo-thumb:hover {
+                transform: scale(1.05);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            }
+            .demo-video video {
+                width: auto;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .demo-video video:hover {
+                transform: scale(1.05); /* phóng nhẹ khi hover */
+                box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            }
+
+            .video-wrapper {
+                position: relative;
+                display: inline-block;
+                cursor: pointer;
+            }
+
+            .video-wrapper video {
+                display: block;
+                border-radius: 8px;
+                pointer-events: none; /* không cho click trực tiếp vào video */
+            }
+
+            .play-button {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 70px;
+                height: 70px;
+                background: rgba(0,0,0,0.2); /* nền đen siêu mờ */
+                border-radius: 50%;
+                transition: transform 0.2s ease, background 0.2s ease;
+            }
+
+            .play-button::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-35%, -50%);
+                width: 0;
+                height: 0;
+                border-left: 24px solid rgba(255,255,255,0.6); /* tam giác trắng mờ hơn */
+                border-top: 14px solid transparent;
+                border-bottom: 14px solid transparent;
+            }
+
+            .video-wrapper:hover .play-button {
+                transform: translate(-50%, -50%) scale(1.1);
+                background: rgba(0,0,0,0.35); /* hover rõ hơn một chút */
+            }
+
+
+
+
+            #gameTrailerModal video {
+                border-radius: 0;
+            }
+
+            /* Responsive: màn nhỏ (xs - sm) xếp dọc, không overflow */
+            @media (max-width: 767.98px) {
+                .media-section {
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 12px;
+                }
+                .demo-video {
+                    flex: 0 0 auto;
+                    max-width: 100%;
+                    width: 100%;
+                }
+                .demo-images {
+                    justify-content: center;
+                }
+                .demo-thumb {
+                    width: 96px;
+                }
+            }
+
+            /* Nếu bạn muốn bắt buộc ngang mọi kích thước (khi không muốn dọc) dùng overflow-x:
+            .media-section { flex-wrap: nowrap; overflow-x: auto; }
+            */
+
+
+
+            .game-stats {
+                border-top: 1px solid #ddd;
+                border-bottom: 1px solid #ddd;
+                padding: 15px 0;
+                justify-content: space-around;
+                text-align: center;
+            }
+
+            .game-stats .stat-item {
+                flex: 1;
+                position: relative;
+            }
+
+            .game-stats .stat-item:not(:last-child)::after {
+                content: "";
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                height: 50%;
+                border-right: 1px solid #ccc;
+            }
+
+            .age-box {
+                border: 1px solid #000;
+                padding: 2px 6px;
+                font-weight: bold;
+                border-radius: 3px;
+                display: inline-block;
+            }
+
+            /* Responsive: khi màn hình nhỏ thì xếp dọc */
+            @media (max-width: 576px) {
+                .game-stats {
+                    flex-direction: column;
+                }
+                .game-stats .stat-item {
+                    border-right: none !important;
+                }
+                .game-stats .stat-item:not(:last-child)::after {
+                    display: none;
+                }
+            }
+
+
+        </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Play/pause video modal
+                var modalEl = document.getElementById('gameTrailerModal');
+                var video = document.getElementById('gameTrailerModalVideo');
+                if (modalEl && video) {
+                    modalEl.addEventListener('shown.bs.modal', function () {
+                        video.play();
+                    });
+                    modalEl.addEventListener('hidden.bs.modal', function () {
+                        video.pause();
+                        video.currentTime = 0;
+                    });
+                }
+
+                // Thumbnails mở modal ảnh riêng
+                document.querySelectorAll('.demo-thumb').forEach(img => {
+                    img.addEventListener('click', function () {
+                        document.getElementById('modalImage').src = this.src;
+                        var myModal = new bootstrap.Modal(document.getElementById('imageModal'));
+                        myModal.show();
+                    });
+                });
+            });
+        </script>
+        <!-- Hover khi di chuot vào khung game -->
+        <style>
+            /* Hiệu ứng phóng to ảnh khi hover */
+            .game-img {
+                transition: transform 0.4s ease; /* Tạo hiệu ứng mượt */
+            }
+
+            .game-img:hover {
+                transform: scale(1.08); /* Phóng to 8% */
+            }
+
+            .game-title {
+                cursor: pointer; /* hiển thị dấu tay khi hover */
+                transition: all 0.3s ease; /* hiệu ứng mượt */
+                display: inline-block;
+            }
+
+            .game-title:hover {
+                color: #ffd700; /* đổi màu vàng */
+                transform: scale(1.05); /* phóng to nhẹ */
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); /* thêm hiệu ứng glow */
+            }
+        </style>
+    </div>
+
+    <!-- Modal chứa trailer -->
+    <div class="modal fade" id="gameTrailerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Liên Quân Mobile thắng bại tại kỹ năng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <!-- Video local -->
+                    <video id="gameTrailer" width="100%" controls>
+                        <source src="videos/lienquan.mp4" type="video/mp4">
+                        Trình duyệt của bạn không hỗ trợ video.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS xử lý autoplay và pause khi đóng -->
+</section>
+<!-- Related items section-->
+<section class="py-5 bg-light">
+    <div class="container px-4 px-lg-5 mt-5">
+        <h2 class="fw-bolder mb-4">Related products</h2>
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <div class="col mb-5">
+                <a href="GameDetail.jsp?id=2" style="text-decoration: none; color: inherit;">
+                    <div id ="freefire" class="card h-100">
+                        <!-- Product image-->
+
+                        <img class="card-img-top"  src="img/game2.jpg"  alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Free Fire</h5>
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                $40.00 - $80.00
+                            </div>
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>4,5 ★</strong>
+                                    <div class="small text-muted">7,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>2.0 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>1 T+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">12+</span>
+                                    <div class="small text-muted">12 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Thêm phần giống trong ảnh -->
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <!-- Form Mua -->
+                            <form action="buy" method="post" class="me-2">
+                                <input type="hidden" name="gameId" value="2">
+                                <input type="hidden" name="sourcePage"
+                                       value="[[${request.getRequestURI().endsWith("GameDetail.jsp") ? "GameDetail.jsp" : "Index.jsp"}]]">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <!-- Form Add to Cart -->
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="2">
+                                <input type="hidden" name="sourcePage"
+                                       value="[[${request.getRequestURI().endsWith("GameDetail.jsp") ? "GameDetail.jsp" : "Index.jsp"}]]">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div id="zingspeed" class="col mb-5">
+
+                <div class="card h-100">
+                    <a href="GameDetail.jsp?id=3" style="text-decoration: none; color: inherit;">
+                        <!-- Sale badge-->
+                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <!-- Product image-->
+                        <img class="card-img-top" src="img/game3.jpg" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Zing Speed Mobile</h5>
+                                <!-- Product reviews-->
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                <span class="text-muted text-decoration-line-through">$20.00</span>
+                                $18.00
+                            </div>
+                            <!-- Thêm phần giống trong ảnh -->
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>3,5 ★</strong>
+                                    <div class="small text-muted">3,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>3.5 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>30 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">18+</span>
+                                    <div class="small text-muted">18 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <!-- Nút Mua ngay -->
+                            <form action="buy" method="post" class="me-1">
+                                <input type="hidden" name="gameId" value="3">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <!-- Nút Thêm vào giỏ -->
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="3">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div id="genshin" class="col mb-5">
+                <a href="GameDetail.jsp?id=4" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100">
+                        <!-- Sale badge-->
+                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <!-- Product image-->
+                        <img class="card-img-top" src="img/game5.jpg" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Genshin Impact</h5>
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                <span class="text-muted text-decoration-line-through">$50.00</span>
+                                $25.00
+                            </div>
+                            <!-- Thêm phần giống trong ảnh -->
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>4,5 ★</strong>
+                                    <div class="small text-muted">7,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>5.0 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>90 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">18+</span>
+                                    <div class="small text-muted">18 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <!-- Nút Mua ngay -->
+                            <form action="buy" method="post" class="me-1">
+                                <input type="hidden" name="gameId" value="4">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <!-- Nút Thêm vào giỏ -->
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="4">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div id="chienco"class="col mb-5">
+                <a href="GameDetail.jsp?id=5" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100">
+                        <!-- Product image-->
+                        <img class="card-img-top" src="img/game4.jpg" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Chiến Cơ Huyền Thoại</h5>
+                                <!-- Product reviews-->
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                $40.00
+                            </div>
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>4,0 ★</strong>
+                                    <div class="small text-muted">5,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>1.2 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>10 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">12+</span>
+                                    <div class="small text-muted">12 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <!-- Nút Mua ngay -->
+                            <form action="buy" method="post" class="me-1">
+                                <input type="hidden" name="gameId" value="5">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <!-- Nút Thêm vào giỏ -->
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="5">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <div id="pubg" class="col mb-5">
+                <a href="GameDetail.jsp?id=6" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100">
+                        <!-- Product image-->
+
+                        <img class="card-img-top"  src="img/game6.jpg"  alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">PUBG Mobile</h5>
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Thêm phần giống trong ảnh -->
+
+                                <!-- Product price-->
+                                $40.00 - $80.00
+                            </div>
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>4,5 ★</strong>
+                                    <div class="small text-muted">6,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>3.5 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>5 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">12+</span>
+                                    <div class="small text-muted">12 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <!-- Nút Mua ngay -->
+                            <form action="buy" method="post" class="me-1">
+                                <input type="hidden" name="gameId" value="6">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <!-- Nút Thêm vào giỏ -->
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="6">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div id="cyberpunk" class="col mb-5">
+                <a href="GameDetail.jsp?id=7" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100">
+                        <!-- Sale badge-->
+                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <!-- Product image-->
+                        <img class="card-img-top" src="img/game7.jpg" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Cyberpunk</h5>
+                                <!-- Product reviews-->
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                <span class="text-muted text-decoration-line-through">$20.00</span>
+                                $18.00
+                            </div>
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>4,9 ★</strong>
+                                    <div class="small text-muted">9,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>4.5 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>50 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">18+</span>
+                                    <div class="small text-muted">18 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <form action="buy" method="post" class="me-1">
+                                <input type="hidden" name="gameId" value="7">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="7">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+            <div id ="among" class="col mb-5">
+                <a href="GameDetail.jsp?id=8" style="text-decoration: none; color: inherit;">
+                    <div id ="amongus"class="card h-100">
+                        <!-- Sale badge-->
+                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <!-- Product image-->
+                        <img class="card-img-top" src="img/game8.jpg" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Among Us</h5>
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                <span class="text-muted text-decoration-line-through">$50.00</span>
+                                $25.00
+                            </div>
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>3,5 ★</strong>
+                                    <div class="small text-muted">6,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>2.0 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>20 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">12+</span>
+                                    <div class="small text-muted">12 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <form action="buy" method="post" class="me-2">
+                                <input type="hidden" name="gameId" value="8">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="8">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+            <div id="kiemhiep" class="col mb-5">
+                <a href="GameDetail.jsp?id=9" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100">
+                        <!-- Product image-->
+                        <img class="card-img-top" src="img/game9.jpg" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Võ Lâm Truyền kỳ</h5>
+                                <!-- Product reviews-->
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                $40.00
+                            </div>
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>3,0 ★</strong>
+                                    <div class="small text-muted">6,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>1.5 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>20 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">12+</span>
+                                    <div class="small text-muted">12 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <form action="buy" method="post" class="me-2">
+                                <input type="hidden" name="gameId" value="9">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="9">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <div class="col mb-5">
+                <a href="GameDetail.jsp?id=10" style="text-decoration: none; color: inherit;">
+                    <div id ="hayday" class="card h-100">
+                        <!-- Product image-->
+
+                        <img class="card-img-top"  src="img/game10.jpg"  alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Hay Day</h5>
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                $30.00 - $40.00
+                            </div>
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>4,0 ★</strong>
+                                    <div class="small text-muted">4,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>2.5 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>1 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">12+</span>
+                                    <div class="small text-muted">12 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Thêm phần giống trong ảnh -->
+
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <form action="buy" method="post" class="me-2">
+                                <input type="hidden" name="gameId" value="10">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="10">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div id="lmth" class="col mb-5">
+                <a href="GameDetail.jsp?id=11" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100">
+                        <!-- Sale badge-->
+                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <!-- Product image-->
+                        <img class="card-img-top" src="img/game11.jpg" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Liên Minh Huyền Thoại</h5>
+                                <!-- Product reviews-->
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                <span class="text-muted text-decoration-line-through">$20.00</span>
+                                $15.00
+                            </div>
+                            <!-- Thêm phần giống trong ảnh -->
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>5.0 ★</strong>
+                                    <div class="small text-muted">10 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>5.5 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>90 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">18+</span>
+                                    <div class="small text-muted">18 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <form action="buy" method="post" class="me-1">
+                                <input type="hidden" name="gameId" value="11">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="11">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+            <div id="dota" class="col mb-5">
+                <a href="GameDetail.jsp?id=12" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100">
+                        <!-- Sale badge-->
+                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <!-- Product image-->
+                        <img class="card-img-top" src="img/game12.jpg" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Dota 2</h5>
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                <span class="text-muted text-decoration-line-through">$90.00</span>
+                                $85.00
+                            </div>
+                            <!-- Thêm phần giống trong ảnh -->
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>4,5 ★</strong>
+                                    <div class="small text-muted">7,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>4.0 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>60 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">18+</span>
+                                    <div class="small text-muted">18 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <form action="buy" method="post" class="me-2">
+                                <input type="hidden" name="gameId" value="12">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="12">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+            <div id="chienco"class="col mb-5">
+                <a href="GameDetail.jsp?id=13" style="text-decoration: none; color: inherit;">
+                    <div class="card h-100">
+                        <!-- Product image-->
+                        <img class="card-img-top" src="img/game13.jpg" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">Call of Duty</h5>
+                                <!-- Product reviews-->
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                    <div class="bi-star-fill"></div>
+                                </div>
+                                <!-- Product price-->
+                                $199.00
+                            </div>
+                            <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="stat-item text-center">
+                                    <strong>4,9 ★</strong>
+                                    <div class="small text-muted">5,5 Tr đánh giá</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>4.2 GB</strong>
+                                    <div class="small text-muted">Dung lượng</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <strong>10 Tr+</strong>
+                                    <div class="small text-muted">Lượt tải xuống</div>
+                                </div>
+                                <div class="stat-item text-center">
+                                    <span class="age-box">18+</span>
+                                    <div class="small text-muted">18 tuổi trở lên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
+                            <form action="buy" method="post" class="me-2">
+                                <input type="hidden" name="gameId" value="13">
+                                <button type="submit" class="btn btn-success">Mua</button>
+                            </form>
+
+                            <form action="AddToCart" method="post">
+                                <input type="hidden" name="gameId" value="13">
+                                <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!<!-- hover khi di chuot vào game -->
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.05); /* phóng to nhẹ */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* bóng đổ */
+        z-index: 2; /* nổi lên trên */
+    }
+</style>
+
+<!-- Footer -->
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer custom-footer mt-auto py-5 text-white">
+    <div class="container px-5">
+        <div class="row gy-4 gx-5">
+            <!-- Cột 1: Logo & mô tả -->
+
+            <div class="col-md-3">
+                <a href="Index.jsp" class="logo-link">
+                    <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+                </a>
+
+                <p class="text-white-50">
+                    Trải nghiệm thế giới game đỉnh cao – nơi hội tụ những siêu phẩm nhập vai, hành động và phiêu lưu.
+                    GameStore mang đến không gian giải trí sống động, đậm chất công nghệ và đam mê, giá cả hợp lý và nhiều khuyến mãi hấp dẫn!.
+                </p>
+            </div>
+
+            <!-- Cột 2: Liên kết nhanh -->
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Thông tin</h5>
+                <ul class="list-unstyled text-white-50">
+                    <li><a href="#" class="footer-link">Hỗ trợ</a></li>
+                    <li><a href="About.jsp" class="footer-link">About us</a></li>
+                    <li><a href="TermsOfService.jsp" class="footer-link">Điều khoản dịch vụ</a></li>
+                    <li><a href="PrivacyPolicy.jsp" class="footer-link">Chính sách bảo mật</a></li>
+                    <li><a href="BuyingGuide.jsp" class="footer-link">Hướng dẫn mua hàng</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Liên hệ</h5>
+                <p><a href="tel:+84912345678" class="footer-link">+84 1900 1099 </a></p>
+                <p><a href="mailto:support@gamestore.com" class="footer-link">support@gamestore.com</a></p>
+                <p><a href="https://surl.li/bhtojh" target="_blank" class="footer-link">https://surl.li/bhtojh/</a></p>
+            </div>
+
+            <!-- Cột 3: Liên hệ & MXH -->
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Kết nối với chúng tôi</h5>
+                <div class="social-icons">
+                    <a href="https://surl.li/bhtojh" class="social-link" target="_blank">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                </div>
+                <img src="img/qr.jpg" alt="QR Shop" class="qr-img">
+            </div>
+        </div>
+
+        <hr class="border-secondary my-4">
+
+        <div class="text-center text-white-50 small">
+            © 2025 <span class="fw-bold text-primary">GameStore</span>. All rights reserved.
+            | Designed by <span class="text-glow">Do Trong Tri</span>
+        </div>
+    </div>
+</footer>
+
+<!-- ===================== CSS ===================== -->
+<style>
+    .logo-link {
+        text-decoration: none !important;
+        color: inherit; /* Giữ nguyên màu chữ h3 */
+    }
+
+    .logo-link:hover {
+        color: #00e0ff; /* Thêm hiệu ứng hover nếu muốn */
+        text-shadow: 0 0 10px #00e0ff;
+    }
+
+    /* Nền xanh đen chuyển sắc */
+    .custom-footer {
+        background: linear-gradient(135deg, #0b0f29, #1b2347);
+        border-top: 2px solid #1e3a8a;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 -2px 20px rgba(0, 150, 255, 0.15);
+    }
+
+    /* Hiệu ứng text neon */
+    .neon-text {
+        color: #4f9eff;
+        text-shadow: 0 0 5px #4f9eff, 0 0 15px #4f9eff, 0 0 25px #007bff;
+        animation: flicker 3s infinite;
+    }
+
+    /* Hiệu ứng chớp sáng nhẹ */
+    @keyframes flicker {
+        0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+            opacity: 1;
+        }
+        20%, 24%, 55% {
+            opacity: 0.6;
+        }
+    }
+
+    /* Tiêu đề có ánh sáng */
+    .glow-title {
+        text-shadow: 0 0 8px rgba(79, 158, 255, 0.8);
+    }
+
+    /* Liên kết chân trang */
+    .footer-link {
+        color: #adb5bd;
+        text-decoration: none;
+        display: inline-block;
+        margin: 4px 0;
+        transition: color 0.3s, transform 0.2s;
+    }
+
+    .footer-link:hover {
+        color: #4f9eff;
+        transform: translateX(4px);
+    }
+
+    /* Icon mạng xã hội */
+    .social-icons {
+        display: flex;
+        gap: 18px;
+        margin-top: 10px;
+    }
+
+    .social-link {
+        color: #ffffffcc;
+        font-size: 1.6rem;
+        transition: all 0.3s ease;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    }
+
+    .social-link:hover {
+        color: #4f9eff;
+        transform: scale(1.25) rotate(8deg);
+        text-shadow: 0 0 15px #4f9eff;
+    }
+
+    /* Glow tên tác giả */
+    .text-glow {
+        color: #4f9eff;
+        text-shadow: 0 0 10px #4f9eff;
+    }
+
+    .qr-img {
+        margin-top: 15px;
+        width: 160px;
+        border-radius: 5px;
+    }
+
+</style>
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<!-- FontAwesome icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="js/scripts.js"></script>
+
+<!-- Js chạy model Dang Nhap -->
+<script>
+    (function () {
+        var hasLoginError = [[${(loginError != null) ? "true" : "false"}]];
+        if (!hasLoginError)
+            return;
+
+        if (typeof bootstrap === 'undefined') {
+            console.error("Bootstrap is not loaded yet.");
+            return;
+        }
+
+        var modalEl = document.getElementById('loginModal');
+        var modal = bootstrap.Modal.getOrCreateInstance(modalEl, {backdrop: 'static', keyboard: false});
+        var allowClose = false; // chỉ cho phép đóng khi user bấm nút close
+
+        // ngăn modal đóng nếu chưa cho phép
+        modalEl.addEventListener('hide.bs.modal', function (e) {
+            if (!allowClose) {
+                e.preventDefault();
+                // nếu có script khác cố tình hide, reopen 1 lần sau
+                setTimeout(function () {
+                    modal.show();
+                }, 50);
+            }
+        });
+        // bật modal
+        modal.show();
+
+        // cho nút close hoạt động an toàn
+        var closeBtn = document.getElementById('loginCloseBtn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                allowClose = true;
+                modal.hide();
+            });
+        }
+        // Ẩn alert sau countdown (KHÔNG đóng modal)
+        var alert = modalEl.querySelector('#loginAlertArea .alert');
+        if (!alert)
+            return;
+        var secondsSpan = alert.querySelector('.seconds');
+        var remaining = secondsSpan ? parseInt(secondsSpan.textContent, 10) : 3;
+
+        var timer = setInterval(function () {
+            remaining--;
+            if (secondsSpan)
+                secondsSpan.textContent = remaining;
+            if (remaining <= 0) {
+                clearInterval(timer);
+                alert.classList.remove('show');
+                alert.classList.add('d-none');
+            }
+        }, 1000);
+    })();
+</script>
+
+<script>
+    <!-- TODO: Converted from JSP scriptlet, review logic:
+        String showForm = (String) request.getAttribute("showForm");
+    if ("register".equals(showForm)) {
+-->
+        var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+        registerModal.show();
+    <!-- TODO: Converted from JSP scriptlet, review logic:
+}
+-->
+</script>
+
+
+<!-- dieu kien va JS hien thi loi buy sp -->
+<!-- TODO: Converted from JSP scriptlet, review logic:
+if (request.getAttribute("buyError") != null) {
+-->
+<div id="buyAlert"
+     style="position: fixed; top: 20px; right: 20px;
+             background: #f44336; color: white; padding: 15px;
+             border-radius: 8px; z-index: 9999;
+             box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+    [[${request.getAttribute("buyError")}]]
+</div>
+
+<script>
+    setTimeout(function () {
+        let alertBox = document.getElementById("buyAlert");
+        if (alertBox) {
+            alertBox.style.transition = "opacity 0.5s ease";
+            alertBox.style.opacity = "0";
+            setTimeout(() => alertBox.remove(), 500);
+        }
+    }, 3000);
+</script>
+<!-- TODO: Converted from JSP scriptlet, review logic:
+}
+-->
+
+<!-- dieu kien va JS hien thi loi Add cart -->
+<!-- TODO: Converted from JSP scriptlet, review logic:
+if (request.getAttribute("cartError") != null) {
+-->
+<div id="cartAlert"
+     style="position: fixed; top: 20px; right: 20px; /* lệch xuống dưới */
+             background: #fff3cd; color: black; padding: 15px;
+             border-radius: 8px; z-index: 9999;
+             box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+    [[${request.getAttribute("cartError")}]]
+</div>
+
+<script>
+    setTimeout(function () {
+        let alertBox = document.getElementById("cartAlert");
+        if (alertBox) {
+            alertBox.style.transition = "opacity 0.5s ease";
+            alertBox.style.opacity = "0";
+            setTimeout(() => alertBox.remove(), 500);
+        }
+    }, 3000);
+</script>
+<!-- TODO: Converted from JSP scriptlet, review logic:
+}
+-->
+</body>
+
+</html>
