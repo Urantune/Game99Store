@@ -1,0 +1,1130 @@
+<!-- Migrated from JSP -> HTML placeholder. Dynamic pieces removed; wire via Thymeleaf and Controller. -->
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>New Game</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles2.css" rel="stylesheet" />
+    </head>
+    <style>
+        .custom-bg{
+            background: linear-gradient(135deg, #0b0f29, #1b2347);
+            background-attachment: fixed; /* giúp màu không bị cắt khi cuộn */
+        }
+    </style>
+    <body class="d-flex flex-column h-100">      
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999"></div>
+               
+        <!-- Modal Login (single source of truth) -->
+        <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Login</h5>
+                        <!-- remove data-bs-dismiss so we control close behavior -->
+                        <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="loginAlertArea">
+                            
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <span class="alert-message"></span>
+                                <span class="countdown"> (<span class="seconds">3</span>s)</span>
+                            </div>
+                            
+                        </div>
+
+                        <form action="login" method="post" id="loginForm" autocomplete="off">
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" name="username"
+                                       value=""  autocomplete="off" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" name="password" required>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <button type="submit" class="btn btn-primary me-3">Login</button>
+                                <a href="ForgotPassword" class="text-decoration-none">Forgot password?</a> <!-- mapping URL -->
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CSS form Login -->
+        <style>
+            #loginModal .modal-header {
+                background: linear-gradient(135deg, #0d47a1, #1a237e);
+                color: #fff;
+                border-bottom: none;
+                padding: 1rem 1.2rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+            }
+
+            /* nút close trắng cho nổi bật */
+            #loginModal .modal-header .btn-close {
+                filter: invert(1);
+                position: absolute;
+                right: 1rem;
+            }
+
+            /* Thu nhỏ modal tổng thể */
+            #loginModal .modal-dialog {
+                max-width: 380px;   /* gọn lại */
+                margin: 1.75rem auto;
+            }
+
+            /* Modal content */
+            #loginModal .modal-content {
+                border-radius: 16px;
+                box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+                border: none;
+                background: rgba(13, 71, 161, 0.2);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                overflow: hidden;
+            }
+
+            /* Modal body */
+            #loginModal .modal-body {
+                padding: 1.5rem;
+                text-align: center; /* căn giữa nội dung */
+            }
+
+            /* Input */
+            #loginModal .form-control {
+                background: #2c3e50;
+                border: none;
+                border-radius: 8px;
+                color: #fff;
+                font-size: 14px;
+                padding: 10px;
+                margin-bottom: 1rem;
+                text-align: left; /* text trong input vẫn trái */
+            }
+
+            #loginModal .form-control:focus {
+                border: 1px solid #ff9800;
+                box-shadow: 0 0 6px rgba(255, 152, 0, 0.5);
+            }
+
+            /* Label */
+            #loginModal .form-label {
+                font-weight: 500;
+                color: white;
+                display: block;
+                text-align: left; /* label canh trái */
+            }
+
+            /* Nút Login */
+            #loginModal .btn-primary {
+                border-radius: 10px;
+                padding: 0.5rem 1.2rem;
+                font-weight: 600;
+                background: linear-gradient(135deg, #0d47a1, #1a237e);
+                border: none;
+                transition: 0.3s;
+            }
+
+            #loginModal .btn-primary:hover {
+                background: linear-gradient(135deg, #1565c0, #0d47a1);
+                transform: translateY(-2px);
+            }
+
+            /* Căn giữa hàng nút và link */
+            #loginModal .d-flex {
+                justify-content: center;  /* căn giữa */
+                gap: 1rem; /* khoảng cách nút và link */
+            }
+
+            /* Link Forgot */
+            #loginModal a.text-decoration-none {
+                font-size: 0.9rem;
+                color: white;
+                transition: color 0.3s;
+            }
+
+            #loginModal a.text-decoration-none:hover {
+                color: #ff9800;
+                text-decoration: underline;
+            }
+
+        </style>
+        <!-- Modal Đăng ký -->
+        <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Register</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <!-- Alert hiển thị lỗi -->
+                        <div id="registerAlert">
+                            
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <span class="alert-message"></span>
+                            </div>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                                    registerModal.show();
+                                });
+                            </script>
+                            
+                        </div>
+
+                        <!-- Form đăng ký -->
+                        <form id="registerForm" action="register" method="post" autocomplete="off">
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" name="username" 
+                                       value="${enteredUsername != null ? enteredUsername : ''}" autocomplete="off" required>
+                            </div>
+                            <label class="form-label">Email</label>
+                            <div class="mb-3 d-flex align-items-center gap-2">
+
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="${enteredEmail != null ? enteredEmail : ''}" required>
+                                <button type="button" class="btn btn-sendcode" id="sendOtpBtn">Send code</button>
+                            </div>
+
+
+                            <div class="mb-3" id="otpSection" style="display:${enteredEmail != null ? 'block' : 'none'};">
+                                <label class="form-label">OTP</label>
+                                <input type="text" class="form-control" id="otp" name="otp">
+                                <div class="form-text">Please enter the 6-digit code sent to your email</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Confirm password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                <div id="passwordMessage" class="form-text text-danger"></div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- CSS form Register -->
+        <style>
+            /* Modal chung */
+            #registerModal .modal-content {
+                border-radius: 20px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+                border: none;
+                background: rgba(13, 71, 161, 0.2);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                overflow: hidden;
+            }
+
+            /* Header Register */
+            #registerModal .modal-header {
+                background: linear-gradient(135deg, #0d47a1, #1a237e);
+                /*background: rgba(27, 56, 92, 0.95); */
+                color: white;
+                border-bottom: none;
+                padding: 1rem 1.5rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+            }
+
+            #registerModal .modal-title {
+                font-weight: 600;
+                font-size: 1.2rem;
+            }
+
+            #registerModal .modal-header .btn-close {
+                position: absolute;
+                right: 1rem;
+                filter: brightness(0) invert(1);
+            }
+
+            /* Body */
+            #registerModal .modal-body {
+                padding: 2rem;
+                background: rgba(255, 255, 255, 0.15);
+                border-radius: 0 0 20px 20px;
+            }
+
+            /* Input */
+            #registerModal .form-control {
+                background: #2c3e50;   /* màu nền tối */
+                border: none;
+                border-radius: 6px;
+                color: #fff;           /* chữ trắng */
+                font-size: 14px;
+                padding: 10px;
+                transition: all 0.3s ease;
+            }
+
+            #registerModal .form-control:focus {
+                border: 1px solid #ff9800; /* viền cam khi focus */
+                box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
+            }
+
+            /* Label */
+            #registerModal .form-label {
+                font-weight: 500;
+            }
+
+            /* Nút Register */
+            #registerModal .btn-success {
+                border-radius: 12px;
+                padding: 0.6rem 1.5rem;
+                font-weight: 600;
+                background: linear-gradient(135deg, #0d47a1, #1a237e);
+                border: none;
+                transition: 0.3s;
+            }
+
+            #registerModal .btn-success:hover {
+                background: linear-gradient(135deg, #1565c0, #0d47a1);
+                transform: translateY(-2px);
+            }
+
+            /* Alert Register */
+            #registerAlert .alert {
+                border-radius: 12px;
+                font-size: 0.95rem;
+                padding: 0.8rem 1rem;
+            }
+
+            /* Ô email*/
+            #registerModal .form-control {
+                border-radius: 12px;
+                padding: 0.7rem 1rem;
+                border: 1px solid #cfd8dc;
+                background: #2c3e50;
+                transition: all 0.3s ease;
+            }
+
+            #registerModal .form-control:focus {
+                border-color: #0d47a1;
+                box-shadow: 0 0 8px rgba(13, 71, 161, 0.3);
+            }
+
+            /*Send code */
+            #registerModal .btn-sendcode {
+                border-radius: 12px;
+                padding: 0.6rem 1rem;
+                font-weight: 500;
+                background: linear-gradient(135deg, #1565c0, #0d47a1);
+                border: none;
+                color: #fff;
+                transition: 0.3s;
+                white-space: nowrap;   /* giữ chữ không xuống dòng */
+            }
+
+            #registerModal .btn-sendcode:hover {
+                background: linear-gradient(135deg, #1e88e5, #1565c0);
+                transform: translateY(-2px);
+            }
+        </style>
+
+        <!-- JS check form -->
+        <script>
+            const passwordInput = document.getElementById("password");
+            const confirmPasswordInput = document.getElementById("confirmPassword");
+            const message = document.getElementById("passwordMessage");
+            const form = document.getElementById("registerForm");
+            const otpInput = document.getElementById("otp");
+            const otpSection = document.getElementById("otpSection");
+            const sendOtpBtn = document.getElementById("sendOtpBtn");
+
+            function checkPasswordMatch() {
+                if (confirmPasswordInput.value !== "" && passwordInput.value !== confirmPasswordInput.value) {
+                    message.textContent = "❌ Mật khẩu không khớp!";
+                } else {
+                    message.textContent = "";
+                }
+            }
+            passwordInput.addEventListener("input", checkPasswordMatch);
+            confirmPasswordInput.addEventListener("input", checkPasswordMatch);
+
+            form.addEventListener("submit", function (e) {
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    e.preventDefault();
+                    alert("Mật khẩu nhập lại không khớp!");
+                    return;
+                }
+                if (otpSection.style.display === "none") {
+                    e.preventDefault();
+                    alert("Bạn cần gửi OTP trước khi đăng ký!");
+                    return;
+                }
+                if (otpInput.value.trim() === "") {
+                    e.preventDefault();
+                    alert("Vui lòng điền mã OTP được gửi đến email của bạn!");
+                    return;
+                }
+            });
+
+            // Gửi OTP
+            sendOtpBtn.addEventListener("click", function () {
+                const email = document.getElementById("email").value;
+                if (!email) {
+                    alert("Vui lòng nhập email!");
+                    return;
+                }
+
+                fetch("sendOtp", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: "email=" + encodeURIComponent(email)
+                })
+                        .then(res => res.text())
+                        .then(data => {
+                            if (data === "success") {
+                                alert("Mã OTP đã được gửi đến email của bạn!");
+                                otpSection.style.display = "block";
+                                otpInput.setAttribute("required", "true");
+
+                                // Disable nút 60s
+                                let countdown = 60;
+                                sendOtpBtn.disabled = true;
+                                sendOtpBtn.textContent = "Gửi lại (" + countdown + "s)";
+
+                                const interval = setInterval(() => {
+                                    countdown--;
+                                    if (countdown > 0) {
+                                        sendOtpBtn.textContent = "Gửi mã (" + countdown + "s)";
+                                    } else {
+                                        clearInterval(interval);
+                                        sendOtpBtn.disabled = false;
+                                        sendOtpBtn.textContent = "Gửi mã";
+                                    }
+                                }, 1000);
+
+                            } else {
+                                alert("Không thể gửi OTP, vui lòng thử lại!\n" + data);
+                            }
+                        });
+            });
+        </script>
+
+
+
+
+
+        
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light custom-bg">
+            <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
+                <!-- Logo -->
+                <a href="Index.jsp" class="logo-link text-white fs-4">
+                    <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+                </a>
+
+                <!-- Left nav links -->
+                <ul class="navbar-nav d-flex flex-row mb-0">                                  
+                    
+                    <li class="nav-item"><a class="nav-link" href="manageProducts.jsp">Quản lý sản phẩm</a></li>
+                        
+                </ul>
+
+                <!-- Right: Cart + User info -->
+                <div class="d-flex align-items-center">
+
+                    <form class="d-flex me-2" action="Cart">
+                        <button class="btn btn-outline-light" type="submit">
+                            <i class="bi-cart-fill me-1"></i>
+                            <a href="Cart.jsp" style="text-decoration: none; color: inherit;">Cart</a>
+                            <span class="badge bg-dark text-white ms-1 rounded-pill"></span>
+                        </button>
+                    </form>
+
+                    
+                    <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Đăng nhập
+                    </button>
+                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        Đăng ký
+                    </button>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="text-center me-3">                
+                            <a href="ProfileUser.jsp" class="profile-link">
+                                <!-- Avatar -->
+                                <img src="https://i.pravatar.cc/50?u=" 
+                                     alt="avatar" 
+                                     class="rounded-circle profile-avatar">                            
+                                <div class="profile-name">
+                                    <b></b>
+                                </div>
+                            </a>
+                        </div>                        
+                    </div>
+                    
+                </div>
+            </div>
+        </nav>
+        <style>
+            /* Link tổng thể */
+            .profile-link {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-decoration: none;
+                color: inherit;
+                transition: all 0.3s ease;
+            }
+
+            /* Avatar */
+            .profile-avatar {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 2px solid transparent;
+                transition: all 0.3s ease;
+            }
+
+            /* Hover hiệu ứng avatar */
+            .profile-link:hover .profile-avatar {
+                border-color:#FFD700; /* viền xanh đậm */
+                box-shadow: 0 0 8px rgba(13, 71, 161, 0.5);
+            }
+
+            /* Tên user */
+            .profile-name {
+                font-size: 14px;
+                color: #333;
+                margin-top: 5px;
+                transition: color 0.3s ease;
+            }
+
+            /* Hover hiệu ứng tên */
+            .profile-link:hover .profile-name {
+                color: #FFD700;
+            }
+        </style>
+        <main class="flex-shrink-0">
+            <!-- Header-->
+            <header class="hero-section">
+                <!-- Video nền -->
+                <video autoplay loop muted playsinline id="bg-video">
+                    <source src="videos/Nghichthuyhan.mp4" type="video/mp4">
+                    Trình duyệt không hỗ trợ video.
+                </video>
+                <button id="mute-btn">
+                    🔇
+                </button>
+
+                <!-- Lớp phủ tối nhẹ để chữ nổi bật -->
+                <div class="overlay"></div>
+
+                <!-- Nội dung header -->
+                <div class="container px-5">
+                    <div class="row gx-5 align-items-center justify-content-center">
+                        <div class="col-lg-8 col-xl-7 col-xxl-6">
+                            <div class="my-5 text-center text-xl-start text-white">
+                                <h1 class="display-5 fw-bolder mb-2">Nghịch Thuỷ Hàn</h1>
+                                <p class="lead fw-normal text-white-50 mb-4">
+                                    Nghịch Thủy Hàn là một tựa game nhập vai kiếm hiệp hấp dẫn, lấy bối cảnh giang hồ rộng 
+                                    lớn với đồ họa 3D tinh xảo và lối chơi chân thực. Người chơi hóa thân thành các hiệp khách, 
+                                    tu luyện võ công, phiêu bạt giang hồ và tham gia những trận chiến kịch tính. 
+                                    Game mang đến cảm giác tự do, lãng mạn và đầy thử thách trong thế giới võ lâm huyền ảo.
+                                </p>
+                                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">                                
+                                    <!-- ví dụ thay đổi nút trong 1 card -->                                                                                                                       
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center">
+                        </div>
+
+                    </div>
+                </div>
+            </header>
+
+            <!-- JS am thanh -->
+            <script>
+                const video = document.getElementById("bg-video");
+                const muteBtn = document.getElementById("mute-btn");
+
+                muteBtn.addEventListener("click", () => {
+                    if (video.muted) {
+                        video.muted = false;
+                        muteBtn.textContent = "🔊"; // icon loa mở
+                    } else {
+                        video.muted = true;
+                        muteBtn.textContent = "🔇"; // icon loa tắt
+                    }
+                });
+            </script>
+            <style>
+                .hero-section {
+                    position: relative;
+                    height: 70vh; /* thay vì 100vh -> còn 70% màn hình */
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    overflow: hidden;
+                }
+
+
+                /* Video nền */
+                #bg-video {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;   /* video lấp đầy màn hình */
+                    z-index: -1;         /* nằm dưới nội dung */
+                }
+
+                #mute-btn {
+                    position: absolute;
+                    bottom: 20px;
+                    right: 20px;
+                    z-index: 10;
+                    background: rgba(0,0,0,0.5);
+                    color: #fff;
+                    border: none;
+                    padding: 10px 15px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    font-size: 18px;
+                }
+
+                /* Lớp phủ tối */
+                .overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.4); /* mờ 40% */
+                    z-index: -1;
+                }
+
+                /* Nội dung */
+                .hero-section .container {
+                    position: relative;
+                    z-index: 1; /* nổi trên video */
+                    margin-top: 10px; /* đẩy chữ xuống */
+                    margin-left: 50px;
+                }
+
+                .overlay-img {
+                    opacity: 0.3;          /* chỉnh độ mờ, 0.5 = 50% */
+                    transition: opacity 0.3s ease; /* hiệu ứng mượt khi hover */
+                }
+
+                .overlay-img:hover {
+                    opacity: 0.7;          /* khi hover sẽ rõ hơn một chút */
+                }
+
+                .register-btn-transparent {
+                    color: #ffffff;
+                    background: transparent;
+                    border: 2px solid transparent;
+                    border-radius: 10px;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                }
+
+                /* Hiệu ứng khi hover: ánh tím nhẹ */
+                .register-btn-transparent:hover {
+                    border-color: rgba(173, 90, 255, 0.6);
+                    color: #d8b7ff;
+                    box-shadow: 0 0 10px rgba(173, 90, 255, 0.6);
+                    transform: scale(1.05);
+                }
+
+                /* Hiệu ứng khi nhấn giữ */
+                .register-btn-transparent:active {
+                    transform: scale(0.95);
+                    box-shadow: 0 0 5px rgba(173, 90, 255, 0.5);
+                }
+
+
+            </style>
+
+
+            
+
+            <!-- Features section-->
+            <section class="py-5 text-white custom-bg" id="features">
+                <div class="container px-5 my-5">
+                    <div class="row gx-5 align-items-center">                      
+                        <!-- Cột trái: Ảnh + Tiêu đề -->
+                        <!-- Cột trái: Ảnh + Tiêu đề -->
+                        <div class="col-lg-6 mb-5 mb-lg-0 text-center">
+                            <h2 class="fw-bolder mb-4 text-white">
+                                Nghịch Thủy Hàn – Siêu phẩm kiếm hiệp 3D sắp ra mắt!
+                            </h2>
+
+                            <!-- Ảnh game -->
+                            <img
+                                class="img-fluid rounded-4 shadow-lg mb-4"
+                                src="img/newgame.jpg"
+                                alt="Nghịch Thủy Hàn"
+                                style="max-height: 380px; object-fit: cover; opacity: 0.9;"
+                                />
+                            <!-- Hàng chứa 2 nút nằm ngang bên dưới ảnh -->
+                            <div class="d-flex justify-content-center gap-3">                              
+                                
+
+                                <!-- Form đăng ký -->
+                                <form action="RegisterGame" method="post" class="d-inline">
+                                    <input type="hidden" name="gameId" value="17">
+                                    <button type="button"
+                                            class="btn btn-lg text-white register-btn-transparent"
+                                            style=''>
+                                        
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+
+                        <!-- Cột phải: Các tính năng -->
+                        <div class="col-lg-6">
+                            <div class="row gx-4 gy-4 row-cols-1 row-cols-md-2">
+                                <div class="col h-100">
+                                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                        <i class="bi bi-controller"></i>
+                                    </div>
+                                    <h2 class="h5 text-white">Đồ họa 3D tuyệt đẹp</h2>
+                                    <p class="mb-0 text-white-50">
+                                        Thế giới giang hồ được tái hiện sống động với hiệu ứng ánh sáng, cảnh vật và nhân vật chân thực.
+                                    </p>
+                                </div>
+
+                                <div class="col h-100">
+                                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                        <i class="bi bi-swords"></i>
+                                    </div>
+                                    <h2 class="h5 text-white">Chiến đấu kịch tính</h2>
+                                    <p class="mb-0 text-white-50">
+                                        Hệ thống kỹ năng đa dạng, combo uyển chuyển – mỗi trận chiến đều là một màn biểu diễn võ học tinh hoa.
+                                    </p>
+                                </div>
+
+                                <div class="col h-100">
+                                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+                                    <h2 class="h5 text-white">Tương tác cộng đồng</h2>
+                                    <p class="mb-0 text-white-50">
+                                        Kết giao bằng hữu, lập bang hội, tham gia các sự kiện PvP, PvE quy mô lớn và chiến đấu vì vinh quang.
+                                    </p>
+                                </div>
+
+                                <div class="col h-100">
+                                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </div>
+                                    <h2 class="h5 text-white">Sắp ra mắt!</h2>
+                                    <p class="mb-0 text-white-50">
+                                        Dự kiến phát hành vào đầu năm 2026. Hãy theo dõi để trở thành hiệp khách đầu tiên đặt chân vào thế giới Nghịch Thủy Hàn!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Blog preview section-->
+            <section class="py-5">
+                
+                <div class="container px-5 my-5">
+                    <div class="row gx-5 justify-content-center">
+                        <div class="col-lg-8 col-xl-6">
+                            <div class="text-center">
+                                <h2 class="fw-bolder">Game liên quan</h2>
+                                <p class="lead fw-normal text-muted fw-bolder mb-5">Các game mới sắp ra mắt tiếp theo.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gx-5">
+                        
+                        <div class="col-lg-4 mb-5">
+                            <div class="card h-100 shadow border-0">
+                                <img class="card-img-top" src="" alt="..." />
+                                <div class="card-body p-4">
+                                    <div class="badge rounded-pill mb-2"
+                                         style="background: linear-gradient(90deg, #8E2DE2, #4A00E0); border: none; border-radius: 10px; box-shadow: 0 4px 15px rgba(142,45,226,0.5);">
+                                        Sắp phát hành
+                                    </div>
+                                    <a class="text-decoration-none link-dark stretched-link" href="#!">
+                                        <h5 class="card-title mb-3"></h5>
+                                    </a>
+                                    <p class="card-text mb-0"></p>
+                                </div>
+                                <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                                    <div class="d-flex align-items-end justify-content-between">
+                                        <div class="small">
+                                            <form action="RegisterGame" method="post">
+                                                <input type="hidden" name="gameId" value="">
+                                                <!-- Dùng single-quote cho attribute style để tránh xung đột với double-quotes -->
+                                                <button class="btn btn-lg px-4 text-white register-btn-transparent"
+                                                        style=''>
+                                                    
+                                                </button>
+                                            </form>
+                                            <div class="text-muted mt-2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <!-- Call to action -->
+                    <aside class="bg-primary custom-bg rounded-3 p-4 p-sm-5 mt-5">
+                        <div class="d-flex align-items-center justify-content-between flex-column flex-xl-row text-center text-xl-start">
+                            <div class="mb-4 mb-xl-0">
+                                <div class="fs-3 fw-bold text-white">Game mới sắp ra mắt – đừng bỏ lỡ!</div>
+                                <div class="text-white-50">Đăng ký ngay để nhận thông báo nhanh nhất và cập nhật về những tựa game chuẩn bị phát hành.</div>
+                            </div>
+                            <div class="ms-xl-4">
+                                <div class="input-group mb-2">
+                                    <input class="form-control" type="text" placeholder="Email address..." aria-label="Email address..." aria-describedby="button-newsletter" />
+                                    <button class="btn btn-outline-light" id="button-newsletter" type="button">Sign up</button>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+                <!-- Script xử lý nút Đăng ký game -->
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const buttons = document.querySelectorAll(".register-btn-transparent");
+                        const isLoggedIn = ;
+
+                        buttons.forEach(button => {
+                            button.addEventListener("click", function (e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                const form = this.closest("form");
+                                const gameId = form ? form.querySelector("input[name='gameId']").value : null;
+
+                                if (!isLoggedIn) {
+                                    showRegisterError("Vui lòng đăng nhập!");
+                                    return;
+                                }
+
+                                button.disabled = true;
+                                fetch("RegisterGame", {
+                                    method: "POST",
+                                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                                    body: "gameId=" + encodeURIComponent(gameId)
+                                })
+                                        .then(res => res.json().then(json => ({ok: res.ok, status: res.status, json})))
+                                        .then(({ ok, json }) => {
+                                            button.disabled = false;
+
+                                            if (ok && json.success) {
+                                                if (json.action === "registered") {
+                                                    // Đổi thành Đã đăng ký
+                                                    button.textContent = "Đã đăng ký";
+                                                    button.style.background = "linear-gradient(90deg, #8E2DE2, #4A00E0)";
+                                                    button.style.boxShadow = "0 0 10px rgba(142,45,226,0.6)";
+                                                } else if (json.action === "unregistered") {
+                                                    // Đổi về Đăng ký
+                                                    button.textContent = "Đăng ký";
+                                                    button.style.background = "linear-gradient(90deg, #8E2DE2, #4A00E0)";
+                                                    button.style.boxShadow = "0 4px 15px rgba(142,45,226,0.5)";
+                                                }
+                                                // ⚠️ Đã xoá showSuccess("Thao tác thành công!");
+                                            } else {
+                                                showRegisterError(json.message || "Có lỗi xảy ra khi đăng ký!");
+                                        }
+                                        })
+                                        .catch(() => {
+                                            button.disabled = false;
+                                            showRegisterError("Lỗi kết nối máy chủ!");
+                                        });
+                            });
+                        });
+
+                        // --- Chỉ còn hiển thị lỗi ---
+                        function showRegisterError(message) {
+                            showAlert(message);
+                        }
+
+                        function showAlert(message) {
+                            let oldAlert = document.getElementById("alertBox");
+                            if (oldAlert)
+                                oldAlert.remove();
+
+                            const alertBox = document.createElement("div");
+                            alertBox.id = "alertBox";
+                            alertBox.innerText = message;
+                            alertBox.style.cssText = `
+            position: fixed; 
+            top: 20px; 
+            right: 20px;
+            background: #ff4d4d;   /* 🔴 nền đỏ */
+            color: black;           /* ⚫ chữ đen */
+            padding: 15px; 
+            border-radius: 8px; 
+            z-index: 9999;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: opacity 0.5s ease;
+        `;
+
+                            document.body.appendChild(alertBox);
+                            setTimeout(() => {
+                                alertBox.style.opacity = "0";
+                                setTimeout(() => alertBox.remove(), 500);
+                            }, 3000);
+                        }
+                    });
+                </script>
+
+            </section>
+
+        </main>
+        <!-- ===================== FOOTER ===================== -->
+        <footer class="footer custom-footer mt-auto py-5 text-white">
+            <div class="container px-5">
+                <div class="row gy-4 gx-5">
+                    <!-- Cột 1: Logo & mô tả -->
+
+                    <div class="col-md-3">
+                        <a href="Index.jsp" class="logo-link">
+                            <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+                        </a>
+                        <p class="text-white-50">
+                            Trải nghiệm thế giới game đỉnh cao – nơi hội tụ những siêu phẩm nhập vai, hành động và phiêu lưu.
+                            GameStore mang đến không gian giải trí sống động, đậm chất công nghệ và đam mê, giá cả hợp lý và nhiều khuyến mãi hấp dẫn!.
+                        </p>
+                    </div>
+                    <!-- Cột 2: Liên kết nhanh -->
+                    <div class="col-md-3">
+                        <h5 class="text-uppercase text-primary glow-title mb-3">Thông tin</h5>
+                        <ul class="list-unstyled text-white-50">
+                            <li><a href="#" class="footer-link">Hỗ trợ</a></li>
+                            <li><a href="About.jsp" class="footer-link">About us</a></li>    
+                            <li><a href="TermsOfService.jsp" class="footer-link">Điều khoản dịch vụ</a></li> 
+                            <li><a href="PrivacyPolicy.jsp" class="footer-link">Chính sách bảo mật</a></li>                              
+                            <li><a href="BuyingGuide.jsp" class="footer-link">Hướng dẫn mua hàng</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="text-uppercase text-primary glow-title mb-3">Liên hệ</h5>               
+                        <p><a href="tel:+84912345678" class="footer-link">+84 1900 1099 </a></p>
+                        <p><a href="mailto:support@gamestore.com" class="footer-link">support@gamestore.com</a></p>
+                        <p><a href="https://surl.li/bhtojh" target="_blank" class="footer-link">https://surl.li/bhtojh/</a></p>
+                    </div>
+                    <!-- Cột 3: Liên hệ & MXH -->
+                    <div class="col-md-3">
+                        <h5 class="text-uppercase text-primary glow-title mb-3">Kết nối với chúng tôi</h5>                      
+                        <div class="social-icons">
+                            <a href="https://surl.li/bhtojh" class="social-link" target="_blank">
+                                <i class="bi bi-facebook"></i>
+                            </a>                          
+                            <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                        </div>
+                        <img src="img/qr.jpg" alt="QR Shop" class="qr-img">
+                    </div>
+                </div>
+                <hr class="border-secondary my-4">
+                <div class="text-center text-white-50 small">
+                    © 2025 <span class="fw-bold text-primary">GameStore</span>. All rights reserved.  
+                    | Designed by <span class="text-glow">Do Trong Tri</span>
+                </div>
+            </div>
+        </footer>
+        <!-- ===================== CSS ===================== -->
+        <style>
+            .logo-link {
+                text-decoration: none !important;
+                color: inherit; /* Giữ nguyên màu chữ h3 */
+            }
+
+            .logo-link:hover {
+                color: #00e0ff; /* Thêm hiệu ứng hover nếu muốn */
+                text-shadow: 0 0 10px #00e0ff;
+            }
+
+            /* Nền xanh đen chuyển sắc */
+            .custom-footer {
+                background: linear-gradient(135deg, #0b0f29, #1b2347);
+                border-top: 2px solid #1e3a8a;
+                font-family: 'Poppins', sans-serif;
+                box-shadow: 0 -2px 20px rgba(0, 150, 255, 0.15);
+            }
+
+            /* Hiệu ứng text neon */
+            .neon-text {
+                color: #4f9eff;
+                text-shadow: 0 0 5px #4f9eff, 0 0 15px #4f9eff, 0 0 25px #007bff;
+                animation: flicker 3s infinite;
+            }
+
+            /* Hiệu ứng chớp sáng nhẹ */
+            @keyframes flicker {
+                0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                    opacity: 1;
+                }
+                20%, 24%, 55% {
+                    opacity: 0.6;
+                }
+            }
+
+            /* Tiêu đề có ánh sáng */
+            .glow-title {
+                text-shadow: 0 0 8px rgba(79, 158, 255, 0.8);
+            }
+
+            /* Liên kết chân trang */
+            .footer-link {
+                color: #adb5bd;
+                text-decoration: none;
+                display: inline-block;
+                margin: 4px 0;
+                transition: color 0.3s, transform 0.2s;
+            }
+
+            .footer-link:hover {
+                color: #4f9eff;
+                transform: translateX(4px);
+            }
+
+            /* Icon mạng xã hội */
+            .social-icons {
+                display: flex;
+                gap: 18px;
+                margin-top: 10px;
+            }
+
+            .social-link {
+                color: #ffffffcc;
+                font-size: 1.6rem;
+                transition: all 0.3s ease;
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            }
+
+            .social-link:hover {
+                color: #4f9eff;
+                transform: scale(1.25) rotate(8deg);
+                text-shadow: 0 0 15px #4f9eff;
+            }
+
+            /* Glow tên tác giả */
+            .text-glow {
+                color: #4f9eff;
+                text-shadow: 0 0 10px #4f9eff;
+            }
+
+            .qr-img {
+                margin-top: 15px;
+                width: 160px;
+                border-radius: 5px;
+            }
+
+        </style>       
+        <!-- Bootstrap Icons CDN -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <!-- Js chạy model Dang Nhap -->
+        <script>
+                    (function () {
+                        var hasLoginError = ;
+                        if (!hasLoginError)
+                            return;
+
+                        if (typeof bootstrap === 'undefined') {
+                            console.error("Bootstrap is not loaded yet.");
+                            return;
+                        }
+
+                        var modalEl = document.getElementById('loginModal');
+                        var modal = bootstrap.Modal.getOrCreateInstance(modalEl, {backdrop: 'static', keyboard: false});
+                        var allowClose = false; // chỉ cho phép đóng khi user bấm nút close
+
+                        // ngăn modal đóng nếu chưa cho phép
+                        modalEl.addEventListener('hide.bs.modal', function (e) {
+                            if (!allowClose) {
+                                e.preventDefault();
+                                // nếu có script khác cố tình hide, reopen 1 lần sau
+                                setTimeout(function () {
+                                    modal.show();
+                                }, 50);
+                            }
+                        });
+                        // bật modal
+                        modal.show();
+
+                        // cho nút close hoạt động an toàn
+                        var closeBtn = document.getElementById('loginCloseBtn');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', function () {
+                                allowClose = true;
+                                modal.hide();
+                            });
+                        }
+                        // Ẩn alert sau countdown (KHÔNG đóng modal)
+                        var alert = modalEl.querySelector('#loginAlertArea .alert');
+                        if (!alert)
+                            return;
+                        var secondsSpan = alert.querySelector('.seconds');
+                        var remaining = secondsSpan ? parseInt(secondsSpan.textContent, 10) : 3;
+
+                        var timer = setInterval(function () {
+                            remaining--;
+                            if (secondsSpan)
+                                secondsSpan.textContent = remaining;
+                            if (remaining <= 0) {
+                                clearInterval(timer);
+                                alert.classList.remove('show');
+                                alert.classList.add('d-none');
+                            }
+                        }, 1000);
+                    })();
+        </script>
+
+        <script>
+            
+            var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+            registerModal.show();
+            
+        </script>      
+    </body>
+</html>
