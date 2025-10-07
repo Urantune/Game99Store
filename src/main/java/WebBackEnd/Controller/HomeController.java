@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public class HomeController {
 
 
-    @GetMapping("/home")
+    @GetMapping("/")
     public String homepage(Model model) {
      //   model.addAttribute("title", "Hehehe");a
         return "HTML/Index";

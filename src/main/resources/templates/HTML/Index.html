@@ -1,0 +1,574 @@
+<!--
+  Thymeleaf Index template for Spring Boot (no JSP/Servlet code)
+  Place under: src/main/resources/templates/index.html
+  Static assets under: src/main/resources/static/{css,js,img,videos}
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Game-Store</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/favicon.ico}" />
+    <!-- Bootstrap icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link th:href="@{/css/styles1.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999"></div>
+
+<!-- =================== LOGIN MODAL =================== -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="loginAlertArea" th:if="${loginError}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-message" th:text="${loginError}">Login failed</span>
+                        <span class="countdown"> (<span class="seconds">3</span>s)</span>
+                    </div>
+                </div>
+
+                <form th:action="@{/login}" method="post" id="loginForm" autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username"
+                               th:value="${enteredUsername}" autocomplete="off" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button type="submit" class="btn btn-primary me-3">Login</button>
+                        <a th:href="@{/forgot-password}" class="text-decoration-none">Forgot password?</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inline CSS for login modal tweaks -->
+<style>
+    #loginModal .modal-header { background: linear-gradient(135deg, #0d47a1, #1a237e); color: #fff; border-bottom: none; padding: 1rem 1.2rem; display: flex; justify-content: center; align-items: center; position: relative; }
+    #loginModal .modal-header .btn-close { filter: invert(1); position: absolute; right: 1rem; }
+    #loginModal .modal-dialog { max-width: 380px; margin: 1.75rem auto; }
+    #loginModal .modal-content { border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.25); border: none; background: rgba(13, 71, 161, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); overflow: hidden; }
+    #loginModal .modal-body { padding: 1.5rem; text-align: center; }
+    #loginModal .form-control { background: #2c3e50; border: none; border-radius: 8px; color: #fff; font-size: 14px; padding: 10px; margin-bottom: 1rem; text-align: left; }
+    #loginModal .form-control:focus { border: 1px solid #ff9800; box-shadow: 0 0 6px rgba(255, 152, 0, 0.5); }
+    #loginModal .form-label { font-weight: 500; color: white; display: block; text-align: left; }
+    #loginModal .btn-primary { border-radius: 10px; padding: 0.5rem 1.2rem; font-weight: 600; background: linear-gradient(135deg, #0d47a1, #1a237e); border: none; transition: 0.3s; }
+    #loginModal .btn-primary:hover { background: linear-gradient(135deg, #1565c0, #0d47a1); transform: translateY(-2px); }
+    #loginModal .d-flex { justify-content: center; gap: 1rem; }
+    #loginModal a.text-decoration-none { font-size: 0.9rem; color: white; transition: color 0.3s; }
+    #loginModal a.text-decoration-none:hover { color: #ff9800; text-decoration: underline; }
+</style>
+
+<!-- =================== REGISTER MODAL =================== -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Register</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+
+                <div id="registerAlert" th:if="${registerError}">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <span class="alert-message" th:text="${registerError}">Register error</span>
+                    </div>
+                </div>
+
+                <form id="registerForm" th:action="@{/register}" method="post" autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" th:value="${enteredUsername}" autocomplete="off" required>
+                    </div>
+
+                    <label class="form-label">Email</label>
+                    <div class="mb-3 d-flex align-items-center gap-2">
+                        <input type="email" class="form-control" id="email" name="email" th:value="${enteredEmail}" required>
+                        <button type="button" class="btn btn-sendcode" id="sendOtpBtn">Send code</button>
+                    </div>
+
+                    <div class="mb-3" id="otpSection" th:style="${enteredEmail} != null ? 'display:block' : 'display:none'">
+                        <label class="form-label">OTP</label>
+                        <input type="text" class="form-control" id="otp" name="otp">
+                        <div class="form-text">Please enter the 6-digit code sent to your email</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        <div id="passwordMessage" class="form-text text-danger"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #registerModal .modal-content { border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.25); border: none; background: rgba(13, 71, 161, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); overflow: hidden; }
+    #registerModal .modal-header { background: linear-gradient(135deg, #0d47a1, #1a237e); color: white; border-bottom: none; padding: 1rem 1.5rem; display: flex; justify-content: center; align-items: center; position: relative; }
+    #registerModal .modal-title { font-weight: 600; font-size: 1.2rem; }
+    #registerModal .modal-header .btn-close { position: absolute; right: 1rem; filter: brightness(0) invert(1); }
+    #registerModal .modal-body { padding: 2rem; background: rgba(255, 255, 255, 0.15); border-radius: 0 0 20px 20px; }
+    #registerModal .form-control { background: #2c3e50; border: none; border-radius: 12px; color: #fff; font-size: 14px; padding: 0.7rem 1rem; transition: all 0.3s ease; border: 1px solid #cfd8dc; }
+    #registerModal .form-control:focus { border-color: #0d47a1; box-shadow: 0 0 8px rgba(13, 71, 161, 0.3); }
+    #registerModal .form-label { font-weight: 500; }
+    #registerModal .btn-success { border-radius: 12px; padding: 0.6rem 1.5rem; font-weight: 600; background: linear-gradient(135deg, #0d47a1, #1a237e); border: none; transition: 0.3s; }
+    #registerModal .btn-success:hover { background: linear-gradient(135deg, #1565c0, #0d47a1); transform: translateY(-2px); }
+    #registerAlert .alert { border-radius: 12px; font-size: 0.95rem; padding: 0.8rem 1rem; }
+    #registerModal .btn-sendcode { border-radius: 12px; padding: 0.6rem 1rem; font-weight: 500; background: linear-gradient(135deg, #1565c0, #0d47a1); border: none; color: #fff; transition: 0.3s; white-space: nowrap; }
+    #registerModal .btn-sendcode:hover { background: linear-gradient(135deg, #1e88e5, #1565c0); transform: translateY(-2px); }
+</style>
+
+<!-- =================== NAVBAR =================== -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
+        <a th:href="@{/}" class="logo-link text-white fs-4">
+            <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+        </a>
+
+        <ul class="navbar-nav d-flex flex-row mb-0">
+            <li class="nav-item" th:if="${session.user != null and session.user.role?.toLowerCase() == 'admin'}">
+                <a class="nav-link" th:href="@{/admin/products}">Quản lý sản phẩm</a>
+            </li>
+        </ul>
+
+        <div class="d-flex align-items-center">
+            <form class="d-flex me-2" th:action="@{/cart}" method="get">
+                <button class="btn btn-outline-dark" type="submit">
+                    <i class="bi-cart-fill me-1"></i>
+                    <span style="text-decoration: none; color: inherit;">Cart</span>
+                    <span class="badge bg-dark text-white ms-1 rounded-pill" th:text="${cartCount}">0</span>
+                </button>
+            </form>
+
+            <div th:if="${session.user == null}">
+                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
+            </div>
+
+            <div class="d-flex align-items-center" th:if="${session.user != null}">
+                <div class="text-center me-3">
+                    <a th:href="@{/profile}" class="profile-link">
+                        <img th:src="@{|https://i.pravatar.cc/50?u=${session.user.username}|}"
+                             alt="avatar" class="rounded-circle profile-avatar">
+                        <div class="profile-name"><b th:text="${session.user.username}">username</b></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<style>
+    .profile-link { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: inherit; transition: all 0.3s ease; }
+    .profile-avatar { width: 50px; height: 50px; object-fit: cover; border-radius: 50%; border: 2px solid transparent; transition: all 0.3s ease; }
+    .profile-link:hover .profile-avatar { border-color:#FFD700; box-shadow: 0 0 8px rgba(13, 71, 161, 0.5); }
+    .profile-name { font-size: 14px; color: #333; margin-top: 5px; transition: color 0.3s ease; }
+    .profile-link:hover .profile-name { color: #FFD700; }
+</style>
+
+<!-- =================== BANNER & MENU =================== -->
+<header class="banner">
+    <div class="steam-menu">
+        <div class="steam-menu-inner">
+            <a th:href="@{/}">Cửa hàng của bạn</a>
+            <a th:href="@{/about}">About</a>
+            <a th:href="@{/upcoming}">Sắp phát hành</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle">Danh mục</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-column">
+                        <h4>Thể loại</h4>
+                        <a href="#">Hành động</a>
+                        <a href="#">Phiêu lưu</a>
+                        <a href="#">Nhập vai (RPG)</a>
+                        <a href="#">Chiến thuật</a>
+                        <a href="#">Mô phỏng</a>
+                        <a href="#">Đua xe</a>
+                        <a href="#">Thể thao</a>
+                        <a href="#">Kinh dị</a>
+                        <a href="#">Puzzle</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Chủ đề</h4>
+                        <a href="#">Anime</a>
+                        <a href="#">Khoa học viễn tưởng</a>
+                        <a href="#">Cyberpunk</a>
+                        <a href="#">Thế giới mở</a>
+                        <a href="#">Sinh tồn</a>
+                        <a href="#">Vũ trụ</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Theo độ phổ biến</h4>
+                        <a href="#">Mới phát hành</a>
+                        <a href="#">Sắp ra mắt</a>
+                        <a href="#">Bán chạy nhất</a>
+                        <a href="#">Được đánh giá cao</a>
+                        <a href="#">Game hot</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Theo nền tảng</h4>
+                        <a href="#">PC</a>
+                        <a href="#">Smart Phone</a>
+                        <a href="#">PlayStation</a>
+                        <a href="#">Xbox</a>
+                        <a href="#">Nintendo Switch</a>
+                        <a href="#">Mobile</a>
+                        <a href="#">VR</a>
+                    </div>
+                </div>
+            </div>
+            <a href="#">Cửa hàng điểm</a>
+            <a href="#">Labs</a>
+
+            <!-- Search -->
+            <div class="search-box">
+                <input type="text" id="search" placeholder="Tìm kiếm game...">
+                <button type="button">🔍</button>
+                <div id="suggestions"></div>
+            </div>
+            <div id="no-result" style="display:none; color:red; margin-top:3px;">Không tìm thấy game</div>
+        </div>
+    </div>
+
+    <!-- Slides (use static paths) -->
+    <div class="slides active" th:style="|background-image: url('@{/img/Aboutbanner.jpg}')|"></div>
+    <div class="slides" th:style="|background-image: url('@{/img/game1.jpg}')|"></div>
+    <div class="slides" th:style="|background-image: url('@{/img/game2.jpg}')|"></div>
+    <div class="slides" th:style="|background-image: url('@{/img/game3.jpg}')|"></div>
+    <div class="slides" th:style="|background-image: url('@{/img/game4.jpg}')|"></div>
+    <div class="slides" th:style="|background-image: url('@{/img/game5.jpg}')|"></div>
+    <div class="slides" th:style="|background-image: url('@{/img/game6.jpg}')|"></div>
+
+    <div class="dots">
+        <span class="dot active" onclick="currentSlide(0)"></span>
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+        <span class="dot" onclick="currentSlide(4)"></span>
+        <span class="dot" onclick="currentSlide(5)"></span>
+        <span class="dot" onclick="currentSlide(6)"></span>
+    </div>
+</header>
+
+<!-- (CSS/JS for dropdown, banner, search) keep as in your original; omitted here for brevity -->
+<style>
+    /* (Keep your existing CSS blocks: dropdown, banner, dots, etc.) */
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchBar = document.getElementById("search");
+        const suggestions = document.getElementById("suggestions");
+        const noResult = document.getElementById("no-result");
+
+        const games = [
+            {name: "Liên Quân Mobile", img: /*[*/'@{/img/game1.jpg}'/*]*/, anchor: "#lienquan"},
+            {name: "Free Fire", img: /*[*/'@{/img/game2.jpg}'/*]*/, anchor: "#freefire"},
+            {name: "Zingspeed Mobile", img: /*[*/'@{/img/game3.jpg}'/*]*/, anchor: "#zingspeed"},
+            {name: "Chiến Cơ Huyền Thoại", img: /*[*/'@{/img/game4.jpg}'/*]*/, anchor: "#chienco"},
+            {name: "Genshin Impact", img: /*[*/'@{/img/game5.jpg}'/*]*/, anchor: "#genshin"},
+            {name: "PUBG Mobile", img: /*[*/'@{/img/game6.jpg}'/*]*/, anchor: "#pubg"},
+            {name: "Cyberpunk", img: /*[*/'@{/img/game7.jpg}'/*]*/, anchor: "#cyberpunk"},
+            {name: "Among Us", img: /*[*/'@{/img/game8.jpg}'/*]*/, anchor: "#amongus"},
+            {name: "Hay Day", img: /*[*/'@{/img/game10.jpg}'/*]*/, anchor: "#hayday"},
+            {name: "Lien Minh Huyen Thoai", img: /*[*/'@{/img/game11.jpg}'/*]*/, anchor: "#lmth"},
+            {name: "Dota", img: /*[*/'@{/img/game12.jpg}'/*]*/, anchor: "#dota"},
+            {name: "Call of Duty", img: /*[*/'@{/img/game13.jpg}'/*]*/, anchor: "#cod"}
+        ];
+
+        const placeholder = "data:image/svg+xml;utf8," + encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#2b2b2b"/><text x="50%" y="50%" fill="#999" font-size="12" text-anchor="middle" dominant-baseline="middle">No Image</text></svg>'
+        );
+
+        function createSuggestionItem(game) {
+            const div = document.createElement("div");
+            div.className = "suggestion-item";
+            const img = document.createElement("img");
+            img.alt = game.name; img.src = game.img; img.onerror = function(){ img.src = placeholder; };
+            const span = document.createElement("span");
+            span.textContent = game.name;
+            div.appendChild(img); div.appendChild(span);
+            div.onclick = () => { window.location.hash = game.anchor; };
+            return div;
+        }
+
+        function searchGames() {
+            const q = searchBar.value.trim().toLowerCase();
+            suggestions.innerHTML = ""; noResult.style.display = "none";
+            if (!q) { suggestions.style.display = "none"; return []; }
+            const filtered = games.filter(g => g.name.toLowerCase().includes(q));
+            if (filtered.length === 0) { suggestions.style.display = "none"; noResult.style.display = "block"; }
+            else { filtered.forEach(g => suggestions.appendChild(createSuggestionItem(g))); suggestions.style.display = "block"; }
+            return filtered;
+        }
+        searchBar.addEventListener("input", searchGames);
+        searchBar.addEventListener("keydown", function (e) { if (e.key === "Enter") { const results = searchGames(); if (results.length === 0) alert("Không tìm thấy game"); } });
+        document.addEventListener("click", (e) => { if (!e.target.closest(".search-box")) { suggestions.style.display = "none"; noResult.style.display = "none"; } });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let slideIndex = 0;
+        const slides = document.querySelectorAll(".slides");
+        const dots = document.querySelectorAll(".dot");
+        window.currentSlide = function(n){ slideIndex = n; showSlide(slideIndex); };
+        function showSlide(index){ slides.forEach((s,i)=>{ s.classList.toggle("active", i===index); dots[i].classList.toggle("active", i===index); }); }
+        function changeSlide(n){ slideIndex = (slideIndex + n + slides.length) % slides.length; showSlide(slideIndex); }
+        showSlide(slideIndex); setInterval(()=>changeSlide(1), 3000);
+    });
+</script>
+
+<!-- =================== PRODUCT SECTION (example for one game) =================== -->
+<section class="py-5">
+    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+        <div th:if="${session.role == null}"></div>
+        <div th:if="${session.role == 'USER'}">
+            <form th:action="@{/buy}" method="post">
+                <input type="hidden" name="gameId" value="123">
+                <button type="submit" class="btn btn-success">Mua</button>
+            </form>
+        </div>
+        <div th:if="${session.role == 'ADMIN'}">
+            <a th:href="@{/admin/products}" class="btn btn-warning">Quản lý sản phẩm</a>
+        </div>
+    </div>
+
+    <div class="container px-4 px-lg-5 my-5">
+        <div id="lienquan" class="row gx-4 gx-lg-5 align-items-center game-detail">
+            <div class="col-md-6">
+                <a th:href="@{/game/detail(id=1)}" style="text-decoration: none; color: inherit;">
+                    <img class="card-img-top mb-4 game-img" th:src="@{/img/game1.jpg}" alt="Sản phẩm mới" />
+                </a>
+
+                <div class="media-section d-flex align-items-center mb-3">
+                    <div class="demo-video" data-bs-toggle="modal" data-bs-target="#gameTrailerModal">
+                        <div class="video-wrapper">
+                            <video class="w-100 rounded shadow" muted>
+                                <source th:src="@{/videos/lienquan.mp4}" type="video/mp4" />
+                            </video>
+                            <div class="play-button"></div>
+                        </div>
+                    </div>
+
+                    <div class="demo-images d-flex flex-row gap-2">
+                        <img th:src="@{/img/demo.jpg}" class="img-fluid demo-thumb" alt="Demo 1">
+                        <img th:src="@{/img/demo1.jpg}" class="img-fluid demo-thumb" alt="Demo 2">
+                        <img th:src="@{/img/demo3.jpg}" class="img-fluid demo-thumb" alt="Demo 3">
+                    </div>
+                </div>
+
+                <!-- Unified Video Modal (single id) -->
+                <div class="modal fade" id="gameTrailerModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content bg-dark">
+                            <div class="modal-body p-0">
+                                <video id="gameTrailerModalVideo" class="w-100" controls>
+                                    <source th:src="@{/videos/lienquan.mp4}" type="video/mp4" />
+                                    Trình duyệt của bạn không hỗ trợ video.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Modal -->
+                <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content bg-transparent border-0 p-2">
+                            <img id="modalImage" src="" class="img-fluid rounded shadow" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var modal = document.getElementById('gameTrailerModal');
+                        var video = document.getElementById('gameTrailerModalVideo');
+                        modal.addEventListener('shown.bs.modal', function () { video.play(); });
+                        modal.addEventListener('hidden.bs.modal', function () { video.pause(); video.currentTime = 0; });
+                    });
+                    document.addEventListener('DOMContentLoaded', function(){
+                        document.querySelectorAll('.demo-thumb').forEach(img => {
+                            img.addEventListener('click', function(){
+                                document.getElementById('modalImage').src = this.src;
+                                var myModal = new bootstrap.Modal(document.getElementById('imageModal'));
+                                myModal.show();
+                            });
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="col-md-6">
+                <div class="small mb-1">Tencent Games</div>
+                <h1 class="display-5 fw-bolder game-title" data-bs-toggle="modal" data-bs-target="#gameTrailerModal">Liên Quân Mobile</h1>
+                <div class="fs-5 mb-5">
+                    <span class="text-decoration-line-through">$999.00</span>
+                    <span>$999.00</span>
+                </div>
+                <p class="lead">Liên Quân Mobile là tựa game MOBA nổi tiếng trên di động...</p>
+
+                <div class="game-stats d-flex align-items-center mb-3">
+                    <div class="stat-item text-center"><strong>3,5 ★</strong><div class="small text-muted">6,5 Tr đánh giá</div></div>
+                    <div class="stat-item text-center"><strong>2.5 GB</strong><div class="small text-muted">Dung lượng</div></div>
+                    <div class="stat-item text-center"><strong>50 Tr+</strong><div class="small text-muted">Lượt tải xuống</div></div>
+                    <div class="stat-item text-center"><span class="age-box">12+</span><div class="small text-muted">12 tuổi trở lên</div></div>
+                </div>
+
+                <div class="d-flex">
+                    <form th:action="@{/buy}" method="post" class="me-2">
+                        <input type="hidden" name="gameId" value="1">
+                        <input type="hidden" name="sourcePage" th:value="${#httpServletRequest.requestURI.endsWith('game/detail') ? 'GameDetail' : 'Index'}">
+                        <button type="submit" class="btn btn-success">Mua</button>
+                    </form>
+                    <form th:action="@{/cart/add}" method="post">
+                        <input type="hidden" name="gameId" value="1">
+                        <input type="hidden" name="sourcePage" th:value="${#httpServletRequest.requestURI.endsWith('game/detail') ? 'GameDetail' : 'Index'}">
+                        <button class="btn btn-outline-dark flex-shrink-0" type="submit"><i class="bi-cart-fill me-1"></i>Add to cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- (Repeat your product cards below; convert links/src with th:href/th:src as above) -->
+    </div>
+</section>
+
+<!-- =================== FOOTER =================== -->
+<footer class="footer custom-footer mt-auto py-5 text-white">
+    <div class="container px-5">
+        <div class="row gy-4 gx-5">
+            <div class="col-md-3">
+                <a th:href="@{/}" class="logo-link"><h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3></a>
+                <p class="text-white-50">Trải nghiệm thế giới game đỉnh cao…</p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Thông tin</h5>
+                <ul class="list-unstyled text-white-50">
+                    <li><a href="#" class="footer-link">Hỗ trợ</a></li>
+                    <li><a th:href="@{/about}" class="footer-link">About us</a></li>
+                    <li><a th:href="@{/terms}" class="footer-link">Điều khoản dịch vụ</a></li>
+                    <li><a th:href="@{/privacy}" class="footer-link">Chính sách bảo mật</a></li>
+                    <li><a th:href="@{/guide}" class="footer-link">Hướng dẫn mua hàng</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Liên hệ</h5>
+                <p><a href="tel:+84912345678" class="footer-link">+84 1900 1099</a></p>
+                <p><a href="mailto:support@gamestore.com" class="footer-link">support@gamestore.com</a></p>
+                <p><a href="https://surl.li/bhtojh" target="_blank" class="footer-link">https://surl.li/bhtojh/</a></p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Kết nối với chúng tôi</h5>
+                <div class="social-icons">
+                    <a href="https://surl.li/bhtojh" class="social-link" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                </div>
+                <img th:src="@{/img/qr.jpg}" alt="QR Shop" class="qr-img">
+            </div>
+        </div>
+        <hr class="border-secondary my-4">
+        <div class="text-center text-white-50 small">© 2025 <span class="fw-bold text-primary">GameStore</span>. All rights reserved. | Designed by <span class="text-glow">Do Trong Tri</span></div>
+    </div>
+</footer>
+
+<!-- =================== ALERTS (BUY/CART) =================== -->
+<div id="buyAlert" th:if="${buyError}" style="position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" th:text="${buyError}">Buy error</div>
+<div id="cartAlert" th:if="${cartError}" style="position: fixed; top: 60px; right: 20px; background: #fff3cd; color: black; padding: 15px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" th:text="${cartError}">Cart error</div>
+
+<script>
+    (function () {
+        const hasLoginError = /*[[${loginError != null}]]*/ false;
+        if (!hasLoginError) return;
+        if (typeof bootstrap === 'undefined') return;
+        const modalEl = document.getElementById('loginModal');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl, {backdrop: 'static', keyboard: false});
+        let allowClose = false;
+        modalEl.addEventListener('hide.bs.modal', function (e) { if (!allowClose) { e.preventDefault(); setTimeout(function () { modal.show(); }, 50); } });
+        modal.show();
+        const closeBtn = document.getElementById('loginCloseBtn');
+        if (closeBtn) closeBtn.addEventListener('click', function () { allowClose = true; modal.hide(); });
+        const alertEl = modalEl.querySelector('#loginAlertArea .alert');
+        if (!alertEl) return; const secondsSpan = alertEl.querySelector('.seconds'); let remaining = secondsSpan ? parseInt(secondsSpan.textContent, 10) : 3;
+        const timer = setInterval(function () { remaining--; if (secondsSpan) secondsSpan.textContent = remaining; if (remaining <= 0) { clearInterval(timer); alertEl.classList.remove('show'); alertEl.classList.add('d-none'); } }, 1000);
+    })();
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    /* Show Register modal from controller flag */
+    /* when controller sets model.addAttribute("showForm","register") */
+    /*
+    const showForm = /*[[${showForm}]]*/ null;
+    if (showForm === 'register') {
+        const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+        registerModal.show();
+    }
+
+    /*]]>*/
+</script>
+
+<!-- OTP JS -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const message = document.getElementById("passwordMessage");
+    const form = document.getElementById("registerForm");
+    const otpInput = document.getElementById("otp");
+    const otpSection = document.getElementById("otpSection");
+    const sendOtpBtn = document.getElementById("sendOtpBtn");
+
+    function checkPasswordMatch() {
+        if (confirmPasswordInput.value !== "" && passwordInput.value !== confirmPasswordInput.value) {
+            message.textContent = "❌ Mật khẩu không khớp!";
+        } else { message.textContent = ""; }
+    }
+    if (passwordInput && confirmPasswordInput){
+        passwordInput.addEventListener("input", checkPasswordMatch);
+        confirmPasswordInput.addEventListener("input", checkPasswordMatch);
+    }
+
+    if (form) {
+        form.addEventListener("submit", function (e) {
+            if (passwordInput.value !== confirmPasswordInput.value) { e.preventDefault(); alert("Mật khẩu nhập lại không khớp!"); return; }
+            if (otpSection && otpSection.style.display === "none") { e.preventDefault(); alert("Bạn cần gửi OTP trước khi đăng ký!"); return; }
+            if (otpInput && otpInput.value.trim() === "") { e.preventDefault(); alert("Vui lòng điền mã OTP được gửi đến email của bạn!"); return; }
+        });
+    }
+
+
+    /*]]>*/
+</script>
+
+<!-- Vendor & App JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/scripts.js}"></script>
+
+</body>
+</html>
