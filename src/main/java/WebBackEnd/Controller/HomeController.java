@@ -21,7 +21,7 @@ public class    HomeController {
         return "HTML/About";
     }
 
-    @GetMapping("/newgame")
+    @GetMapping("/Newgame")
     public String newgame(Model model) {
         return "HTML/NewGame";
     }

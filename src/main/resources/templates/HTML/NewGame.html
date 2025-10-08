@@ -10,7 +10,7 @@
     <!-- Bootstrap icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
     <!-- Core theme CSS -->
-    <link th:href="@{/css/styles2.css}" rel="stylesheet"/>
+    <link th:href="@{/Accest/css/styles2.css}" rel="stylesheet"/>
     <style>
         .custom-bg{background:linear-gradient(135deg,#0b0f29,#1b2347);background-attachment:fixed}
     </style>
@@ -141,7 +141,7 @@
 <nav class="navbar navbar-expand-lg navbar-light custom-bg">
     <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
         <!-- Logo -->
-        <a th:href="@{/' }" class="logo-link text-white fs-4" style="text-decoration:none">
+        <a th:href="@{/}" class="logo-link text-white fs-4" style="text-decoration:none">
             <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
         </a>
 
@@ -202,7 +202,10 @@
                     <div class="my-5 text-center text-xl-start text-white">
                         <h1 class="display-5 fw-bolder mb-2">Nghịch Thuỷ Hàn</h1>
                         <p class="lead fw-normal text-white-50 mb-4">
-                            Nghịch Thủy Hàn là một tựa game nhập vai kiếm hiệp hấp dẫn, lấy bối cảnh giang hồ rộng lớn với đồ họa 3D tinh xảo và lối chơi chân thực...
+                            Nghịch Thủy Hàn là một tựa game nhập vai kiếm hiệp hấp dẫn, lấy bối cảnh giang hồ rộng
+                            lớn với đồ họa 3D tinh xảo và lối chơi chân thực. Người chơi hóa thân thành các hiệp khách,
+                            tu luyện võ công, phiêu bạt giang hồ và tham gia những trận chiến kịch tính.
+                            Game mang đến cảm giác tự do, lãng mạn và đầy thử thách trong thế giới võ lâm huyền ảo.
                         </p>
                         <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start"></div>
                     </div>
@@ -330,6 +333,75 @@
                     </div>
                 </div>
             </div>
+            <div class="container my-5">
+                <div class="row g-4">
+                    <!-- Game 1 -->
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="/img/newgame1.jpg" class="card-img-top" alt="IRONBLOOD SAGA">
+                            <div class="card-body d-flex flex-column">
+                                <span class="badge bg-purple mb-2" style="background-color:#7C4DFF;">Sắp phát hành</span>
+                                <h5 class="card-title">IRONBLOOD SAGA</h5>
+                                <p class="card-text flex-grow-1">
+                                    Ironblood Saga là game nhập vai kết hợp hành động và chiến thuật, đưa người chơi vào những
+                                    trận chiến khốc liệt giữa quân đoàn sắt máu và thế lực hắc ám. Với bối cảnh sử thi
+                                    và lối chơi đa dạng, game hứa hẹn mang đến trải nghiệm chinh phục đỉnh cao chiến trường.
+                                </p>
+                                <button class="btn btn-lg px-4 text-white register-btn-transparent"
+                                        style="position: relative; z-index: 5; background: linear-gradient(90deg, #8E2DE2, #4A00E0);">
+                                    Đăng ký
+                                </button>
+                                <p class="text-muted mt-2">Dự kiến phát hành 01-04-2026</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game 2 -->
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="/img/newgame2.jpg" class="card-img-top" alt="LUMINA CITY">
+                            <div class="card-body d-flex flex-column">
+                                <span class="badge bg-purple mb-2" style="background-color:#7C4DFF;">Sắp phát hành</span>
+                                <h5 class="card-title">LUMINA CITY</h5>
+                                <p class="card-text flex-grow-1">
+                                    Lumina City là tựa game xây dựng và mô phỏng, nơi bạn kiến tạo thành phố tương lai theo phong cách utopia
+                                    rực rỡ. Người chơi sẽ quản lý tài nguyên, phát triển công nghệ và định hình một đô thị hiện đại,
+                                    đầy sáng tạo.
+                                </p>
+                                <button class="btn btn-lg px-4 text-white register-btn-transparent"
+                                        style="position: relative; z-index: 5; background: linear-gradient(90deg, #8E2DE2, #4A00E0);">
+                                    Đăng ký
+                                </button>
+
+                                <p class="text-muted mt-2">Dự kiến phát hành 11-03-2026</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game 3 -->
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="/img/newgame3.jpg" class="card-img-top" alt="ATHENA’S CRYPT">
+                            <div class="card-body d-flex flex-column">
+                                <span class="badge bg-purple mb-2" style="background-color:#7C4DFF;">Sắp phát hành</span>
+                                <h5 class="card-title">ATHENA’S CRYPT</h5>
+                                <p class="card-text flex-grow-1">
+                                    Athena’s Crypt đưa người chơi bước vào hành trình khám phá huyền bí trong hầm mộ cổ của nữ thần trí tuệ. Với
+                                    những câu đố thông minh, không khí thần thoại và trải nghiệm phiêu lưu kịch tính, game mở ra thế giới
+                                    kỳ bí chờ đợi bạn chinh phục.
+                                </p>
+                                <button class="btn btn-lg px-4 text-white register-btn-transparent"
+                                        style="position: relative; z-index: 5; background: linear-gradient(90deg, #8E2DE2, #4A00E0);">
+                                    Đăng ký
+                                </button>
+
+                                <p class="text-muted mt-2">Dự kiến phát hành 12-12-2026</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="row gx-5">
                 <!-- games: List<GameVM> truyền từ Controller -->
@@ -468,8 +540,9 @@
     <div class="container px-5">
         <div class="row gy-4 gx-5">
             <div class="col-md-3">
-                <a th:href="@{/' }" class="logo-link"><h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3></a>
-                <p class="text-white-50">Trải nghiệm thế giới game đỉnh cao…</p>
+                <a th:href="@{/}" class="logo-link"><h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3></a>
+                <p class="text-white-50">Trải nghiệm thế giới game đỉnh cao – nơi hội tụ những siêu phẩm nhập vai, hành động và phiêu lưu.
+                    GameStore mang đến không gian giải trí sống động, đậm chất công nghệ và đam mê, giá cả hợp lý và nhiều khuyến mãi hấp dẫn!.</p>
             </div>
             <div class="col-md-3">
                 <h5 class="text-uppercase text-primary glow-title mb-3">Thông tin</h5>
