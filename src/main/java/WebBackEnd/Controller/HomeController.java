@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value = "/welcome")
-public class HomeController {
+public class    HomeController {
 
 
-    @GetMapping("/")
+    @GetMapping
     public String homepage(Model model) {
      //   model.addAttribute("title", "Hehehe");a
         return "HTML/Index";
