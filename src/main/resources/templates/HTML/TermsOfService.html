@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Điều khoản dịch vụ - Game Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #0f1c2e;
+            color: #fff;
+            line-height: 1.6;
+        }
+        /* Header */
+        .banner {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            overflow: hidden;
+        }
+        .slides {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .slides.active { opacity: 1; }
+
+        .header-text {
+            position: absolute;
+            top: 70px;
+            left: 200px;
+            text-align: left;
+            background: rgba(0,0,0,0.5);
+            padding: 20px 40px;
+            border-radius: 10px;
+            color: white;
+        }
+        .header-text h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: yellow;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .header-text p {
+            font-size: 1rem;
+            color: yellow;
+            margin: 5px 0 0;
+            font-style: italic;
+        }
+        .header-text:hover h1,
+        .header-text:hover p {
+            color: #ffea00;
+            text-shadow: 0 0 12px rgba(255, 234, 0, 0.8);
+        }
+
+        /* Dots */
+        .dots {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+        .dot {
+            cursor: pointer;
+            height: 12px;
+            width: 12px;
+            margin: 0 4px;
+            background-color: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+        .dot.active { background-color: #ffd700; }
+        .dot:hover { background-color: #fff; }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #1c2f4a;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        h2 { color: #ffd700; margin-bottom: 10px; }
+        ul { margin-left: 20px; margin-bottom: 20px; }
+        p { margin-bottom: 15px; }
+
+        /* Footer */
+        .game-footer {
+            background: #123965;
+            color: #fff;
+            padding: 60px 20px 20px 20px;
+            font-family: Arial, sans-serif;
+            margin-top: 40px;
+        }
+        .footer-container {
+            display: flex; flex-wrap: wrap; justify-content: space-between;
+            max-width: 1200px; margin: 0 auto 20px auto;
+        }
+        .footer-section { flex: 1 1 220px; margin: 20px; }
+        .footer-section h2, .footer-section h3 { color: #ffd700; margin-bottom: 15px; }
+        .footer-section p { color: #ccc; line-height: 1.6; }
+        .footer-section a {
+            display: block; color: #fff; text-decoration: none; margin: 5px 0;
+            transition: color 0.3s, transform 0.3s;
+        }
+        .footer-section a:hover { color: #ffea00; transform: translateX(5px); }
+        .footer-section.social { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .footer-section.social .social-icons { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .footer-section.social .social-icons a {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 45px; height: 45px; background-color: #111; border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .footer-section.social .social-icons a svg { width: 24px; height: 24px; fill: white; transition: all 0.3s ease; }
+        .footer-section.social .social-icons a:hover {
+            background: linear-gradient(45deg, #ff6a00, #ee0979);
+            transform: scale(1.2) rotate(10deg);
+            box-shadow: 0 0 15px rgba(255,106,0,0.7), 0 0 25px rgba(238,9,121,0.7);
+        }
+        .footer-section.social .qr-img {
+            margin-top: 10px; width: 100px; height: 100px; object-fit: cover;
+            border: 2px solid #ffd700; border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .footer-section.social .qr-img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 15px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .footer-container { flex-direction: column; align-items: center; text-align: center; }
+            .footer-section { margin: 10px 0; }
+            .footer-section.social .qr-img { width: 80px; height: 80px; }
+        }
+        a { color: #ffd700; text-decoration: underline; }
+        a:hover { color: #ffea00; }
+    </style>
+</head>
+<body>
+<header class="banner">
+    <!-- Ảnh banner: dùng đường dẫn tuyệt đối /img/... -->
+    <div class="slides active" style="background-image:url('/img/Aboutbanner.jpg')"></div>
+    <div class="slides" style="background-image:url('/img/game1.jpg')"></div>
+    <div class="slides" style="background-image:url('/img/game2.jpg')"></div>
+    <div class="slides" style="background-image:url('/img/game3.jpg')"></div>
+    <div class="slides" style="background-image:url('/img/game4.jpg')"></div>
+    <div class="slides" style="background-image:url('/img/game5.jpg')"></div>
+    <div class="slides" style="background-image:url('/img/game6.jpg')"></div>
+
+    <!-- Text trên banner -->
+    <a href="/">
+        <div class="header-text">
+            <h1>🎮 Game Store</h1>
+            <p>Trò chơi đỉnh cao - Cộng đồng toàn cầu</p>
+        </div>
+    </a>
+
+    <!-- Chấm tròn indicator -->
+    <div class="dots">
+        <span class="dot active" onclick="currentSlide(0)"></span>
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+        <span class="dot" onclick="currentSlide(4)"></span>
+        <span class="dot" onclick="currentSlide(5)"></span>
+        <span class="dot" onclick="currentSlide(6)"></span>
+    </div>
+</header>
+
+<div class="container">
+    <h2>Điều khoản dịch vụ</h2>
+    <p>Chào mừng bạn đến với <strong>Game Store</strong>! Khi sử dụng website hoặc ứng dụng của chúng tôi, bạn đồng ý tuân thủ các điều khoản dịch vụ sau đây. Vui lòng đọc kỹ trước khi sử dụng.</p>
+
+    <h2>1. Giới thiệu</h2>
+    <p>Game Store là nền tảng phân phối game và cộng đồng cho người chơi trên toàn thế giới. Bằng việc truy cập và sử dụng dịch vụ, bạn xác nhận đã hiểu và đồng ý với các điều khoản này.</p>
+
+    <h2>2. Điều kiện đăng ký</h2>
+    <ul>
+        <li>Người dùng phải đủ 13 tuổi trở lên (hoặc theo quy định pháp luật địa phương).</li>
+        <li>Phải cung cấp thông tin chính xác, đầy đủ và cập nhật khi đăng ký tài khoản.</li>
+        <li>Người dùng chịu trách nhiệm bảo mật thông tin tài khoản, mật khẩu và mọi hoạt động phát sinh liên quan đến tài khoản của mình.</li>
+    </ul>
+
+    <h2>3. Quyền và nghĩa vụ của người dùng</h2>
+    <ul>
+        <li>Không gian lận, hack, cheat, spam hoặc quấy rối người khác.</li>
+        <li>Không sao chép, phân phối hoặc sử dụng nội dung game trái phép.</li>
+        <li>Chỉ sử dụng dịch vụ cho mục đích hợp pháp, tuân thủ mọi quy định của pháp luật.</li>
+        <li>Người dùng chịu trách nhiệm về nội dung, bình luận, hình ảnh hoặc dữ liệu mà mình đăng tải lên Game Store.</li>
+    </ul>
+
+    <h2>4. Quyền và nghĩa vụ của Game Store</h2>
+    <ul>
+        <li>Cung cấp dịch vụ, bảo trì hệ thống và hỗ trợ người dùng.</li>
+        <li>Có quyền tạm ngừng, khóa hoặc xóa tài khoản nếu phát hiện vi phạm điều khoản.</li>
+        <li>Được quyền thay đổi giá, nội dung, tính năng hoặc ngừng cung cấp dịch vụ mà không cần thông báo trước.</li>
+        <li>Có quyền thu thập và xử lý dữ liệu theo <a href="/privacy-policy.html">Chính sách quyền riêng tư</a>.</li>
+    </ul>
+
+    <h2>5. Bản quyền và nội dung</h2>
+    <p>
+        Tất cả nội dung trên Game Store, bao gồm nhưng không giới hạn ở: trò chơi, hình ảnh, âm thanh, video, văn bản, biểu tượng, logo, giao diện, dữ liệu và các tài nguyên kỹ thuật số khác đều thuộc quyền sở hữu trí tuệ của Game Store hoặc các nhà phát hành/đối tác được cấp phép.
+    </p>
+    <ul>
+        <li><strong>Quyền sở hữu:</strong> Người chơi được cấp quyền sử dụng theo giấy phép, không đồng nghĩa với việc sở hữu nội dung.</li>
+        <li><strong>Hạn chế sao chép:</strong> Nghiêm cấm sao chép, chỉnh sửa, phát hành, bán, cho thuê, hoặc phân phối trái phép dưới bất kỳ hình thức nào.</li>
+        <li><strong>Quyền của nhà phát hành:</strong> Các nhà phát hành giữ toàn quyền về nội dung, cập nhật, vá lỗi và thay đổi sản phẩm.</li>
+        <li><strong>Nội dung do người dùng tạo:</strong> Khi đăng tải đánh giá, bình luận, hình ảnh hoặc nội dung khác, bạn đồng ý cấp cho Game Store quyền sử dụng và hiển thị cho mục đích vận hành và quảng bá dịch vụ.</li>
+        <li><strong>Bảo vệ bản quyền:</strong> Game Store có quyền gỡ bỏ nội dung vi phạm và áp dụng biện pháp pháp lý khi cần thiết.</li>
+    </ul>
+
+    <h2>6. Thanh toán và hoàn tiền</h2>
+    <ul>
+        <li>Người chơi cần tạo tài khoản để được cấp ví <strong>GamePay</strong> dùng cho tất cả các giao dịch.</li>
+        <li>Để mua game hoặc dịch vụ, người chơi phải nạp tiền vào ví GamePay thông qua các phương thức thanh toán được hỗ trợ.</li>
+        <li>Khi có yêu cầu hoàn tiền, số tiền sẽ được hoàn trực tiếp về ví GamePay của người chơi.</li>
+        <li>Người chơi có trách nhiệm đảm bảo thanh toán đầy đủ, bao gồm các loại thuế và phí (nếu có).</li>
+        <li><strong>Lưu ý:</strong> Số dư trong ví GamePay chỉ dùng để mua game hoặc dịch vụ trên hệ thống, không thể rút về tài khoản ngân hàng hay các kênh bên ngoài.</li>
+    </ul>
+
+    <h3>📌 Luồng giao dịch mẫu</h3>
+    <ol>
+        <li><strong>Tạo tài khoản:</strong> Người chơi đăng ký tài khoản để hệ thống khởi tạo ví GamePay.</li>
+        <li><strong>Nạp tiền:</strong> Người chơi nạp tiền vào ví GamePay thông qua các phương thức được hỗ trợ.</li>
+        <li><strong>Mua game/dịch vụ:</strong> Khi thanh toán, hệ thống trừ tiền trực tiếp từ số dư ví GamePay.</li>
+        <li><strong>Hoàn tiền (nếu có):</strong> Người chơi chỉ có thể gửi yêu cầu hoàn tiền trong vòng <a href="#">10 giờ</a> kể từ thời điểm thanh toán. Sau <a href="#">10 giờ</a>, yêu cầu hoàn tiền sẽ không được chấp nhận. Yêu cầu hợp lệ sẽ được xử lý trong 1–3 ngày làm việc và số tiền sẽ được hoàn lại trực tiếp vào ví GamePay.</li>
+        <li><strong>Sử dụng tiếp:</strong> Người chơi có thể dùng số dư còn lại trong ví GamePay để mua các game/dịch vụ khác.</li>
+    </ol>
+
+    <h2>7. Bảo mật và quyền riêng tư</h2>
+    <p>
+        Game Store cam kết bảo vệ dữ liệu cá nhân và quyền riêng tư của người dùng. Khi sử dụng dịch vụ, bạn đồng ý rằng chúng tôi có thể thu thập và xử lý một số thông tin cần thiết để cung cấp dịch vụ tốt hơn.
+    </p>
+    <ul>
+        <li><strong>Thông tin thu thập:</strong> Bao gồm họ tên, email, số điện thoại, lịch sử giao dịch, thông tin thiết bị và hành vi sử dụng dịch vụ.</li>
+        <li><strong>Mục đích sử dụng:</strong> Cung cấp dịch vụ, hỗ trợ khách hàng, phòng chống gian lận, cải thiện trải nghiệm và gửi thông báo quan trọng.</li>
+        <li><strong>Bảo vệ dữ liệu:</strong> Dữ liệu được mã hóa và lưu trữ an toàn, hạn chế tối đa việc truy cập trái phép.</li>
+        <li><strong>Chia sẻ thông tin:</strong> Không bán hoặc chia sẻ thông tin cá nhân cho bên thứ ba, ngoại trừ khi có yêu cầu pháp lý hoặc đối tác thanh toán/kỹ thuật liên quan.</li>
+        <li><strong>Quyền của người dùng:</strong> Bạn có quyền yêu cầu chỉnh sửa, cập nhật hoặc xóa thông tin cá nhân (trong phạm vi pháp luật cho phép).</li>
+    </ul>
+    <p>
+        Việc tiếp tục sử dụng dịch vụ đồng nghĩa với việc bạn đồng ý với <a href="/privacy-policy.html">Chính sách quyền riêng tư</a> của Game Store.
+    </p>
+
+    <h2>8. Quảng cáo và khuyến mãi</h2>
+    <ul>
+        <li>Game Store có thể gửi thông báo, email hoặc tin nhắn quảng cáo về các game mới, sự kiện hoặc ưu đãi.</li>
+        <li>Người dùng có quyền từ chối nhận thông báo quảng cáo nhưng vẫn sẽ nhận thông tin quan trọng.</li>
+    </ul>
+
+    <h2>9. Giới hạn trách nhiệm</h2>
+    <ul>
+        <li>Game Store không chịu trách nhiệm cho lỗi kỹ thuật, downtime hoặc mất dữ liệu.</li>
+        <li>Không chịu trách nhiệm về hành vi của người dùng khác.</li>
+        <li>Không chịu trách nhiệm cho thiệt hại gián tiếp, lợi nhuận bị mất hoặc hậu quả phát sinh từ việc sử dụng dịch vụ.</li>
+    </ul>
+
+    <h2>10. Chấm dứt hợp đồng</h2>
+    <p>Game Store hoặc người dùng có thể chấm dứt tài khoản bất cứ lúc nào theo quy định. Các quyền lợi, nghĩa vụ và giao dịch phát sinh trước khi chấm dứt vẫn cần được thực hiện đầy đủ.</p>
+
+    <h2>11. Luật áp dụng và giải quyết tranh chấp</h2>
+    <p>Điều khoản này tuân thủ pháp luật Việt Nam. Mọi tranh chấp sẽ được giải quyết trước tiên bằng thương lượng; nếu không thành sẽ đưa ra trọng tài hoặc tòa án có thẩm quyền.</p>
+
+    <h2>12. Thay đổi điều khoản</h2>
+    <p>Game Store có quyền chỉnh sửa hoặc cập nhật điều khoản bất kỳ lúc nào. Người dùng nên kiểm tra thường xuyên để nắm rõ các thay đổi.</p>
+
+    <h2>13. Hỗ trợ và liên hệ</h2>
+    <p>Nếu có thắc mắc hoặc yêu cầu hỗ trợ, vui lòng liên hệ qua email <a href="mailto:support@gamestore.com">support@gamestore.com</a> hoặc qua mục <a href="/support.html">Trung tâm hỗ trợ</a> trên website.</p>
+</div>
+
+<!-- Footer -->
+<footer class="game-footer">
+    <div class="footer-container">
+        <!-- Logo & Giới thiệu -->
+        <div class="footer-section about">
+            <h2>🎮 Game Store</h2>
+            <p>Chúng tôi mang đến những tựa game hot nhất và trải nghiệm tuyệt vời cho mọi game thủ.</p>
+        </div>
+
+        <!-- Liên kết nhanh -->
+        <div class="footer-section links">
+            <h3>Liên kết nhanh</h3>
+            <a href="/">Trang chủ</a>
+            <a href="/products.html">Sản phẩm</a>
+            <a href="/news.html">Tin tức</a>
+            <a href="/contact.html">Liên hệ</a>
+        </div>
+
+        <!-- Hỗ trợ -->
+        <div class="footer-section support">
+            <h3>Hỗ trợ</h3>
+            <a href="/faq.html">FAQ</a>
+            <a href="/how-to-buy.html">Hướng dẫn mua hàng</a>
+            <a href="/privacy-policy.html">Chính sách bảo mật</a>
+        </div>
+
+        <!-- Social -->
+        <div class="footer-section social">
+            <h3>Kết nối</h3>
+            <div class="social-icons">
+                <!-- Facebook -->
+                <a href="https://surl.li/bhtojh" target="_blank" rel="noopener" class="social-icon" aria-label="Facebook">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22 12C22 6.48 17.52 2 12 2S2 6.48 2 12c0 5 3.66 9.13 8.44 9.88v-6.99h-2.54v-2.89h2.54V9.84c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.89h-2.34v6.99C18.34 21.13 22 17 22 12z"/>
+                    </svg>
+                </a>
+                <!-- Twitter -->
+                <a href="#" class="social-icon" aria-label="Twitter">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.3 4.3 0 001.88-2.37 8.59 8.59 0 01-2.72 1.04 4.28 4.28 0 00-7.3 3.9A12.15 12.15 0 013 4.8a4.28 4.28 0 001.33 5.71 4.25 4.25 0 01-1.94-.54v.05a4.28 4.28 0 003.43 4.2 4.28 4.28 0 01-1.93.07 4.28 4.28 0 003.99 2.97A8.57 8.57 0 012 19.54a12.1 12.1 0 006.56 1.92c7.88 0 12.2-6.53 12.2-12.2 0-.19-.01-.37-.02-.56A8.72 8.72 0 0022.46 6z"/>
+                    </svg>
+                </a>
+                <!-- Instagram -->
+                <a href="#" class="social-icon" aria-label="Instagram">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm0 2h10c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3zm8 1a1 1 0 110 2 1 1 0 010-2zm-5 1c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 2a3 3 0 100 6 3 3 0 000-6z"/>
+                    </svg>
+                </a>
+                <!-- YouTube -->
+                <a href="#" class="social-icon" aria-label="YouTube">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.615 3.184A2.96 2.96 0 0017.76 2H6.24a2.96 2.96 0 00-1.854.184A2.985 2.985 0 002 5.003v13.994a2.985 2.985 0 002.386 2.819A2.96 2.96 0 006.24 22h11.52a2.96 2.96 0 001.854-.184A2.985 2.985 0 0022 18.997V5.003a2.985 2.985 0 00-2.385-2.819zM10 16V8l6 4-6 4z"/>
+                    </svg>
+                </a>
+            </div>
+            <img src="/img/qr.jpg" alt="QR Shop" class="qr-img">
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2025 <strong>Game Store</strong>. All Rights Reserved. | Designed by <strong>Do Trong Tri</strong></p>
+    </div>
+</footer>
+
+<!-- JS: Slider -->
+<script>
+    let slideIndex = 0;
+    const slides = document.querySelectorAll(".slides");
+    const dots = document.querySelectorAll(".dot");
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.remove("active");
+            dots[i].classList.remove("active");
+            if (i === index) {
+                slide.classList.add("active");
+                dots[i].classList.add("active");
+            }
+        });
+    }
+    function changeSlide(n) {
+        slideIndex = (slideIndex + n + slides.length) % slides.length;
+        showSlide(slideIndex);
+    }
+    function currentSlide(n) {
+        slideIndex = n;
+        showSlide(slideIndex);
+    }
+    // Auto chạy mỗi 5s
+    setInterval(() => changeSlide(1), 5000);
+</script>
+</body>
+</html>

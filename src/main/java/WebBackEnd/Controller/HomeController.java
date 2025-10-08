@@ -26,6 +26,21 @@ public class    HomeController {
         return "HTML/NewGame";
     }
 
+    @GetMapping("/buyguide")
+    public String buyguide() {
+        return "HTML/BuyGuide";
+    }
+
+    @GetMapping("/privacypolicy")
+    public String privacypolicy() {
+        return "HTML/PrivacyPolicy";
+    }
+
+    @GetMapping("/termsofservice")
+    public String termsofservice() {
+        return "HTML/TermsOfService";
+    }
+
 
 //    @PostMapping("/home")
 //    public String doLogin(@RequestParam("username") String username,
