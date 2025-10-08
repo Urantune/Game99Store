@@ -16,6 +16,12 @@ public class    HomeController {
     }
 
 
+    @GetMapping("/about")
+    public String controllAbout(Model model) {
+        return "HTML/About";
+    }
+
+
 //    @PostMapping("/home")
 //    public String doLogin(@RequestParam("username") String username,
 //                          @RequestParam("password") String password,
