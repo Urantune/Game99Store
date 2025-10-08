@@ -21,6 +21,11 @@ public class    HomeController {
         return "HTML/About";
     }
 
+    @GetMapping("/newgame")
+    public String newgame(Model model) {
+        return "HTML/NewGame";
+    }
+
 
 //    @PostMapping("/home")
 //    public String doLogin(@RequestParam("username") String username,

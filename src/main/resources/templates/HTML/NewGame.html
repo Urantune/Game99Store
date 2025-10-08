@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>New Game</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/favicon.ico}"/>
+    <!-- Bootstrap icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <!-- Core theme CSS -->
+    <link th:href="@{/css/styles2.css}" rel="stylesheet"/>
+    <style>
+        .custom-bg{background:linear-gradient(135deg,#0b0f29,#1b2347);background-attachment:fixed}
+    </style>
+</head>
+<body class="d-flex flex-column h-100">
+
+<!-- Toast container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999"></div>
+
+<!-- ===== Modal Login ===== -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background:linear-gradient(135deg,#0d47a1,#1a237e);color:#fff;border-bottom:none;position:relative;justify-content:center">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close" style="filter:invert(1);position:absolute;right:1rem"></button>
+            </div>
+            <div class="modal-body" style="padding:1.5rem;text-align:center">
+                <div id="loginAlertArea" th:if="${loginError}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-message" th:text="${loginError}">Sai tài khoản</span>
+                        <span class="countdown"> (<span class="seconds">3</span>s)</span>
+                    </div>
+                </div>
+
+                <form th:action="@{/login}" method="post" id="loginForm" autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username"
+                               th:value="${enteredUsername}" autocomplete="off" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required/>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <a th:href="@{/forgot-password}" class="text-decoration-none">Forgot password?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS cho login (giữ nguyên style cũ, rút gọn những phần cần) -->
+<style>
+    #loginModal .modal-dialog{max-width:380px;margin:1.75rem auto}
+    #loginModal .modal-content{border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.25);border:none;background:rgba(13,71,161,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden}
+    #loginModal .form-control{background:#2c3e50;border:none;border-radius:8px;color:#fff;font-size:14px;padding:10px;margin-bottom:1rem}
+    #loginModal .form-control:focus{border:1px solid #ff9800;box-shadow:0 0 6px rgba(255,152,0,.5)}
+    #loginModal .form-label{font-weight:500;color:white;display:block;text-align:left}
+    #loginModal .btn-primary{border-radius:10px;padding:.5rem 1.2rem;font-weight:600;background:linear-gradient(135deg,#0d47a1,#1a237e);border:none;transition:.3s}
+    #loginModal .btn-primary:hover{background:linear-gradient(135deg,#1565c0,#0d47a1);transform:translateY(-2px)}
+    #loginModal a.text-decoration-none{font-size:.9rem;color:white}
+    #loginModal a.text-decoration-none:hover{color:#ff9800;text-decoration:underline}
+</style>
+
+<!-- ===== Modal Register ===== -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,.25);border:none;background:rgba(13,71,161,.2);backdrop-filter:blur(10px)">
+            <div class="modal-header" style="background:linear-gradient(135deg,#0d47a1,#1a237e);color:#fff;border-bottom:none;justify-content:center;position:relative">
+                <h5 class="modal-title">Register</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter:brightness(0) invert(1)"></button>
+            </div>
+            <div class="modal-body" style="padding:2rem;background:rgba(255,255,255,.15);border-radius:0 0 20px 20px">
+
+                <div id="registerAlert" th:if="${registerError}">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <span class="alert-message" th:text="${registerError}">Đăng ký lỗi</span>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded",function(){
+                            var registerModal=new bootstrap.Modal(document.getElementById('registerModal'));
+                            registerModal.show();
+                        });
+                    </script>
+                </div>
+
+                <form id="registerForm" th:action="@{/register}" method="post" autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" th:value="${enteredUsername}" autocomplete="off" required/>
+                    </div>
+
+                    <label class="form-label">Email</label>
+                    <div class="mb-3 d-flex align-items-center gap-2">
+                        <input type="email" class="form-control" id="email" name="email" th:value="${enteredEmail}" required/>
+                        <button type="button" class="btn btn-sendcode" id="sendOtpBtn">Send code</button>
+                    </div>
+
+                    <div class="mb-3" id="otpSection" th:style="'display:' + (${enteredEmail} != null ? 'block' : 'none') + ';'">
+                        <label class="form-label">OTP</label>
+                        <input type="text" class="form-control" id="otp" name="otp"/>
+                        <div class="form-text">Please enter the 6-digit code sent to your email</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required/>
+                        <div id="passwordMessage" class="form-text text-danger"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #registerModal .form-control{background:#2c3e50;border:none;border-radius:12px;color:#fff;font-size:14px;padding:.7rem 1rem;transition:.3s;border:1px solid #cfd8dc}
+    #registerModal .form-control:focus{border-color:#0d47a1;box-shadow:0 0 8px rgba(13,71,161,.3)}
+    #registerModal .btn-success{border-radius:12px;padding:.6rem 1.5rem;font-weight:600;background:linear-gradient(135deg,#0d47a1,#1a237e);border:none;transition:.3s}
+    #registerModal .btn-success:hover{background:linear-gradient(135deg,#1565c0,#0d47a1);transform:translateY(-2px)}
+    #registerModal .btn-sendcode{border-radius:12px;padding:.6rem 1rem;font-weight:500;background:linear-gradient(135deg,#1565c0,#0d47a1);border:none;color:#fff;transition:.3s;white-space:nowrap}
+    #registerModal .btn-sendcode:hover{background:linear-gradient(135deg,#1e88e5,#1565c0);transform:translateY(-2px)}
+</style>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar navbar-expand-lg navbar-light custom-bg">
+    <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
+        <!-- Logo -->
+        <a th:href="@{/' }" class="logo-link text-white fs-4" style="text-decoration:none">
+            <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+        </a>
+
+        <!-- Trái: link quản trị (nếu admin) -->
+        <ul class="navbar-nav d-flex flex-row mb-0">
+            <li class="nav-item" th:if="${user != null and #strings.equalsIgnoreCase(user.role,'admin')}">
+                <a class="nav-link" th:href="@{/manage-products}">Quản lý sản phẩm</a>
+            </li>
+        </ul>
+
+        <!-- Phải: Cart + User -->
+        <div class="d-flex align-items-center">
+            <form class="d-flex me-2" th:action="@{/cart}" method="get">
+                <button class="btn btn-outline-light" type="submit">
+                    <i class="bi-cart-fill me-1"></i>
+                    <span style="text-decoration:none;color:inherit">Cart</span>
+                    <span class="badge bg-dark text-white ms-1 rounded-pill" th:text="${cartCount}">0</span>
+                </button>
+            </form>
+
+            <!-- Nếu chưa login -->
+            <div th:if="${user == null}">
+                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
+            </div>
+
+            <!-- Nếu đã login -->
+            <div th:if="${user != null}" class="d-flex align-items-center">
+                <div class="text-center me-3">
+                    <a th:href="@{/profile}" class="profile-link">
+                        <img th:src="'https://i.pravatar.cc/50?u=' + ${user.username}" alt="avatar" class="rounded-circle profile-avatar"/>
+                        <div class="profile-name"><b th:text="${user.username}">username</b></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .profile-link{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;transition:.3s}
+    .profile-avatar{width:50px;height:50px;object-fit:cover;border-radius:50%;border:2px solid transparent;transition:.3s}
+    .profile-link:hover .profile-avatar{border-color:#FFD700;box-shadow:0 0 8px rgba(13,71,161,.5)}
+    .profile-name{font-size:14px;color:#333;margin-top:5px;transition:.3s}
+    .profile-link:hover .profile-name{color:#FFD700}
+</style>
+
+<main class="flex-shrink-0">
+    <!-- ===== HERO (video) ===== -->
+    <header class="hero-section" style="position:relative;height:70vh;display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden">
+        <video autoplay loop muted playsinline id="bg-video" th:src="@{/videos/Nghichthuyhan.mp4}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-1"></video>
+        <button id="mute-btn" style="position:absolute;bottom:20px;right:20px;z-index:10;background:rgba(0,0,0,.5);color:#fff;border:none;padding:10px 15px;border-radius:50%;cursor:pointer;font-size:18px">🔇</button>
+        <div class="overlay" style="position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:-1"></div>
+
+        <div class="container px-5" style="position:relative;z-index:1;margin-top:10px;margin-left:50px">
+            <div class="row gx-5 align-items-center justify-content-center">
+                <div class="col-lg-8 col-xl-7 col-xxl-6">
+                    <div class="my-5 text-center text-xl-start text-white">
+                        <h1 class="display-5 fw-bolder mb-2">Nghịch Thuỷ Hàn</h1>
+                        <p class="lead fw-normal text-white-50 mb-4">
+                            Nghịch Thủy Hàn là một tựa game nhập vai kiếm hiệp hấp dẫn, lấy bối cảnh giang hồ rộng lớn với đồ họa 3D tinh xảo và lối chơi chân thực...
+                        </p>
+                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start"></div>
+                    </div>
+                </div>
+                <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"></div>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        const video=document.getElementById("bg-video");
+        const muteBtn=document.getElementById("mute-btn");
+        muteBtn.addEventListener("click",()=>{video.muted=!video.muted;muteBtn.textContent=video.muted?"🔇":"🔊";});
+    </script>
+
+    <!-- ===== Features / Đăng ký game đặc biệt ===== -->
+    <section class="py-5 text-white custom-bg" id="features">
+        <div class="container px-5 my-5">
+            <div class="row gx-5 align-items-center">
+                <!-- Trái -->
+                <div class="col-lg-6 mb-5 mb-lg-0 text-center">
+                    <h2 class="fw-bolder mb-4 text-white">Nghịch Thủy Hàn – Siêu phẩm kiếm hiệp 3D sắp ra mắt!</h2>
+
+                    <img class="img-fluid rounded-4 shadow-lg mb-4" th:src="@{/img/newgame.jpg}" alt="Nghịch Thủy Hàn"
+                         style="max-height:380px;object-fit:cover;opacity:.9"/>
+
+                    <div class="d-flex justify-content-center gap-3">
+                        <form th:action="@{/register-game}" method="post" class="d-inline">
+                            <input type="hidden" name="gameId" value="17"/>
+                            <button type="button"
+                                    class="btn btn-lg text-white register-btn-transparent"
+                                    th:text="${registeredGames != null and registeredGames.contains(17)} ? 'Đã đăng ký' : 'Đăng ký'"
+                                    th:style="${registeredGames != null and registeredGames.contains(17)} ?
+                        'background:linear-gradient(90deg,#8E2DE2,#4A00E0);box-shadow:0 0 10px rgba(142,45,226,.6);border:none;border-radius:10px;' :
+                        'background:linear-gradient(90deg,#8E2DE2,#4A00E0);box-shadow:0 4px 15px rgba(142,45,226,.5);border:none;border-radius:10px;'">
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Phải -->
+                <div class="col-lg-6">
+                    <div class="row gx-4 gy-4 row-cols-1 row-cols-md-2">
+                        <div class="col h-100">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-controller"></i></div>
+                            <h2 class="h5 text-white">Đồ họa 3D tuyệt đẹp</h2>
+                            <p class="mb-0 text-white-50">Thế giới giang hồ được tái hiện sống động...</p>
+                        </div>
+                        <div class="col h-100">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-swords"></i></div>
+                            <h2 class="h5 text-white">Chiến đấu kịch tính</h2>
+                            <p class="mb-0 text-white-50">Hệ thống kỹ năng đa dạng...</p>
+                        </div>
+                        <div class="col h-100">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-people"></i></div>
+                            <h2 class="h5 text-white">Tương tác cộng đồng</h2>
+                            <p class="mb-0 text-white-50">Kết giao bằng hữu, lập bang hội...</p>
+                        </div>
+                        <div class="col h-100">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-calendar-event"></i></div>
+                            <h2 class="h5 text-white">Sắp ra mắt!</h2>
+                            <p class="mb-0 text-white-50">Dự kiến phát hành vào đầu năm 2026...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JS validate register -->
+        <script>
+            const passwordInput=document.getElementById("password");
+            const confirmPasswordInput=document.getElementById("confirmPassword");
+            const message=document.getElementById("passwordMessage");
+            const form=document.getElementById("registerForm");
+            const otpInput=document.getElementById("otp");
+            const otpSection=document.getElementById("otpSection");
+            const sendOtpBtn=document.getElementById("sendOtpBtn");
+
+            function checkPasswordMatch(){
+                if(confirmPasswordInput && passwordInput && confirmPasswordInput.value!=="" && passwordInput.value!==confirmPasswordInput.value){
+                    message.textContent="❌ Mật khẩu không khớp!";
+                }else{message.textContent="";}
+            }
+            if(passwordInput && confirmPasswordInput){
+                passwordInput.addEventListener("input",checkPasswordMatch);
+                confirmPasswordInput.addEventListener("input",checkPasswordMatch);
+            }
+
+            if(form){
+                form.addEventListener("submit",function(e){
+                    if(passwordInput.value!==confirmPasswordInput.value){e.preventDefault();alert("Mật khẩu nhập lại không khớp!");return;}
+                    if(otpSection && otpSection.style.display==="none"){e.preventDefault();alert("Bạn cần gửi OTP trước khi đăng ký!");return;}
+                    if(otpInput && otpInput.value.trim()===""){e.preventDefault();alert("Vui lòng điền mã OTP!");}
+                });
+            }
+
+            if(sendOtpBtn){
+                sendOtpBtn.addEventListener("click",function(){
+                    const email=document.getElementById("email").value;
+                    if(!email){alert("Vui lòng nhập email!");return;}
+                    fetch(/* gửi OTP */ "/send-otp",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"email="+encodeURIComponent(email)})
+                        .then(res=>res.text())
+                        .then(data=>{
+                            if(data==="success"){
+                                alert("Mã OTP đã được gửi!");
+                                if(otpSection){otpSection.style.display="block";}
+                                if(otpInput){otpInput.setAttribute("required","true");}
+                                let countdown=60;sendOtpBtn.disabled=true;sendOtpBtn.textContent="Gửi mã ("+countdown+"s)";
+                                const timer=setInterval(()=>{countdown--;if(countdown>0){sendOtpBtn.textContent="Gửi mã ("+countdown+"s)";}else{clearInterval(timer);sendOtpBtn.disabled=false;sendOtpBtn.textContent="Send code";}},1000);
+                            }else{alert("Không thể gửi OTP!\n"+data);}
+                        });
+                });
+            }
+        </script>
+    </section>
+
+    <!-- ===== Danh sách game liên quan ===== -->
+    <section class="py-5">
+        <div class="container px-5 my-5">
+            <div class="row gx-5 justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+                    <div class="text-center">
+                        <h2 class="fw-bolder">Game liên quan</h2>
+                        <p class="lead fw-normal text-muted fw-bolder mb-5">Các game mới sắp ra mắt tiếp theo.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row gx-5">
+                <!-- games: List<GameVM> truyền từ Controller -->
+                <div class="col-lg-4 mb-5" th:each="g : ${games}">
+                    <div class="card h-100 shadow border-0">
+                        <img class="card-img-top" th:src="@{${g.img}}" alt="..."/>
+                        <div class="card-body p-4">
+                            <div class="badge rounded-pill mb-2"
+                                 style="background:linear-gradient(90deg,#8E2DE2,#4A00E0);border:none;border-radius:10px;box-shadow:0 4px 15px rgba(142,45,226,.5)">
+                                Sắp phát hành
+                            </div>
+                            <a class="text-decoration-none link-dark stretched-link" href="#!">
+                                <h5 class="card-title mb-3" th:text="${g.title}">TITLE</h5>
+                            </a>
+                            <p class="card-text mb-0" th:text="${g.desc}">Mô tả…</p>
+                        </div>
+                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                            <div class="d-flex align-items-end justify-content-between">
+                                <div class="small">
+                                    <form th:action="@{/register-game}" method="post">
+                                        <input type="hidden" name="gameId" th:value="${g.id}"/>
+                                        <button class="btn btn-lg px-4 text-white register-btn-transparent"
+                                                th:text="${registeredGames != null and registeredGames.contains(g.id)} ? 'Đã đăng ký' : 'Đăng ký'"
+                                                th:style="${registeredGames != null and registeredGames.contains(g.id)} ?
+                              'position:relative;z-index:5;background:linear-gradient(90deg,#8E2DE2,#4A00E0);box-shadow:0 0 10px rgba(142,45,226,.6);' :
+                              'position:relative;z-index:5;background:linear-gradient(90deg,#8E2DE2,#4A00E0);box-shadow:0 4px 15px rgba(142,45,226,.5);'">
+                                        </button>
+                                    </form>
+                                    <div class="text-muted mt-2" th:text="${g.date}">Dự kiến…</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /each -->
+            </div>
+
+            <!-- CTA -->
+            <aside class="bg-primary custom-bg rounded-3 p-4 p-sm-5 mt-5">
+                <div class="d-flex align-items-center justify-content-between flex-column flex-xl-row text-center text-xl-start">
+                    <div class="mb-4 mb-xl-0">
+                        <div class="fs-3 fw-bold text-white">Game mới sắp ra mắt – đừng bỏ lỡ!</div>
+                        <div class="text-white-50">Đăng ký để nhận thông báo nhanh nhất…</div>
+                    </div>
+                    <div class="ms-xl-4">
+                        <div class="input-group mb-2">
+                            <input class="form-control" type="text" placeholder="Email address..." aria-label="Email address..." aria-describedby="button-newsletter"/>
+                            <button class="btn btn-outline-light" id="button-newsletter" type="button">Sign up</button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- JS xử lý nút Đăng ký game -->
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                document.addEventListener("DOMContentLoaded", function () {
+                    const buttons = document.querySelectorAll(".register-btn-transparent");
+                    const isLoggedIn = /*[[${user != null}]]*/ false;
+
+                    function showAlert(message) {
+                        let old=document.getElementById("alertBox"); if(old) old.remove();
+                        const alertBox=document.createElement("div");
+                        alertBox.id="alertBox"; alertBox.innerText=message;
+                        alertBox.style.cssText="position:fixed;top:20px;right:20px;background:#ff4d4d;color:black;padding:15px;border-radius:8px;z-index:9999;box-shadow:0 4px 8px rgba(0,0,0,.2);transition:opacity .5s";
+                        document.body.appendChild(alertBox);
+                        setTimeout(()=>{alertBox.style.opacity="0";setTimeout(()=>alertBox.remove(),500);},3000);
+                    }
+
+                    buttons.forEach(btn=>{
+                        btn.addEventListener("click",function(e){
+                            e.preventDefault(); e.stopPropagation();
+                            const form=this.closest("form");
+                            const gameId=form?form.querySelector("input[name='gameId']").value:null;
+
+                            if(!isLoggedIn){showAlert("Vui lòng đăng nhập!");return;}
+
+                            btn.disabled=true;
+                            fetch(/* đăng ký */ "/register-game",{
+                                method:"POST",
+                                headers:{"Content-Type":"application/x-www-form-urlencoded"},
+                                body:"gameId="+encodeURIComponent(gameId)
+                            })
+                                .then(res=>res.json().then(json=>({ok:res.ok,json})))
+                                .then(({ok,json})=>{
+                                    btn.disabled=false;
+                                    if(ok && json.success){
+                                        if(json.action==="registered"){
+                                            btn.textContent="Đã đăng ký";
+                                            btn.style.background="linear-gradient(90deg,#8E2DE2,#4A00E0)";
+                                            btn.style.boxShadow="0 0 10px rgba(142,45,226,.6)";
+                                        }else if(json.action==="unregistered"){
+                                            btn.textContent="Đăng ký";
+                                            btn.style.background="linear-gradient(90deg,#8E2DE2,#4A00E0)";
+                                            btn.style.boxShadow="0 4px 15px rgba(142,45,226,.5)";
+                                        }
+                                    }else{
+                                        showAlert((json && json.message) || "Có lỗi xảy ra khi đăng ký!");
+                                    }
+                                })
+                                .catch(()=>{btn.disabled=false;showAlert("Lỗi kết nối máy chủ!");});
+                        });
+                    });
+
+                    // Hiển thị login modal nếu có lỗi
+                    const hasLoginError = /*[[${loginError != null}]]*/ false;
+                    if(hasLoginError && typeof bootstrap!=="undefined"){
+                        const modalEl=document.getElementById('loginModal');
+                        const modal=bootstrap.Modal.getOrCreateInstance(modalEl,{backdrop:'static',keyboard:false});
+                        let allowClose=false;
+                        modalEl.addEventListener('hide.bs.modal',function(e){if(!allowClose){e.preventDefault();setTimeout(()=>modal.show(),50);}});
+                        modal.show();
+                        const closeBtn=document.getElementById('loginCloseBtn');
+                        if(closeBtn){closeBtn.addEventListener('click',function(){allowClose=true;modal.hide();});}
+                        const alert=modalEl.querySelector('#loginAlertArea .alert');
+                        if(alert){
+                            let secondsSpan=alert.querySelector('.seconds'); let remaining=secondsSpan?parseInt(secondsSpan.textContent,10):3;
+                            const timer=setInterval(function(){remaining--; if(secondsSpan) secondsSpan.textContent=remaining; if(remaining<=0){clearInterval(timer); alert.classList.remove('show'); alert.classList.add('d-none');}},1000);
+                        }
+                    }
+
+                    // Mở sẵn register modal nếu controller yêu cầu
+                    const showForm = /*[[${showForm}]]*/ null;
+                    if(showForm==='register' && typeof bootstrap!=="undefined"){
+                        const reg= new bootstrap.Modal(document.getElementById('registerModal'));
+                        reg.show();
+                    }
+                });
+                /*]]>*/
+            </script>
+        </div>
+    </section>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer custom-footer mt-auto py-5 text-white">
+    <div class="container px-5">
+        <div class="row gy-4 gx-5">
+            <div class="col-md-3">
+                <a th:href="@{/' }" class="logo-link"><h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3></a>
+                <p class="text-white-50">Trải nghiệm thế giới game đỉnh cao…</p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Thông tin</h5>
+                <ul class="list-unstyled text-white-50">
+                    <li><a href="#" class="footer-link">Hỗ trợ</a></li>
+                    <li><a th:href="@{/about}" class="footer-link">About us</a></li>
+                    <li><a th:href="@{/terms}" class="footer-link">Điều khoản dịch vụ</a></li>
+                    <li><a th:href="@{/privacy}" class="footer-link">Chính sách bảo mật</a></li>
+                    <li><a th:href="@{/buying-guide}" class="footer-link">Hướng dẫn mua hàng</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Liên hệ</h5>
+                <p><a href="tel:+84912345678" class="footer-link">+84 1900 1099</a></p>
+                <p><a href="mailto:support@gamestore.com" class="footer-link">support@gamestore.com</a></p>
+                <p><a href="https://surl.li/bhtojh" target="_blank" class="footer-link">https://surl.li/bhtojh/</a></p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Kết nối với chúng tôi</h5>
+                <div class="social-icons" style="display:flex;gap:18px;margin-top:10px">
+                    <a href="https://surl.li/bhtojh" class="social-link" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                </div>
+                <img th:src="@{/img/qr.jpg}" alt="QR Shop" class="qr-img" style="margin-top:15px;width:160px;border-radius:5px"/>
+            </div>
+        </div>
+        <hr class="border-secondary my-4"/>
+        <div class="text-center text-white-50 small">
+            © 2025 <span class="fw-bold text-primary">GameStore</span>. All rights reserved. | Designed by <span class="text-glow">Do Trong Tri</span>
+        </div>
+    </div>
+</footer>
+
+<!-- Footer CSS rút gọn -->
+<style>
+    .logo-link{text-decoration:none;color:inherit}
+    .logo-link:hover{color:#00e0ff;text-shadow:0 0 10px #00e0ff}
+    .custom-footer{background:linear-gradient(135deg,#0b0f29,#1b2347);border-top:2px solid #1e3a8a;font-family:Poppins,Arial,sans-serif;box-shadow:0 -2px 20px rgba(0,150,255,.15)}
+    .neon-text{color:#4f9eff;text-shadow:0 0 5px #4f9eff,0 0 15px #4f9eff,0 0 25px #007bff}
+    .glow-title{text-shadow:0 0 8px rgba(79,158,255,.8)}
+    .footer-link{color:#adb5bd;text-decoration:none;display:inline-block;margin:4px 0;transition:.2s}
+    .footer-link:hover{color:#4f9eff;transform:translateX(4px)}
+    .social-link{color:#ffffffcc;font-size:1.6rem;transition:.3s;text-shadow:0 0 5px rgba(255,255,255,.3)}
+    .social-link:hover{color:#4f9eff;transform:scale(1.25) rotate(8deg);text-shadow:0 0 15px #4f9eff}
+    .text-glow{color:#4f9eff;text-shadow:0 0 10px #4f9eff}
+    .register-btn-transparent{color:#fff;background:transparent;border:2px solid transparent;border-radius:10px;transition:.3s;cursor:pointer}
+    .register-btn-transparent:hover{border-color:rgba(173,90,255,.6);color:#d8b7ff;box-shadow:0 0 10px rgba(173,90,255,.6);transform:scale(1.05)}
+    .register-btn-transparent:active{transform:scale(.95);box-shadow:0 0 5px rgba(173,90,255,.5)}
+</style>
+
+<!-- Bootstrap Icons + Bootstrap bundle -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"/>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS -->
+<script th:src="@{/js/scripts.js}"></script>
+
+</body>
+</html>
