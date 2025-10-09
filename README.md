@@ -1,1 +1,1 @@
-Game 99 Store -> Game Store
+Game 99 Store ⤏ Game Store
