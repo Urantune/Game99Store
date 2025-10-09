@@ -1,0 +1,106 @@
+CREATE DATABASE Game99Store;
+GO
+
+USE Game99Store;
+GO
+
+CREATE TABLE [User] (
+    user_Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    userName VARCHAR(100) NOT NULL,
+    [password] VARCHAR(100) NOT NULL,
+    dateCreateAcc DATETIME DEFAULT GETDATE(),
+    score INT DEFAULT 0,
+    [status] VARCHAR(50),
+    userType INT,
+    email VARCHAR(100) NOT NULL,
+    CONSTRAINT UQ_User_userName UNIQUE (userName),
+    CONSTRAINT UQ_User_email UNIQUE (email)
+);
+GO
+
+CREATE TABLE Company (
+    company_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    user_id UNIQUEIDENTIFIER UNIQUE,
+    companyName VARCHAR(150) NOT NULL,
+    dateCreated DATETIME DEFAULT GETDATE(),
+    [status] VARCHAR(50),
+    CONSTRAINT FK_Company_User FOREIGN KEY (user_id) REFERENCES [User](user_Id)
+);
+GO
+
+CREATE TABLE Admin (
+    admin_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    adminName VARCHAR(100) NOT NULL,
+    [password] VARCHAR(100) NOT NULL,
+    dateCreateAcc DATETIME DEFAULT GETDATE()
+);
+GO
+
+CREATE TABLE Game (
+    game_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    gameName VARCHAR(150) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    version VARCHAR(50),
+    company_id UNIQUEIDENTIFIER NOT NULL,
+    [status] VARCHAR(50),
+    category VARCHAR(100),
+    locateGame VARCHAR(255),
+    CONSTRAINT FK_Game_Company FOREIGN KEY (company_id) REFERENCES Company(company_id),
+    CONSTRAINT UQ_Game_company_gameName UNIQUE (company_id, gameName)
+);
+GO
+
+CREATE TABLE feedbackGame (
+    feedback_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    game_id UNIQUEIDENTIFIER NOT NULL,
+    user_id UNIQUEIDENTIFIER NOT NULL,
+    comment VARCHAR(500),
+    star INT CHECK (star BETWEEN 1 AND 5),
+    date_created DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_feedback_Game FOREIGN KEY (game_id) REFERENCES Game(game_id),
+    CONSTRAINT FK_feedback_User FOREIGN KEY (user_id) REFERENCES [User](user_Id)
+);
+GO
+
+CREATE TABLE Game_Queue (
+    queue_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    game_Name VARCHAR(150) NOT NULL,
+    price DECIMAL(10,2),
+    version VARCHAR(50),
+    company_id UNIQUEIDENTIFIER NOT NULL,
+    upload_date DATETIME DEFAULT GETDATE(),
+    [status] VARCHAR(50),
+    CONSTRAINT FK_GameQueue_Company FOREIGN KEY (company_id) REFERENCES Company(company_id)
+);
+GO
+
+CREATE TABLE UserGame (
+    user_id UNIQUEIDENTIFIER NOT NULL,
+    game_id UNIQUEIDENTIFIER NOT NULL,
+    purchase_date DATETIME DEFAULT GETDATE(),
+    price DECIMAL(10,2),
+    CONSTRAINT PK_UserGame PRIMARY KEY (user_id, game_id),
+    CONSTRAINT FK_UserGame_User FOREIGN KEY (user_id) REFERENCES [User](user_Id),
+    CONSTRAINT FK_UserGame_Game FOREIGN KEY (game_id) REFERENCES Game(game_id)
+);
+GO
+
+CREATE TABLE Event (
+    event_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    link_image VARCHAR(255),
+    type VARCHAR(100),
+    info VARCHAR(500),
+    date_start DATE,
+    date_end DATE
+);
+GO
+
+CREATE TABLE Voucher (
+    voucherid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    name VARCHAR(100),
+    sale INT,
+    type VARCHAR(100),
+    date_start DATE,
+    date_end DATE
+);
+GO
