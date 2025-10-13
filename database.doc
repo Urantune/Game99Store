@@ -1,106 +1,105 @@
 CREATE DATABASE Game99Store;
 GO
-
 USE Game99Store;
 GO
 
-CREATE TABLE [User] (
-    user_Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    userName VARCHAR(100) NOT NULL,
-    [password] VARCHAR(100) NOT NULL,
-    dateCreateAcc DATETIME DEFAULT GETDATE(),
-    score INT DEFAULT 0,
-    [status] VARCHAR(50),
-    userType INT,
-    email VARCHAR(100) NOT NULL,
+CREATE TABLE dbo.[User] (
+    user_Id uniqueidentifier NOT NULL DEFAULT NEWID(),
+    userName nvarchar(100) NOT NULL,
+    [password] nvarchar(200) NOT NULL,
+    dateCreateAcc datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    score int NULL,
+    [status] nvarchar(50) NULL,
+    userType int NULL,
+    email nvarchar(255) NOT NULL,
+    CONSTRAINT PK_User PRIMARY KEY CLUSTERED (user_Id),
     CONSTRAINT UQ_User_userName UNIQUE (userName),
     CONSTRAINT UQ_User_email UNIQUE (email)
 );
 GO
 
-CREATE TABLE Company (
-    company_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    user_id UNIQUEIDENTIFIER UNIQUE,
-    companyName VARCHAR(150) NOT NULL,
-    dateCreated DATETIME DEFAULT GETDATE(),
-    [status] VARCHAR(50),
-    CONSTRAINT FK_Company_User FOREIGN KEY (user_id) REFERENCES [User](user_Id)
+CREATE TABLE dbo.[Admin] (
+    admin_id uniqueidentifier NOT NULL DEFAULT NEWID(),
+    adminName nvarchar(100) NOT NULL,
+    [password] nvarchar(200) NOT NULL,
+    dateCreateAcc datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT PK_Admin PRIMARY KEY CLUSTERED (admin_id)
 );
 GO
 
-CREATE TABLE Admin (
-    admin_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    adminName VARCHAR(100) NOT NULL,
-    [password] VARCHAR(100) NOT NULL,
-    dateCreateAcc DATETIME DEFAULT GETDATE()
+CREATE TABLE dbo.[Game] (
+    game_id uniqueidentifier NOT NULL DEFAULT NEWID(),
+    gameName nvarchar(200) NOT NULL,
+    price decimal(10,2) NOT NULL DEFAULT (0),
+    [version] nvarchar(50) NULL,
+    [status] nvarchar(50) NULL,
+    category nvarchar(100) NULL,
+    locateGame nvarchar(512) NULL,
+    CONSTRAINT PK_Game PRIMARY KEY CLUSTERED (game_id)
 );
 GO
 
-CREATE TABLE Game (
-    game_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    gameName VARCHAR(150) NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    version VARCHAR(50),
-    company_id UNIQUEIDENTIFIER NOT NULL,
-    [status] VARCHAR(50),
-    category VARCHAR(100),
-    locateGame VARCHAR(255),
-    CONSTRAINT FK_Game_Company FOREIGN KEY (company_id) REFERENCES Company(company_id),
-    CONSTRAINT UQ_Game_company_gameName UNIQUE (company_id, gameName)
+CREATE TABLE dbo.[Event] (
+    event_id uniqueidentifier NOT NULL DEFAULT NEWID(),
+    link_image nvarchar(512) NULL,
+    [type] nvarchar(50) NULL,
+    info nvarchar(1000) NULL,
+    date_start date NOT NULL,
+    date_end date NOT NULL,
+    CONSTRAINT PK_Event PRIMARY KEY CLUSTERED (event_id),
+    CONSTRAINT CK_Event_DateRange CHECK (date_end >= date_start)
 );
 GO
 
-CREATE TABLE feedbackGame (
-    feedback_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    game_id UNIQUEIDENTIFIER NOT NULL,
-    user_id UNIQUEIDENTIFIER NOT NULL,
-    comment VARCHAR(500),
-    star INT CHECK (star BETWEEN 1 AND 5),
-    date_created DATETIME DEFAULT GETDATE(),
-    CONSTRAINT FK_feedback_Game FOREIGN KEY (game_id) REFERENCES Game(game_id),
-    CONSTRAINT FK_feedback_User FOREIGN KEY (user_id) REFERENCES [User](user_Id)
+CREATE TABLE dbo.[Voucher] (
+    voucherid uniqueidentifier NOT NULL DEFAULT NEWID(),
+    [name] nvarchar(150) NOT NULL,
+    sale int NOT NULL,
+    [type] nvarchar(50) NULL,
+    date_start date NOT NULL,
+    date_end date NOT NULL,
+    CONSTRAINT PK_Voucher PRIMARY KEY CLUSTERED (voucherid),
+    CONSTRAINT CK_Voucher_Sale CHECK (sale BETWEEN 0 AND 100),
+    CONSTRAINT CK_Voucher_DateRange CHECK (date_end >= date_start)
 );
 GO
 
-CREATE TABLE Game_Queue (
-    queue_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    game_Name VARCHAR(150) NOT NULL,
-    price DECIMAL(10,2),
-    version VARCHAR(50),
-    company_id UNIQUEIDENTIFIER NOT NULL,
-    upload_date DATETIME DEFAULT GETDATE(),
-    [status] VARCHAR(50),
-    CONSTRAINT FK_GameQueue_Company FOREIGN KEY (company_id) REFERENCES Company(company_id)
+CREATE TABLE dbo.[Game_Queue] (
+    queue_id uniqueidentifier NOT NULL DEFAULT NEWID(),
+    game_Name nvarchar(200) NOT NULL,
+    price decimal(10,2) NOT NULL DEFAULT (0),
+    [version] nvarchar(50) NULL,
+    upload_date datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    [status] nvarchar(50) NULL,
+    CONSTRAINT PK_Game_Queue PRIMARY KEY CLUSTERED (queue_id)
 );
 GO
 
-CREATE TABLE UserGame (
-    user_id UNIQUEIDENTIFIER NOT NULL,
-    game_id UNIQUEIDENTIFIER NOT NULL,
-    purchase_date DATETIME DEFAULT GETDATE(),
-    price DECIMAL(10,2),
-    CONSTRAINT PK_UserGame PRIMARY KEY (user_id, game_id),
-    CONSTRAINT FK_UserGame_User FOREIGN KEY (user_id) REFERENCES [User](user_Id),
-    CONSTRAINT FK_UserGame_Game FOREIGN KEY (game_id) REFERENCES Game(game_id)
+CREATE TABLE dbo.[UserGame] (
+    user_id uniqueidentifier NOT NULL,
+    game_id uniqueidentifier NOT NULL,
+    purchase_date datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    price decimal(10,2) NOT NULL,
+    CONSTRAINT PK_UserGame PRIMARY KEY CLUSTERED (user_id, game_id),
+    CONSTRAINT FK_UserGame_User FOREIGN KEY (user_id) REFERENCES dbo.[User](user_Id) ON DELETE CASCADE,
+    CONSTRAINT FK_UserGame_Game FOREIGN KEY (game_id) REFERENCES dbo.[Game](game_id) ON DELETE CASCADE,
+    CONSTRAINT CK_UserGame_Price CHECK (price >= 0)
 );
 GO
 
-CREATE TABLE Event (
-    event_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    link_image VARCHAR(255),
-    type VARCHAR(100),
-    info VARCHAR(500),
-    date_start DATE,
-    date_end DATE
+CREATE TABLE dbo.[feedbackGame] (
+    feedback_id uniqueidentifier NOT NULL DEFAULT NEWID(),
+    game_id uniqueidentifier NOT NULL,
+    user_id uniqueidentifier NOT NULL,
+    comment nvarchar(1000) NULL,
+    star int NOT NULL,
+    date_created datetime2 NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT PK_feedbackGame PRIMARY KEY CLUSTERED (feedback_id),
+    CONSTRAINT FK_feedbackGame_Game FOREIGN KEY (game_id) REFERENCES dbo.[Game](game_id) ON DELETE CASCADE,
+    CONSTRAINT FK_feedbackGame_User FOREIGN KEY (user_id) REFERENCES dbo.[User](user_Id) ON DELETE CASCADE,
+    CONSTRAINT CK_feedbackGame_Star CHECK (star BETWEEN 1 AND 5)
 );
 GO
 
-CREATE TABLE Voucher (
-    voucherid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    name VARCHAR(100),
-    sale INT,
-    type VARCHAR(100),
-    date_start DATE,
-    date_end DATE
-);
+CREATE INDEX IX_feedbackGame_game ON dbo.[feedbackGame](game_id);
 GO
