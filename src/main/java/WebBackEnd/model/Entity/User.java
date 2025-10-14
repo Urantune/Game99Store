@@ -2,15 +2,17 @@ package WebBackEnd.model.Entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name = "users")
+@Table(name = "[User]")
 public class User {
 
     @Id
-    @Column(name = "UserId")
+    @Column(name = "user_Id")
     private String id;
 
-    @Column(name = "name")
+    @Column(name = "userName")
     private String username;
 
     @Column(name = "password")
@@ -18,6 +20,21 @@ public class User {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "score")
+    private int score;
+
+    @Column(name = "status")
+    private int status;
+
+    @Column(name = "dateCreateAcc")
+    private LocalDate dateCreateAccount;
+
+
+    @Column(name = "imageLinks", nullable = true)
+    private String imageLinks;
+
+
 
 
     public User() {}
@@ -28,7 +45,41 @@ public class User {
         this.email = email;
     }
 
-    // ==== Getter & Setter ====
+
+
+
+    public String getImageLinks() {
+        return imageLinks;
+    }
+
+    public void setImageLinks(String imageLinks) {
+        this.imageLinks = imageLinks;
+    }
+
+    public LocalDate getDateCreateAccount() {
+        return dateCreateAccount;
+    }
+
+    public void setDateCreateAccount(LocalDate dateCreateAccount) {
+        this.dateCreateAccount = dateCreateAccount;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public String getId() {
         return id;
     }
