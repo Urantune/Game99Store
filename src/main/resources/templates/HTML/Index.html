@@ -362,18 +362,31 @@
             </ul>
             <!-- Right: Cart + User info -->
             <div class="d-flex align-items-center">
+
                 <a href="Cart.html" class="btn btn-outline-dark me-2">
                     <i class="bi-cart-fill me-1"></i>
                     Cart
                     <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
                 </a>
-                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
-                    Đăng nhập
-                </button>
-                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">
-                    Đăng ký
-                </button>
+
+                <!-- Nếu chưa login -->
+                <div th:if="${session.username == null}">
+                    <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Đăng nhập
+                    </button>
+                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        Đăng ký
+                    </button>
+                </div>
+
+                <!-- Nếu đã login -->
+                <div th:if="${session.username != null}" class="d-flex align-items-center">
+                    <span class="me-3">Xin chào, <b th:text="${session.username}"></b> 👋</span>
+                    <a th:href="@{/logout}" class="btn btn-danger">Đăng xuất</a>
+                </div>
+
             </div>
+
         </div>
     </nav>
     <link rel="stylesheet" href="css/profile-user.css">
@@ -2071,5 +2084,16 @@
             }
         }, 3000);
     </script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const showForm = /*[[${showForm}]]*/ '';
+        if (showForm === 'login') {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        }
+        /*]]>*/
+    </script>
+
     </body>
     </html>

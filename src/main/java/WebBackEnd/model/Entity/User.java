@@ -3,14 +3,16 @@ package WebBackEnd.model.Entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "[User]")
+@Table(name = "Users")
 public class User {
 
     @Id
     @Column(name = "user_Id")
-    private String id;
+    private UUID id;
 
     @Column(name = "userName")
     private String username;
@@ -25,19 +27,16 @@ public class User {
     private int score;
 
     @Column(name = "status")
-    private int status;
+    private String status;
 
     @Column(name = "dateCreateAcc")
-    private LocalDate dateCreateAccount;
-
+    private LocalDateTime dateCreateAccount;
 
     @Column(name = "imageLinks", nullable = true)
     private String imageLinks;
 
-
-
-
-    public User() {}
+    public User() {
+    }
 
     public User(String username, String password, String email) {
         this.username = username;
@@ -45,23 +44,37 @@ public class User {
         this.email = email;
     }
 
-
-
-
-    public String getImageLinks() {
-        return imageLinks;
+    // Getters and setters
+    public UUID getId() {
+        return id;
     }
 
-    public void setImageLinks(String imageLinks) {
-        this.imageLinks = imageLinks;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public LocalDate getDateCreateAccount() {
-        return dateCreateAccount;
+    public String getUsername() {
+        return username;
     }
 
-    public void setDateCreateAccount(LocalDate dateCreateAccount) {
-        this.dateCreateAccount = dateCreateAccount;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public int getScore() {
@@ -72,39 +85,27 @@ public class User {
         this.score = score;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
-        this.id = id;
+    public LocalDateTime getDateCreateAccount() {
+        return dateCreateAccount;
     }
 
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
+    public void setDateCreateAccount(LocalDateTime dateCreateAccount) {
+        this.dateCreateAccount = dateCreateAccount;
     }
 
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
+    public String getImageLinks() {
+        return imageLinks;
     }
 
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
+    public void setImageLinks(String imageLinks) {
+        this.imageLinks = imageLinks;
     }
 }

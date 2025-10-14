@@ -15,36 +15,40 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping(value = "/welcome")
-public class    HomeController {
+public class HomeController {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
     private UserService userService;
 
 
     @GetMapping
     public String homepage(Model model) {
+        if (!model.containsAttribute("showForm")) {
+            model.addAttribute("showForm", "");
+        }
         return "HTML/Index";
     }
 
 
-    @PostMapping("/register")
-    public String register(User user, Model model) {
 
-        user.setId(UUID.randomUUID().toString());
-
-        user.setScore(0);
-        user.setStatus(0);
-        user.setDateCreateAccount(LocalDate.now());
-
-
-        userRepository.save(user);
-
-
-        model.addAttribute("registerSuccess", "Đăng ký thành công! Hãy đăng nhập.");
-        return "redirect:/welcome";
-    }
+//    @PostMapping("/register")
+//    public String register(User user, Model model) {
+//
+//        user.setId(UUID.randomUUID().toString());
+//
+//        user.setScore(0);
+//        user.setStatus(0);
+//        user.setDateCreateAccount(LocalDate.now());
+//
+//
+//        userRepository.save(user);
+//
+//
+//        model.addAttribute("registerSuccess", "Đăng ký thành công! Hãy đăng nhập.");
+//        return "redirect:/welcome";
+//    }
 
 
     @PostMapping("/login")
