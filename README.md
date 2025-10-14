@@ -1,1 +1,1 @@
-Đọc con cặc 
+Game 99 Store ⤏ Game Store

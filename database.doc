@@ -1,0 +1,82 @@
+CREATE DATABASE Game99Store;
+GO
+
+USE Game99Store;
+GO
+
+CREATE TABLE [User] (
+    user_Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    userName VARCHAR(100) NOT NULL UNIQUE,
+    [password] VARCHAR(255) NOT NULL,
+    dateCreateAcc DATETIME DEFAULT GETDATE(),
+    score INT DEFAULT 0,
+    [status] VARCHAR(50),
+    userType INT,
+    email VARCHAR(255) UNIQUE,
+    imageLinks TEXT
+);
+GO
+
+CREATE TABLE [Admin] (
+    admin_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    adminName VARCHAR(100) NOT NULL,
+    [password] VARCHAR(255) NOT NULL,
+    dateCreateAcc DATETIME DEFAULT GETDATE()
+);
+GO
+
+CREATE TABLE [Game] (
+    game_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    gameName VARCHAR(200) NOT NULL,
+    price DECIMAL(10,2),
+    version VARCHAR(50),
+    [status] VARCHAR(50),
+    category VARCHAR(100),
+    locateGame VARCHAR(255),
+    imageLinks TEXT
+);
+GO
+
+CREATE TABLE feedbackGame (
+    feedback_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    game_id UNIQUEIDENTIFIER NOT NULL,
+    user_id UNIQUEIDENTIFIER NOT NULL,
+    comment VARCHAR(500),
+    star INT CHECK (star BETWEEN 1 AND 5),
+    date_created DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (game_id) REFERENCES [Game](game_id),
+    FOREIGN KEY (user_id) REFERENCES [User](user_Id)
+);
+GO
+
+CREATE TABLE UserGame (
+    user_id UNIQUEIDENTIFIER NOT NULL,
+    game_id UNIQUEIDENTIFIER NOT NULL,
+    purchase_date DATETIME DEFAULT GETDATE(),
+    price DECIMAL(10,2),
+    PRIMARY KEY (user_id, game_id),
+    FOREIGN KEY (user_id) REFERENCES [User](user_Id),
+    FOREIGN KEY (game_id) REFERENCES [Game](game_id)
+);
+GO
+
+CREATE TABLE Event (
+    event_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    imageLinks TEXT,
+    type VARCHAR(100),
+    info VARCHAR(500),
+    date_start DATE,
+    date_end DATE
+);
+GO
+
+CREATE TABLE Voucher (
+    voucherid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    name VARCHAR(200),
+    sale INT,
+    type VARCHAR(100),
+    date_start DATE,
+    date_end DATE,
+    imageLinks TEXT
+);
+GO
