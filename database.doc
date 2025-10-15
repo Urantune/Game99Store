@@ -1,82 +1,89 @@
 CREATE DATABASE Game99Store;
 GO
-
 USE Game99Store;
 GO
 
-CREATE TABLE [User] (
-    user_Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    userName VARCHAR(100) NOT NULL UNIQUE,
-    [password] VARCHAR(255) NOT NULL,
-    dateCreateAcc DATETIME DEFAULT GETDATE(),
-    score INT DEFAULT 0,
-    [status] VARCHAR(50),
-    userType INT,
-    email VARCHAR(255) UNIQUE,
-    imageLinks TEXT
+CREATE TABLE dbo.[User] (
+    user_Id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    userName NVARCHAR(255) NOT NULL,
+    [password] NVARCHAR(255) NOT NULL,
+    dateCreateAcc DATETIME2(0) NOT NULL,
+    score INT NULL,
+    [status] NVARCHAR(255) NULL,
+    userType INT NULL,
+    email NVARCHAR(255) NOT NULL,
+    imageLinks NVARCHAR(MAX) NULL,
+    CONSTRAINT PK_User PRIMARY KEY CLUSTERED (user_Id),
+    CONSTRAINT UQ_User_userName UNIQUE (userName),
+    CONSTRAINT UQ_User_email UNIQUE (email)
 );
 GO
 
-CREATE TABLE [Admin] (
-    admin_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    adminName VARCHAR(100) NOT NULL,
-    [password] VARCHAR(255) NOT NULL,
-    dateCreateAcc DATETIME DEFAULT GETDATE()
+CREATE TABLE dbo.Admin (
+    admin_id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    adminName NVARCHAR(255) NOT NULL,
+    [password] NVARCHAR(255) NOT NULL,
+    dateCreateAcc DATETIME2(0) NOT NULL,
+    CONSTRAINT PK_Admin PRIMARY KEY CLUSTERED (admin_id)
 );
 GO
 
-CREATE TABLE [Game] (
-    game_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    gameName VARCHAR(200) NOT NULL,
-    price DECIMAL(10,2),
-    version VARCHAR(50),
-    [status] VARCHAR(50),
-    category VARCHAR(100),
-    locateGame VARCHAR(255),
-    imageLinks TEXT
+CREATE TABLE dbo.Game (
+    game_id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    gameName NVARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    [version] NVARCHAR(255) NULL,
+    [status] NVARCHAR(255) NULL,
+    category NVARCHAR(255) NULL,
+    locateGame NVARCHAR(255) NULL,
+    imageLinks NVARCHAR(MAX) NULL,
+    CONSTRAINT PK_Game PRIMARY KEY CLUSTERED (game_id)
 );
 GO
 
-CREATE TABLE feedbackGame (
-    feedback_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+CREATE TABLE dbo.feedbackGame (
+    feedback_id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
     game_id UNIQUEIDENTIFIER NOT NULL,
     user_id UNIQUEIDENTIFIER NOT NULL,
-    comment VARCHAR(500),
-    star INT CHECK (star BETWEEN 1 AND 5),
-    date_created DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (game_id) REFERENCES [Game](game_id),
-    FOREIGN KEY (user_id) REFERENCES [User](user_Id)
+    comment NVARCHAR(255) NULL,
+    star INT NULL,
+    date_created DATETIME2(0) NOT NULL,
+    CONSTRAINT PK_feedbackGame PRIMARY KEY CLUSTERED (feedback_id),
+    CONSTRAINT FK_feedbackGame_Game FOREIGN KEY (game_id) REFERENCES dbo.Game(game_id),
+    CONSTRAINT FK_feedbackGame_User FOREIGN KEY (user_id) REFERENCES dbo.[User](user_Id)
 );
 GO
 
-CREATE TABLE UserGame (
+CREATE TABLE dbo.UserGame (
     user_id UNIQUEIDENTIFIER NOT NULL,
     game_id UNIQUEIDENTIFIER NOT NULL,
-    purchase_date DATETIME DEFAULT GETDATE(),
-    price DECIMAL(10,2),
-    PRIMARY KEY (user_id, game_id),
-    FOREIGN KEY (user_id) REFERENCES [User](user_Id),
-    FOREIGN KEY (game_id) REFERENCES [Game](game_id)
+    purchase_date DATETIME2(0) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    CONSTRAINT PK_UserGame PRIMARY KEY CLUSTERED (user_id, game_id),
+    CONSTRAINT FK_UserGame_User FOREIGN KEY (user_id) REFERENCES dbo.[User](user_Id),
+    CONSTRAINT FK_UserGame_Game FOREIGN KEY (game_id) REFERENCES dbo.Game(game_id)
 );
 GO
 
-CREATE TABLE Event (
-    event_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    imageLinks TEXT,
-    type VARCHAR(100),
-    info VARCHAR(500),
-    date_start DATE,
-    date_end DATE
+CREATE TABLE dbo.[Event] (
+    event_id UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    imageLinks NVARCHAR(MAX) NULL,
+    [type] NVARCHAR(255) NULL,
+    info NVARCHAR(255) NULL,
+    date_start DATE NOT NULL,
+    date_end DATE NOT NULL,
+    CONSTRAINT PK_Event PRIMARY KEY CLUSTERED (event_id)
 );
 GO
 
-CREATE TABLE Voucher (
-    voucherid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    name VARCHAR(200),
-    sale INT,
-    type VARCHAR(100),
-    date_start DATE,
-    date_end DATE,
-    imageLinks TEXT
+CREATE TABLE dbo.voucher (
+    voucherid UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    [name] NVARCHAR(255) NOT NULL,
+    sale INT NOT NULL,
+    [type] NVARCHAR(255) NULL,
+    date_start DATE NOT NULL,
+    date_end DATE NOT NULL,
+    imageLinks NVARCHAR(MAX) NULL,
+    CONSTRAINT PK_voucher PRIMARY KEY CLUSTERED (voucherid)
 );
 GO
