@@ -11,8 +11,10 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @GeneratedValue
     @Column(name = "user_Id")
     private UUID id;
+
 
     @Column(name = "userName")
     private String username;
