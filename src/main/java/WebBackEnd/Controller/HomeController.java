@@ -31,6 +31,17 @@ public class HomeController {
         return "HTML/Index";
     }
 
+    @GetMapping("/test")
+    public String homepage2(Model model) {
+        return "HTML/seat.html";
+    }
+
+
+    @GetMapping("/Cart")
+    public String payMent(Model model) {
+        return "HTML/Cart.html";
+    }
+
 
 
 //    @PostMapping("/register")
