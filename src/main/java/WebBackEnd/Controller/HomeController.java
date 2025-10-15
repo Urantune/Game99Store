@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Controller
@@ -33,22 +34,17 @@ public class HomeController {
 
 
 
-//    @PostMapping("/register")
-//    public String register(User user, Model model) {
-//
-//        user.setId(UUID.randomUUID().toString());
-//
-//        user.setScore(0);
-//        user.setStatus(0);
-//        user.setDateCreateAccount(LocalDate.now());
-//
-//
-//        userRepository.save(user);
-//
-//
-//        model.addAttribute("registerSuccess", "Đăng ký thành công! Hãy đăng nhập.");
-//        return "redirect:/welcome";
-//    }
+    @PostMapping("/register")
+    public String register(User user, Model model) {
+        user.setScore(0);
+        user.setStatus("active");
+        user.setDateCreateAccount(LocalDateTime.now());
+        userRepository.save(user);
+
+
+        model.addAttribute("registerSuccess", "Đăng ký thành công! Hãy đăng nhập.");
+        return "redirect:/welcome";
+    }
 
 
     @PostMapping("/login")
@@ -120,9 +116,5 @@ public class HomeController {
 //            return "home/welcome";
 //        }
 //    }
-
-
-
-
 
 }
