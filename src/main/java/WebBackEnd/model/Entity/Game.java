@@ -26,7 +26,7 @@ public class Game {
     @Column(name ="locateGame")
     private String locate_game;
 
-    public Game(String locate_game, String game_category, String game_status, String game_version, double game_price, String game_name, int gameId) {
+    public Game(String locate_game, String game_category, String game_status, String game_version, double game_price, String game_name, UUID gameId) {
         this.locate_game = locate_game;
         this.game_category = game_category;
         this.game_status = game_status;
@@ -42,7 +42,7 @@ public class Game {
 
 
 
-    public int getGameId() {
+    public UUID getGameId() {
         return gameId;
     }
 

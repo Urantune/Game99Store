@@ -88,13 +88,13 @@
 <!-- Banner -->
 <header class="banner">
     <!-- Slides (dùng th:style để build URL ảnh tĩnh đúng chuẩn Spring) -->
-    <div class="slides active" th:style="'background-image: url(' + @{/img/Aboutbanner.jpg} + ')'"></div>
-    <div class="slides"        th:style="'background-image: url(' + @{/img/game1.jpg} + ')'"></div>
-    <div class="slides"        th:style="'background-image: url(' + @{/img/game2.jpg} + ')'"></div>
-    <div class="slides"        th:style="'background-image: url(' + @{/img/game3.jpg} + ')'"></div>
-    <div class="slides"        th:style="'background-image: url(' + @{/img/game4.jpg} + ')'"></div>
-    <div class="slides"        th:style="'background-image: url(' + @{/img/game5.jpg} + ')'"></div>
-    <div class="slides"        th:style="'background-image: url(' + @{/img/game6.jpg} + ')'"></div>
+    <div class="slides active" th:style="'background-image: url(/img/Aboutbanner.jpg)'"></div>
+    <div class="slides"        th:style="'background-image: url(/img/game1.jpg)'"></div>
+    <div class="slides"        th:style="'background-image: url(/img/game2.jpg)'"></div>
+    <div class="slides"        th:style="'background-image: url(/img/game3.jpg)'"></div>
+    <div class="slides"        th:style="'background-image: url(/img/game4.jpg)'"></div>
+    <div class="slides"        th:style="'background-image: url(/img/game5.jpg)'"></div>
+    <div class="slides"        th:style="'background-image: url(/img/game6.jpg)'"></div>
 
     <!-- Header text (link về trang chủ) -->
     <a th:href="@{/}">
@@ -135,9 +135,9 @@
 
     <!-- Stats -->
     <div class="stats">
-        <div class="stat" th:style="'background-image: url(' + @{/img/5000.jpg} + ')'"><h3>5000+</h3><p>Tựa game</p></div>
-        <div class="stat" th:style="'background-image: url(' + @{/img/players.jpg} + ')'"><h3>30M+</h3><p>Người chơi</p></div>
-        <div class="stat" th:style="'background-image: url(' + @{/img/victory.jpg} + ')'"><h3>100+</h3><p>Giải thưởng</p></div>
+        <div class="stat" th:style="'background-image: url(/img/5000.jpg)'"><h3>5000+</h3><p>Tựa game</p></div>
+        <div class="stat" th:style="'background-image: url(/img/players.jpg)'"><h3>30M+</h3><p>Người chơi</p></div>
+        <div class="stat" th:style="'background-image: url(/img/victory.jpg)'"><h3>100+</h3><p>Giải thưởng</p></div>
     </div>
 
     <h2>Các tựa game nổi bật</h2>
