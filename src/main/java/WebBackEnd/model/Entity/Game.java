@@ -3,15 +3,16 @@ package WebBackEnd.model.Entity;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "games")
 public class Game {
 
     @Id
-    private Long id;
     @GeneratedValue
     @Column(name = "game_id")
-    private int gameId;
+    private UUID gameId;
     @Column(name = "gameName")
     private String game_name;
     @Column(name = "price")
@@ -25,7 +26,7 @@ public class Game {
     @Column(name ="locateGame")
     private String locate_game;
 
-    public Game(String locate_game, String game_category, String game_status, String game_version, double game_price, String game_name, int gameId) {
+    public Game(String locate_game, String game_category, String game_status, String game_version, double game_price, String game_name, UUID gameId) {
         this.locate_game = locate_game;
         this.game_category = game_category;
         this.game_status = game_status;
@@ -39,19 +40,13 @@ public class Game {
 
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public int getGameId() {
+    public UUID getGameId() {
         return gameId;
     }
 
-    public void setGameId(int gameId) {
+    public void setGameId(UUID gameId) {
         this.gameId = gameId;
     }
 
