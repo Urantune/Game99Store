@@ -12,7 +12,7 @@ public class Game {
     @Id
     @UuidGenerator
     @Column(name = "game_id", length = 36, nullable = false, updatable = false)
-    private String gameId;
+    private String gameId ;
     @Column(name = "gameName")
     private String game_name;
     @Column(name = "price")
