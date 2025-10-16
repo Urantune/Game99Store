@@ -94,14 +94,19 @@ public class HomeController {
         return "HTML/About";
     }
 
-    @GetMapping("/Newgame")
-    public String newgame(Model model) {
-        return "HTML/NewGame";
-    }
-
     @GetMapping("/buyguide")
     public String buyguide() {
         return "HTML/BuyGuide";
+    }
+
+    @GetMapping("/gamedetail")
+    public String gameDetail(Model model) {
+        return  "HTML/GameDetail";
+    }
+
+    @GetMapping("/Newgame")
+    public String newgame(Model model) {
+        return "HTML/NewGame";
     }
 
     @GetMapping("/privacypolicy")
@@ -109,17 +114,16 @@ public class HomeController {
         return "HTML/PrivacyPolicy";
     }
 
+    @GetMapping("/support")
+    public String support(Model model) {return "HTML/Support";}
+
+    @GetMapping("/supporttransaction")
+    public String supporttransaction(Model model) {return "HTML/SupportTransaction";}
+
     @GetMapping("/termsofservice")
     public String termsofservice() {
         return "HTML/TermsOfService";
     }
-
-
-    @GetMapping("/gamedetail")
-    public String gameDetail(Model model) {
-        return  "HTML/GameDetail";
-    }
-
 
 //    @PostMapping("/home")
 //    public String doLogin(@RequestParam("username") String username,
