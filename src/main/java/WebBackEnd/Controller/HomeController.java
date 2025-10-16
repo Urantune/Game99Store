@@ -115,6 +115,12 @@ public class HomeController {
     }
 
 
+    @GetMapping("/gamedetail")
+    public String gameDetail(Model model) {
+        return  "HTML/GameDetail";
+    }
+
+
 //    @PostMapping("/home")
 //    public String doLogin(@RequestParam("username") String username,
 //                          @RequestParam("password") String password,

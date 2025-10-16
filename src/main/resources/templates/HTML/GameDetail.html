@@ -1,0 +1,773 @@
+<!-- templates/game-detail.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Chi tiết game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap & Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"/>
+
+    <style>
+        /* ====== giữ nguyên style quan trọng từ JSP ====== */
+
+        /* Login modal */
+        #loginModal .modal-header{background:linear-gradient(135deg,#0d47a1,#1a237e);color:#fff;border-bottom:none;padding:1rem 1.2rem;display:flex;justify-content:center;align-items:center;position:relative}
+        #loginModal .modal-header .btn-close{filter:invert(1);position:absolute;right:1rem}
+        #loginModal .modal-dialog{max-width:380px;margin:1.75rem auto}
+        #loginModal .modal-content{border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.25);border:none;background:rgba(13,71,161,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden}
+        #loginModal .modal-body{padding:1.5rem;text-align:center}
+        #loginModal .form-control{background:#2c3e50;border:none;border-radius:8px;color:#fff;font-size:14px;padding:10px;margin-bottom:1rem;text-align:left}
+        #loginModal .form-control:focus{border:1px solid #ff9800;box-shadow:0 0 6px rgba(255,152,0,.5)}
+        #loginModal .form-label{font-weight:500;color:#fff;display:block;text-align:left}
+        #loginModal .btn-primary{border-radius:10px;padding:.5rem 1.2rem;font-weight:600;background:linear-gradient(135deg,#0d47a1,#1a237e);border:none;transition:.3s}
+        #loginModal .btn-primary:hover{background:linear-gradient(135deg,#1565c0,#0d47a1);transform:translateY(-2px)}
+        #loginModal .d-flex{justify-content:center;gap:1rem}
+        #loginModal a.text-decoration-none{font-size:.9rem;color:#fff;transition:color .3s}
+        #loginModal a.text-decoration-none:hover{color:#ff9800;text-decoration:underline}
+
+        /* Register modal */
+        #registerModal .modal-content{border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,.25);border:none;background:rgba(13,71,161,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden}
+        #registerModal .modal-header{background:linear-gradient(135deg,#0d47a1,#1a237e);color:#fff;border-bottom:none;padding:1rem 1.5rem;display:flex;justify-content:center;align-items:center;position:relative}
+        #registerModal .modal-title{font-weight:600;font-size:1.2rem}
+        #registerModal .modal-header .btn-close{position:absolute;right:1rem;filter:brightness(0) invert(1)}
+        #registerModal .modal-body{padding:2rem;background:rgba(255,255,255,.15);border-radius:0 0 20px 20px}
+        #registerModal .form-control{background:#2c3e50;border:1px solid #cfd8dc;border-radius:12px;color:#fff;font-size:14px;padding:.7rem 1rem;transition:all .3s}
+        #registerModal .form-control:focus{border-color:#0d47a1;box-shadow:0 0 8px rgba(13,71,161,.3)}
+        #registerModal .btn-success{border-radius:12px;padding:.6rem 1.5rem;font-weight:600;background:linear-gradient(135deg,#0d47a1,#1a237e);border:none;transition:.3s}
+        #registerModal .btn-success:hover{background:linear-gradient(135deg,#1565c0,#0d47a1);transform:translateY(-2px)}
+        #registerModal .btn-sendcode{border-radius:12px;padding:.6rem 1rem;font-weight:500;background:linear-gradient(135deg,#1565c0,#0d47a1);border:none;color:#fff;transition:.3s;white-space:nowrap}
+        #registerModal .btn-sendcode:hover{background:linear-gradient(135deg,#1e88e5,#1565c0);transform:translateY(-2px)}
+
+        /* Navbar user profile */
+        .profile-link{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;transition:all .3s}
+        .profile-avatar{width:50px;height:50px;object-fit:cover;border-radius:50%;border:2px solid transparent;transition:all .3s}
+        .profile-link:hover .profile-avatar{border-color:#FFD700;box-shadow:0 0 8px rgba(13,71,161,.5)}
+        .profile-name{font-size:14px;color:#333;margin-top:5px;transition:color .3s}
+        .profile-link:hover .profile-name{color:#FFD700}
+
+        /* Banner, menu, search… (giữ nguyên cảm giác giao diện) */
+        .banner{position:relative;width:100%;height:550px;overflow:hidden}
+        .slides{position:absolute;width:100%;height:100%;background-size:cover;background-position:center;opacity:0;transition:opacity 1s ease-in-out;z-index:0}
+        .slides.active{opacity:1}
+        .dots{position:absolute;bottom:20px;width:100%;text-align:center}
+        .dot{cursor:pointer;height:12px;width:12px;margin:0 4px;background-color:rgba(255,255,255,.5);border-radius:50%;display:inline-block;transition:background-color .3s}
+        .dot.active{background-color:#ffd700}
+        .steam-menu{position:absolute;top:0;left:0;width:100%;z-index:10;display:flex;justify-content:center;padding:10px 0}
+        .steam-menu-inner{max-width:1500px;width:100%;background:rgba(18,57,101,.8);padding:8px 12px;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:20px}
+        .steam-menu a{color:#fff;text-decoration:none;margin-right:20px;font-size:14px;font-weight:500;padding:6px 10px;border-radius:3px}
+        .steam-menu a:hover{background:rgba(255,255,255,.1)}
+        .search-box{position:relative;width:300px;margin-left:auto;display:flex;align-items:center;gap:6px}
+        #search{flex:1;padding:6px 8px;background:#305680;color:#fff;border:none;border-radius:4px}
+        #suggestions{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(10,18,30,.95);border:1px solid rgba(255,255,255,.06);display:none;max-height:300px;overflow-y:auto;z-index:99999;color:#fff;border-radius:6px}
+        .suggestion-item{display:flex;align-items:center;gap:10px;padding:8px;cursor:pointer}
+        .suggestion-item img{width:40px;height:40px;object-fit:cover;border-radius:6px}
+        .suggestion-item:hover{background:rgba(255,255,255,.03)}
+
+        /* Thumbs & detail */
+        .thumb{object-fit:cover;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer;transition:transform .3s}
+        .thumb:hover{transform:scale(1.1)}
+        .thumbs-row{display:flex;justify-content:center;gap:10px}
+        .equal-col{display:flex}
+        .name-game{text-align:center;color:orange}
+        .custom-footer{background:linear-gradient(135deg,#0b0f29,#1b2347);border-top:2px solid #1e3a8a;font-family:'Poppins',sans-serif;box-shadow:0 -2px 20px rgba(0,150,255,.15)}
+        .neon-text{color:#4f9eff;text-shadow:0 0 5px #4f9eff,0 0 15px #4f9eff,0 0 25px #007bff;animation:flicker 3s infinite}
+        @keyframes flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,24%,55%{opacity:.6}}
+        .footer-link{color:#adb5bd;text-decoration:none;display:inline-block;margin:4px 0;transition:color .3s,transform .2s}
+        .footer-link:hover{color:#4f9eff;transform:translateX(4px)}
+        .social-icons{display:flex;gap:18px;margin-top:10px}
+        .social-link{color:#ffffffcc;font-size:1.6rem;transition:all .3s;text-shadow:0 0 5px rgba(255,255,255,.3)}
+        .social-link:hover{color:#4f9eff;transform:scale(1.25) rotate(8deg);text-shadow:0 0 15px #4f9eff}
+        .text-glow{color:#4f9eff;text-shadow:0 0 10px #4f9eff}
+        .qr-img{margin-top:15px;width:160px;border-radius:5px}
+
+        /* Dropdown mega */
+        .dropdown{position:relative}
+        .dropdown-toggle{cursor:pointer}
+        .dropdown-menu{display:none;position:absolute;top:100%;left:0;background:rgba(27,56,92,.95);padding:20px;border-radius:4px;min-width:700px;box-shadow:0 8px 20px rgba(0,0,0,.5);z-index:1000;grid-template-columns:repeat(4,1fr);gap:20px}
+        .dropdown:hover .dropdown-menu{display:grid}
+        .dropdown-column h4{margin-bottom:10px;color:#66c0f4;font-size:14px;font-weight:bold;border-bottom:1px solid #2a475e;padding-bottom:5px}
+        .dropdown-column a{display:block;color:#c7d5e0;font-size:13px;padding:4px 0;text-decoration:none;transition:color .2s}
+        .dropdown-column a:hover{color:#fff;text-decoration:underline}
+    </style>
+</head>
+<body>
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999"></div>
+
+<!-- ======= Login Modal ======= -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Login</h5>
+            <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div id="loginAlertArea"></div>
+            <form id="loginForm" autocomplete="off">
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" name="username" required/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password" required/>
+                </div>
+                <div class="d-flex align-items-center">
+                    <button type="submit" class="btn btn-primary me-3">Login</button>
+                    <a href="/forgot-password" class="text-decoration-none">Forgot password?</a>
+                </div>
+            </form>
+        </div>
+    </div></div>
+</div>
+
+<!-- ======= Register Modal ======= -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Register</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <div id="registerAlert"></div>
+            <form id="registerForm" autocomplete="off">
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" name="username" required/>
+                </div>
+
+                <label class="form-label">Email</label>
+                <div class="mb-3 d-flex align-items-center gap-2">
+                    <input type="email" class="form-control" id="email" name="email" required/>
+                    <button type="button" class="btn btn-sendcode" id="sendOtpBtn">Send code</button>
+                </div>
+
+                <div class="mb-3" id="otpSection" style="display:none;">
+                    <label class="form-label">OTP</label>
+                    <input type="text" class="form-control" id="otp" name="otp"/>
+                    <div class="form-text">Please enter the 6-digit code sent to your email</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required/>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Confirm password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required/>
+                    <div id="passwordMessage" class="form-text text-danger"></div>
+                </div>
+
+                <button type="submit" class="btn btn-success">Register</button>
+            </form>
+        </div>
+    </div></div>
+</div>
+
+<!-- ======= NAVBAR ======= -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
+        <a href="/index" class="logo-link text-white fs-4">
+            <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+        </a>
+
+        <ul class="navbar-nav d-flex flex-row mb-0">
+            <!-- Nếu muốn hiện link admin theo vai trò thì tự check localStorage -->
+            <li class="nav-item d-none" id="adminLink"><a class="nav-link" href="/admin/products">Quản lý sản phẩm</a></li>
+        </ul>
+
+        <div class="d-flex align-items-center">
+            <form class="d-flex me-2" action="/cart">
+                <button class="btn btn-outline-dark" type="submit">
+                    <i class="bi-cart-fill me-1"></i>
+                    <span>Cart</span>
+                    <span class="badge bg-dark text-white ms-1 rounded-pill" id="cartCount">0</span>
+                </button>
+            </form>
+
+            <div id="guestActions">
+                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
+            </div>
+
+            <div id="userBox" class="d-none">
+                <a href="/profile" class="profile-link">
+                    <img id="userAvatar" src="https://i.pravatar.cc/50" alt="avatar" class="rounded-circle profile-avatar"/>
+                    <div class="profile-name"><b id="userNameText"></b></div>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ======= BANNER + MENU ======= -->
+<header class="banner">
+    <div class="steam-menu">
+        <div class="steam-menu-inner">
+            <a href="/index">Cửa hàng của bạn</a>
+            <a href="/about">About</a>
+            <a href="/new">Sắp phát hành</a>
+
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle">Danh mục</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-column">
+                        <h4>Thể loại</h4>
+                        <a href="#">Hành động</a><a href="#">Phiêu lưu</a><a href="#">RPG</a><a href="#">Chiến thuật</a>
+                        <a href="#">Mô phỏng</a><a href="#">Đua xe</a><a href="#">Thể thao</a><a href="#">Kinh dị</a><a href="#">Puzzle</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Chủ đề</h4>
+                        <a href="#">Anime</a><a href="#">Sci-fi</a><a href="#">Cyberpunk</a><a href="#">Thế giới mở</a>
+                        <a href="#">Sinh tồn</a><a href="#">Vũ trụ</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Độ phổ biến</h4>
+                        <a href="#">Mới phát hành</a><a href="#">Sắp ra mắt</a><a href="#">Bán chạy</a><a href="#">Đánh giá cao</a><a href="#">Hot</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Nền tảng</h4>
+                        <a href="#">PC</a><a href="#">Smart Phone</a><a href="#">PlayStation</a><a href="#">Xbox</a><a href="#">Switch</a><a href="#">Mobile</a><a href="#">VR</a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#">Cửa hàng điểm</a>
+            <a href="/support">Hỗ trợ</a>
+
+            <div class="search-box">
+                <input type="text" id="search" placeholder="Tìm kiếm game..."/>
+                <button type="button">🔍</button>
+                <div id="suggestions"></div>
+            </div>
+            <div id="no-result" style="display:none;color:red;margin-top:3px;">Không tìm thấy game</div>
+        </div>
+    </div>
+
+    <div class="slides active" style="background-image:url('/img/Aboutbanner.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game1.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game2.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game3.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game4.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game5.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game6.jpg');"></div>
+
+    <div class="dots">
+        <span class="dot active" data-idx="0"></span>
+        <span class="dot" data-idx="1"></span>
+        <span class="dot" data-idx="2"></span>
+        <span class="dot" data-idx="3"></span>
+        <span class="dot" data-idx="4"></span>
+        <span class="dot" data-idx="5"></span>
+        <span class="dot" data-idx="6"></span>
+    </div>
+</header>
+
+<!-- ======= BODY: 3 cột ======= -->
+<div class="container mt-5">
+    <h3 class="name-game mt-3" id="gameName">Tên game</h3>
+    <div class="row align-items-stretch">
+        <!-- Cột 1 -->
+        <div class="col-md-4 d-flex flex-column equal-col">
+            <div class="p-3 w-100 h-100 d-flex flex-column">
+                <img id="mainImg" src="/img/notfound.png" alt="Game" class="img-fluid rounded shadow mb-3"/>
+
+                <div class="thumbs-row d-flex justify-content-between gap-2">
+                    <video class="thumb" muted autoplay loop id="thumbVideo"></video>
+                    <img class="thumb" id="thumb1"/>
+                    <img class="thumb" id="thumb2"/>
+                    <img class="thumb" id="thumb3"/>
+                </div>
+            </div>
+
+            <!-- Modal ảnh -->
+            <div class="modal fade" id="imageModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content bg-dark"><div class="modal-body text-center">
+                        <img id="modalImage" class="img-fluid rounded"/>
+                    </div></div>
+                </div>
+            </div>
+            <!-- Modal video -->
+            <div class="modal fade" id="videoModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content bg-dark border-0"><div class="modal-body p-0">
+                        <video id="modalVideo" class="w-100" controls muted autoplay></video>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột 2 -->
+        <div class="col-md-4 d-flex equal-col">
+            <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
+                <h4 class="mb-3">Thông tin chi tiết</h4>
+                <p><strong>💲 Giá:</strong> <span id="price">-</span></p>
+                <p><strong>⭐ Đánh giá:</strong> <span id="rating">-</span></p>
+                <p><strong>📂 Dung lượng:</strong> <span id="size">-</span></p>
+                <p><strong>🔞 Độ tuổi:</strong> <span id="age">-</span></p>
+                <p><strong>⬇️ Lượt tải:</strong> <span id="downloads">-</span></p>
+                <p><strong>📝 Mô tả:</strong> <span id="description">-</span></p>
+
+                <div class="d-flex gap-2 mt-auto">
+                    <form id="buyForm" class="w-100">
+                        <input type="hidden" name="gameId" id="buyGameId"/>
+                        <button type="submit" class="btn btn-success w-100">🛒 Mua ngay</button>
+                    </form>
+                    <form id="addCartForm" class="w-100">
+                        <input type="hidden" name="gameId" id="cartGameId"/>
+                        <button type="submit" class="btn btn-primary w-100">➕ Thêm giỏ hàng</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột 3 -->
+        <div class="col-md-4 d-flex equal-col">
+            <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
+                <h4 class="mb-3">Đánh giá & Bình luận</h4>
+                <div class="mb-3">
+                    <h5>⭐ 4.5 / 5</h5>
+                    <small>6.5 triệu lượt đánh giá</small>
+                </div>
+                <div class="border rounded p-2 mb-2">
+                    <strong>Nguyễn Văn A</strong>
+                    <p>⭐⭐⭐⭐⭐</p><p>Game rất hay, đồ họa đẹp và mượt.</p>
+                </div>
+                <div class="border rounded p-2 mb-2">
+                    <strong>Trần Thị B</strong>
+                    <p>⭐⭐⭐⭐</p><p>Chơi vui nhưng hơi nặng máy.</p>
+                </div>
+                <div class="border rounded p-2 mb-2">
+                    <strong>Lê Văn C</strong>
+                    <p>⭐⭐⭐⭐⭐</p><p>Update mới nhiều tính năng hấp dẫn 👍</p>
+                </div>
+                <div class="text-center mt-auto">
+                    <button class="btn btn-outline-primary btn-sm">Xem thêm bình luận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======= FOOTER ======= -->
+<footer class="footer custom-footer mt-auto py-5 text-white">
+    <div class="container px-5">
+        <div class="row gy-4 gx-5">
+            <div class="col-md-3">
+                <a href="/index" class="logo-link"><h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3></a>
+                <p class="text-white-50">Trải nghiệm thế giới game đỉnh cao…</p>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Thông tin</h5>
+                <ul class="list-unstyled text-white-50">
+                    <li><a href="/support" class="footer-link">Hỗ trợ</a></li>
+                    <li><a href="/about" class="footer-link">About us</a></li>
+                    <li><a href="/tos" class="footer-link">Điều khoản dịch vụ</a></li>
+                    <li><a href="/privacy" class="footer-link">Chính sách bảo mật</a></li>
+                    <li><a href="/guide" class="footer-link">Hướng dẫn mua hàng</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Liên hệ</h5>
+                <p><a href="tel:+84912345678" class="footer-link">+84 1900 1099</a></p>
+                <p><a href="https://surl.li/bhtojh" target="_blank" class="footer-link">https://surl.li/bhtojh/</a></p>
+                <p><a href="mailto:support@gamestore.com" class="footer-link">support@gamestore.com</a></p>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Kết nối với chúng tôi</h5>
+                <div class="social-icons">
+                    <a href="https://surl.li/bhtojh" class="social-link" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                </div>
+                <img src="/img/qr.jpg" alt="QR Shop" class="qr-img"/>
+            </div>
+        </div>
+
+        <hr class="border-secondary my-4"/>
+        <div class="text-center text-white-50 small">
+            © 2025 <span class="fw-bold text-primary">GameStore</span>. All rights reserved. | Designed by <span class="text-glow">Do Trong Tri</span>
+        </div>
+    </div>
+</footer>
+
+<!-- Icons + Bootstrap JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ======= PAGE LOGIC (JS THUẦN) ======= -->
+<script>
+    // --- Helpers lấy id từ URL: hỗ trợ /games?id=.. hoặc /games/{id}
+    function getGameId() {
+        const usp = new URLSearchParams(location.search);
+        if (usp.get('id')) return usp.get('id');
+        const parts = location.pathname.split('/').filter(Boolean);
+        const idx = parts.indexOf('games');
+        if (idx !== -1 && parts[idx+1]) return parts[idx+1];
+        return null;
+    }
+
+    // --- Data: chuyển toàn bộ "if (id)" trong JSP thành object map
+    const GAMES = {
+        "1": { name:"Liên Quân Mobile", price:"$999.00", img:"/img/game1.jpg",
+            rating:"⭐⭐⭐⭐☆ (4.0/5)", size:"2.5 GB", age:"12+", downloads:"50 Tr+",
+            description:"Liên Quân Mobile là tựa game MOBA nổi tiếng...",
+            video:"/videos/lienquan.mp4", preview1:"/img/demo.jpg", preview2:"/img/demo1.jpg", preview3:"/img/demo3.jpg" },
+        "2": { name:"Free Fire", price:"Miễn phí", img:"/img/game2.jpg",
+            rating:"⭐ (1/5)", size:"2.0 GB", age:"12+", downloads:"1 T+",
+            description:"Free Fire là một trò chơi bắn súng sinh tồn...",
+            video:"/videos/freefire.mp4", preview1:"/img/demo4.jpg", preview2:"/img/demo5.jpg", preview3:"/img/demo6.jpg" },
+        "3": { name:"Zing Speed Mobile", price:"Miễn phí", img:"/img/game3.jpg",
+            rating:"⭐⭐⭐⭐⭐ (3.5/5)", size:"3.5 GB", age:"18+", downloads:"30 Tr+",
+            description:"ZingSpeed Mobile là trò chơi đua xe tốc độ cao...",
+            video:"/videos/zingspeed.mp4", preview1:"/img/demo7.jpg", preview2:"/img/demo8.jpg", preview3:"/img/demo9.jpg" },
+        "4": { name:"Genshin Impact", price:"Miễn phí", img:"/img/game5.jpg",
+            rating:"⭐⭐⭐⭐⭐ (4.7/5)", size:"📂 15GB", age:"🔞 12+", downloads:"⬇️ 100 triệu+",
+            description:"Genshin Impact là trò chơi nhập vai phiêu lưu...",
+            video:"/videos/GenshinImpact.mp4", preview1:"/img/demo14.jpg", preview2:"/img/demo15.jpg", preview3:"/img/demo16.jpg" },
+        "5": { name:"Chiến Cơ Huyền Thoại", price:"$5.00", img:"/img/game4.jpg",
+            rating:"⭐⭐⭐⭐ (4.2/5)", size:"📂 300MB", age:"🔞 7+", downloads:"⬇️ 100 triệu+",
+            description:"Chiến Cơ Huyền Thoại là trò chơi bắn máy bay...",
+            video:"/videos/ccht.mp4", preview1:"/img/demo17.jpg", preview2:"/img/demo18.jpg", preview3:"/img/demo19.jpg" },
+        "6": { name:"PUBG Mobile", price:"$29.99", img:"/img/game6.jpg",
+            rating:"⭐⭐⭐⭐⭐ (4.8/5)", size:"📂 400MB", age:"🔞 7+", downloads:"⬇️ 200 triệu+",
+            description:"PUBG là trò chơi sinh tồn bắn súng...",
+            video:"/videos/pubg.mp4", preview1:"/img/demo20.jpg", preview2:"/img/demo21.jpg", preview3:"/img/demo22.jpg" },
+        "7": { name:"Cyberpunk", price:"Miễn phí", img:"/img/game7.jpg",
+            rating:"⭐⭐⭐⭐⭐ (4.5/5)", size:"📂 3GB", age:"🔞 16+", downloads:"⬇️ 300 triệu+",
+            description:"Cyberpunk 2077 là trò chơi nhập vai thế giới mở...",
+            video:"/videos/Cyberpunk.mp4", preview1:"/img/demo23.jpg", preview2:"/img/demo24.jpg", preview3:"/img/demo25.jpg" },
+        "8": { name:"Among Us", price:"Miễn phí", img:"/img/game8.jpg",
+            rating:"⭐⭐⭐⭐ (4.3/5)", size:"📂 500MB", age:"🔞 7+", downloads:"⬇️ 500 triệu+",
+            description:"Among Us là trò chơi xã hội nhiều người chơi...",
+            video:"/videos/Among.mp4", preview1:"/img/demo26.jpg", preview2:"/img/demo27.jpg", preview3:"/img/demo28.jpg" },
+        "9": { name:"Võ Lâm Truyền Kỳ", price:"Miễn phí", img:"/img/game9.jpg",
+            rating:"⭐⭐⭐⭐ (4.4/5)", size:"📂 350MB", age:"🔞 7+", downloads:"⬇️ 200 triệu+",
+            description:"Võ Lâm Truyền Kỳ là trò chơi nhập vai hành động...",
+            video:"/videos/Volamtruyenky.mp4", preview1:"/img/demo29.jpg", preview2:"/img/demo30.jpg", preview3:"/img/demo31.jpg" },
+        "10":{ name:"Hay Day", price:"Miễn phí", img:"/img/game10.jpg",
+            rating:"⭐⭐⭐⭐⭐ (4.6/5)", size:"📂 3GB", age:"🔞 12+", downloads:"⬇️ 50 triệu+",
+            description:"Hay Day là trò chơi nông trại mô phỏng...",
+            video:"/videos/hayday.mp4", preview1:"/img/demo32.jpg", preview2:"/img/demo33.jpg", preview3:"/img/demo34.jpg" },
+        "11":{ name:"Liên Minh Huyền Thoại", price:"Miễn phí", img:"/img/game11.jpg",
+            rating:"⭐⭐⭐⭐ (4.1/5)", size:"📂 1GB", age:"🔞 7+", downloads:"⬇️ 500 triệu+",
+            description:"LMHT là trò chơi MOBA 5v5...",
+            video:"/videos/LMHT.mp4", preview1:"/img/demo35.jpg", preview2:"/img/demo36.jpg", preview3:"/img/demo37.jpg" },
+        "12":{ name:"Dota 2", price:"Miễn phí", img:"/img/game12.jpg",
+            rating:"⭐⭐⭐⭐ (4.3/5)", size:"📂 150MB", age:"🔞 7+", downloads:"⬇️ 1 tỷ+",
+            description:"Dota 2 là trò chơi MOBA cạnh tranh cao...",
+            video:"/videos/Dota2.mp4", preview1:"/img/demo38.jpg", preview2:"/img/demo39.jpg", preview3:"/img/demo40.jpg" },
+        "13":{ name:"Call of Duty", price:"Miễn phí (có IAP)", img:"/img/game13.jpg",
+            rating:"⭐⭐⭐⭐ (4.2/5)", size:"📂 250MB", age:"🔞 3+", downloads:"⬇️ 1 tỷ+",
+            description:"Call of Duty là series bắn súng FPS nổi tiếng...",
+            video:"/videos/CallofDuty.mp4", preview1:"/img/demo41.jpg", preview2:"/img/demo42.jpg", preview3:"/img/demo43.jpg" }
+    };
+
+    // --- Render game theo id
+    function renderGame() {
+        const id = getGameId();
+        const g = GAMES[id] || {
+            name:"Game không tồn tại", price:"-", img:"/img/notfound.png",
+            rating:"-", size:"-", age:"-", downloads:"-",
+            description:"-", video:"", preview1:"", preview2:"", preview3:""
+        };
+
+        document.title = `${g.name} - Chi tiết game`;
+        document.getElementById('gameName').textContent = g.name;
+        document.getElementById('mainImg').src = g.img;
+        document.getElementById('price').textContent = g.price;
+        document.getElementById('rating').textContent = g.rating;
+        document.getElementById('size').textContent = g.size;
+        document.getElementById('age').textContent = g.age;
+        document.getElementById('downloads').textContent = g.downloads;
+        document.getElementById('description').textContent = g.description;
+
+        const v = document.getElementById('thumbVideo');
+        v.innerHTML = g.video ? `<source src="${g.video}" type="video/mp4">` : '';
+        v.onclick = () => g.video && openVideoModal(g.video);
+
+        const t1 = document.getElementById('thumb1');
+        const t2 = document.getElementById('thumb2');
+        const t3 = document.getElementById('thumb3');
+        [t1,t2,t3].forEach((el,i)=>{
+            const src = g[`preview${i+1}`];
+            el.src = src || '/img/notfound.png';
+            el.onclick = () => openImageModal(src || '/img/notfound.png');
+        });
+
+        // set hidden inputs cho forms
+        document.getElementById('buyGameId').value = id || '';
+        document.getElementById('cartGameId').value = id || '';
+    }
+
+    // --- Search box demo (static)
+    const gamesForSearch = [
+        {name:"Liên Quân Mobile", img:"/img/game1.jpg", anchor:"#lienquan"},
+        {name:"Free Fire", img:"/img/game2.jpg", anchor:"#freefire"},
+        {name:"Zingspeed Mobile", img:"/img/game3.jpg", anchor:"#zingspeed"},
+        {name:"Chiến Cơ Huyền Thoại", img:"/img/game4.jpg", anchor:"#chienco"},
+        {name:"Genshin Impact", img:"/img/game5.jpg", anchor:"#genshin"},
+        {name:"PUBG Mobile", img:"/img/game6.jpg", anchor:"#pubg"},
+        {name:"Cyberpunk", img:"/img/game7.jpg", anchor:"#cyberpunk"},
+        {name:"Among Us", img:"/img/game8.jpg", anchor:"#amongus"},
+        {name:"Hay Day", img:"/img/game10.jpg", anchor:"#hayday"},
+        {name:"Lien Minh Huyen Thoai", img:"/img/game11.jpg", anchor:"#lmth"},
+        {name:"Dota", img:"/img/game12.jpg", anchor:"#dota"},
+        {name:"Call of Duty", img:"/img/game13.jpg", anchor:"#duty"},
+        {name:"Võ Lâm Truyền Kỳ", img:"/img/game9.jpg", anchor:"#kiemhiep"}
+    ];
+    (function initSearch(){
+        const searchBar = document.getElementById("search");
+        const suggestions = document.getElementById("suggestions");
+        const noResult = document.getElementById("no-result");
+
+        const placeholder = "data:image/svg+xml;utf8," + encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#2b2b2b"/><text x="50%" y="50%" fill="#999" font-size="12" text-anchor="middle" dominant-baseline="middle">No Image</text></svg>'
+        );
+
+        function createSuggestionItem(game){
+            const div = document.createElement("div");
+            div.className = "suggestion-item";
+            const img = document.createElement("img");
+            img.alt = game.name;
+            img.src = game.img;
+            img.onerror = ()=> img.src = placeholder;
+            const span = document.createElement("span");
+            span.textContent = game.name;
+            div.appendChild(img); div.appendChild(span);
+            div.onclick = ()=> location.href = "/index" + game.anchor;
+            return div;
+        }
+
+        function searchGames(){
+            const q = searchBar.value.trim().toLowerCase();
+            suggestions.innerHTML = "";
+            noResult.style.display = "none";
+            if(!q){ suggestions.style.display = "none"; return []; }
+            const filtered = gamesForSearch.filter(g => g.name.toLowerCase().includes(q));
+            if(filtered.length===0){ suggestions.style.display="none"; noResult.style.display="block"; }
+            else{ filtered.forEach(g=> suggestions.appendChild(createSuggestionItem(g))); suggestions.style.display="block"; }
+            return filtered;
+        }
+
+        searchBar.addEventListener("input", searchGames);
+        searchBar.addEventListener("keydown", (e)=>{
+            if(e.key==="Enter"){
+                const results = searchGames();
+                if(results.length===0) alert("Không tìm thấy game");
+            }
+        });
+        document.addEventListener("click",(e)=>{
+            if(!e.target.closest(".search-box")){
+                suggestions.style.display = "none";
+                noResult.style.display = "none";
+            }
+        });
+    })();
+
+    // --- Banner slideshow
+    (function(){
+        let slideIndex = 0;
+        const slides = document.querySelectorAll(".slides");
+        const dots = document.querySelectorAll(".dot");
+
+        function showSlide(index){
+            slides.forEach((s,i)=>{
+                s.classList.toggle("active", i===index);
+                dots[i].classList.toggle("active", i===index);
+            });
+        }
+        function changeSlide(n){
+            slideIndex = (slideIndex + n + slides.length) % slides.length;
+            showSlide(slideIndex);
+        }
+        dots.forEach(d => d.addEventListener('click', ()=> {
+            slideIndex = parseInt(d.dataset.idx,10); showSlide(slideIndex);
+        }));
+        showSlide(slideIndex);
+        setInterval(()=> changeSlide(1), 3000);
+    })();
+
+    // --- Image/Video modal
+    function openImageModal(src){
+        document.getElementById("modalImage").src = src;
+        new bootstrap.Modal(document.getElementById('imageModal')).show();
+    }
+    function openVideoModal(src){
+        const videoEl = document.getElementById("modalVideo");
+        videoEl.src = src;
+        const modal = new bootstrap.Modal(document.getElementById('videoModal'));
+        modal.show();
+        videoEl.play().catch(()=> console.log("Autoplay bị chặn"));
+        document.getElementById('videoModal').addEventListener('hidden.bs.modal', ()=>{
+            videoEl.pause(); videoEl.currentTime = 0; videoEl.removeAttribute("src");
+        }, {once:true});
+    }
+
+    // --- Đăng nhập/Đăng ký (demo, không gọi server)
+    (function authDemo(){
+        const userBox = document.getElementById('userBox');
+        const guest = document.getElementById('guestActions');
+        const userNameText = document.getElementById('userNameText');
+        const userAvatar = document.getElementById('userAvatar');
+        const adminLink = document.getElementById('adminLink');
+
+        // Giả lập session từ localStorage
+        const raw = localStorage.getItem('gs_user');
+        if(raw){
+            const u = JSON.parse(raw);
+            guest.classList.add('d-none');
+            userBox.classList.remove('d-none');
+            userNameText.textContent = u.username || 'User';
+            userAvatar.src = `https://i.pravatar.cc/50?u=${encodeURIComponent(u.username||'user')}`;
+            if(u.role === 'admin') adminLink.classList.remove('d-none');
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', (e)=>{
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const username = fd.get('username'); // demo
+            localStorage.setItem('gs_user', JSON.stringify({username, role:'user'}));
+            location.reload();
+        });
+
+        // OTP demo
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const otpSection = document.getElementById('otpSection');
+        const otpInput = document.getElementById('otp');
+        let timerId = null;
+        sendOtpBtn.addEventListener('click', ()=>{
+            const emailVal = document.getElementById('email').value;
+            if(!emailVal){ alert("Vui lòng nhập email!"); return; }
+            otpSection.style.display = 'block';
+            otpInput.required = true;
+            let countdown = 60;
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.textContent = `Gửi mã (${countdown}s)`;
+            timerId = setInterval(()=>{
+                countdown--;
+                if(countdown>0) sendOtpBtn.textContent = `Gửi mã (${countdown}s)`;
+                else{
+                    clearInterval(timerId);
+                    sendOtpBtn.disabled = false;
+                    sendOtpBtn.textContent = "Gửi mã";
+                }
+            },1000);
+            alert("Mã OTP demo đã 'gửi' (giả lập).");
+        });
+
+        // check password match
+        const pw = document.getElementById('password');
+        const cpw = document.getElementById('confirmPassword');
+        const msg = document.getElementById('passwordMessage');
+        function checkPw(){
+            msg.textContent = (cpw.value && pw.value !== cpw.value) ? "❌ Mật khẩu không khớp!" : "";
+        }
+        pw.addEventListener('input', checkPw);
+        cpw.addEventListener('input', checkPw);
+
+        document.getElementById('registerForm').addEventListener('submit', (e)=>{
+            e.preventDefault();
+            if(pw.value !== cpw.value){ alert("Mật khẩu nhập lại không khớp!"); return; }
+            if(otpSection.style.display === "none"){ alert("Bạn cần gửi OTP trước khi đăng ký!"); return; }
+            if(!otpInput.value.trim()){ alert("Vui lòng điền mã OTP!"); return; }
+            const fd = new FormData(e.target);
+            const username = fd.get('username');
+            localStorage.setItem('gs_user', JSON.stringify({username, role:'user'}));
+            alert("Đăng ký thành công (demo).");
+            location.reload();
+        });
+    })();
+
+    // --- Cart (demo)
+    (function cartDemo(){
+        const cartCountEl = document.getElementById('cartCount');
+        const raw = localStorage.getItem('gs_cart');
+        const cart = raw ? JSON.parse(raw) : [];
+        const count = cart.reduce((sum, it)=> sum + (it.quantity||1), 0);
+        cartCountEl.textContent = count;
+
+        document.getElementById('buyForm').addEventListener('submit', (e)=>{
+            e.preventDefault();
+            const id = document.getElementById('buyGameId').value;
+            alert("Mua ngay (demo) game id = "+id);
+            // TODO: chuyển sang trang checkout nếu có
+        });
+
+        document.getElementById('addCartForm').addEventListener('submit', (e)=>{
+            e.preventDefault();
+            const id = document.getElementById('cartGameId').value;
+            const item = cart.find(x=> x.id===id);
+            if(item) item.quantity = (item.quantity||1)+1;
+            else cart.push({id, quantity:1});
+            localStorage.setItem('gs_cart', JSON.stringify(cart));
+            cartCountEl.textContent = cart.reduce((s,it)=> s+(it.quantity||1),0);
+            // toast nhẹ
+            const t = document.createElement('div');
+            t.className="toast align-items-center text-bg-primary border-0 show";
+            t.role="alert"; t.innerHTML=`<div class="d-flex"><div class="toast-body">Đã thêm vào giỏ hàng!</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
+            document.querySelector('.toast-container').appendChild(t);
+            setTimeout(()=> t.remove(), 2500);
+        });
+    })();
+
+    // --- Show register/login error by URL query (?showForm=register&loginError=...)
+    (function urlDrivenUI(){
+        const usp = new URLSearchParams(location.search);
+        const showForm = usp.get('showForm'); // register / login
+        if(showForm === 'register'){
+            new bootstrap.Modal(document.getElementById('registerModal')).show();
+        } else if (showForm === 'login'){
+            new bootstrap.Modal(document.getElementById('loginModal')).show();
+        }
+
+        const loginError = usp.get('loginError');
+        if(loginError){
+            const container = document.getElementById('loginAlertArea');
+            container.innerHTML = `
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span class="alert-message">${decodeURIComponent(loginError)}</span>
+          </div>`;
+            const modalEl = document.getElementById('loginModal');
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl, {backdrop:'static', keyboard:false});
+            let allowClose = false;
+            modalEl.addEventListener('hide.bs.modal', (e)=>{ if(!allowClose){ e.preventDefault(); setTimeout(()=> modal.show(), 50); } });
+            modal.show();
+            document.getElementById('loginCloseBtn').addEventListener('click', ()=>{ allowClose = true; modal.hide(); });
+        }
+
+        const buyError = usp.get('buyError');
+        if(buyError){
+            showFloating(`${decodeURIComponent(buyError)}`, '#f44336', 'white');
+        }
+        const cartError = usp.get('cartError');
+        if(cartError){
+            showFloating(`${decodeURIComponent(cartError)}`, '#fff3cd', 'black');
+        }
+
+        function showFloating(text, bg, color){
+            const el = document.createElement('div');
+            el.id = 'floatingAlert';
+            el.style = `position:fixed;top:20px;right:20px;background:${bg};color:${color};padding:15px;border-radius:8px;z-index:9999;box-shadow:0 4px 8px rgba(0,0,0,.2)`;
+            el.textContent = text;
+            document.body.appendChild(el);
+            setTimeout(()=>{
+                el.style.transition='opacity .5s'; el.style.opacity='0';
+                setTimeout(()=> el.remove(), 500);
+            }, 3000);
+        }
+    })();
+
+    // --- Init
+    renderGame();
+</script>
+</body>
+</html>
