@@ -1,0 +1,1676 @@
+<%
+// Lấy id từ URL
+String id = request.getParameter("id");
+
+// Biến lưu thông tin game
+String name = "";
+String price = "";
+String img = "";
+String rating = "";
+String size = "";
+String age = "";
+String downloads = "";
+String description = "";
+
+// Ảnh demo nhỏ
+String preview1 = "";
+String preview2 = "";
+String preview3 = "";
+String video = "";
+
+// Giả lập dữ liệu game (1 -> 13)
+if ("1".equals(id)) {
+name = "Liên Quân Mobile";
+price = "$999.00";
+img = "img/game1.jpg";
+rating = "⭐⭐⭐⭐☆ (4.0/5)";
+size = "2.5 GB";
+age = "12+";
+downloads = "50 Tr+";
+description = "Liên Quân Mobile là tựa game MOBA "
++ "nổi tiếng trên di động, nơi người chơi tham gia"
++ " các trận chiến 5v5 kịch tính. Game sở hữu hệ thống"
++ " tướng đa dạng với nhiều kỹ năng độc đáo, cho phép"
++ " người chơi thỏa sức lựa chọn chiến thuật. Đồ họa đẹp"
++ " mắt, âm thanh sống động mang đến trải nghiệm chân thực"
++ " và hấp dẫn. Đây là trò chơi đòi hỏi tinh thần đồng đội,"
++ " kỹ năng cá nhân và tư duy chiến lược để giành chiến thắng.";
+video = "videos/lienquan.mp4";
+preview1 = "img/demo.jpg";
+preview2 = "img/demo1.jpg";
+preview3 = "img/demo3.jpg";
+} else if ("2".equals(id)) {
+name = "Free Fire";
+price = "Miễn phí";
+img = "img/game2.jpg";
+rating = "⭐ (1/5)";
+size = "2.0 GB";
+age = "12+";
+downloads = "1 T+";
+description = "Free Fire là một trò chơi bắn súng sinh tồn hấp dẫn trên di động, nơi 50 người chơi được thả xuống một hòn đảo để chiến đấu đến cùng. Người chơi phải tìm vũ khí, trang bị và tài nguyên để sống sót, đồng thời tránh vùng an toàn thu hẹp dần. Trò chơi nổi bật với nhịp độ nhanh, chiến lược đa dạng và khả năng tùy chỉnh nhân vật. Với các chế độ chơi phong phú và sự kiện liên tục, Free Fire mang đến trải nghiệm hành động gay cấn và kịch tính cho mọi game thủ.";
+video = "videos/freefire.mp4";
+preview1 = "img/demo4.jpg";
+preview2 = "img/demo5.jpg";
+preview3 = "img/demo6.jpg";
+} else if ("3".equals(id)) {
+name = "Zing Speed Mobile";
+price = "Miễn phí";
+img = "img/game3.jpg";
+rating = "⭐⭐⭐⭐⭐ (3.5/5)";
+size = "3.5 GB";
+age = "18+";
+downloads = "30 Tr+";
+description = "ZingSpeed Mobile là trò chơi đua xe tốc độ cao trên di động, nơi người chơi có thể tham gia các cuộc đua kịch tính và so tài kỹ năng lái xe. Trò chơi nổi bật với đồ họa sinh động, nhiều chế độ đua khác nhau và hệ thống xe đa dạng để tùy chỉnh. Người chơi còn có thể kết nối, thi đấu và tương tác với bạn bè trong các giải đua sôi động.";
+video = "videos/zingspeed.mp4";
+preview1 = "img/demo7.jpg";
+preview2 = "img/demo8.jpg";
+preview3 = "img/demo9.jpg";
+} else if ("4".equals(id)) {
+name = "Genshin Impact";
+price = "Miễn phí";
+img = "img/game5.jpg";
+rating = "⭐⭐⭐⭐⭐ (4.7/5)";
+size = "📂 15GB";
+age = "🔞 12+";
+downloads = "⬇️ 100 triệu+";
+description = "Genshin Impact là trò chơi nhập vai phiêu lưu thế giới mở trên di động và PC, nơi người chơi khám phá vùng đất Teyvat rộng lớn đầy bí ẩn. Người chơi có thể điều khiển nhiều nhân vật với khả năng nguyên tố khác nhau, chiến đấu và giải đố để hoàn thành nhiệm vụ. Trò chơi nổi bật với đồ họa đẹp mắt, cốt truyện phong phú và lối chơi tự do sáng tạo.";
+video = "videos/GenshinImpact.mp4";
+preview1 = "img/demo14.jpg";
+preview2 = "img/demo15.jpg";
+preview3 = "img/demo16.jpg";
+} else if ("5".equals(id)) {
+name = "Chiến Cơ Huyền Thoại";
+price = "$5.00";
+img = "img/game4.jpg";
+rating = "⭐⭐⭐⭐ (4.2/5)";
+size = "📂 300MB";
+age = "🔞 7+";
+downloads = "⬇️ 100 triệu+";
+video = "videos/ccht.mp4";
+preview1 = "img/demo17.jpg";
+preview2 = "img/demo18.jpg";
+preview3 = "img/demo19.jpg";
+description = "Chiến Cơ Huyền Thoại là trò chơi bắn máy bay hành động hấp dẫn trên di động, nơi người chơi điều khiển chiến cơ vượt qua làn sóng kẻ thù đông đảo. Trò chơi nổi bật với đồ họa 3D sống động, hiệu ứng hoành tráng và nhiều loại vũ khí đa dạng. Người chơi có thể nâng cấp chiến cơ, tham gia nhiệm vụ và thử thách để trở thành phi công huyền thoại.";
+} else if ("6".equals(id)) {
+name = "PUBG Mobile";
+price = "$29.99";
+img = "img/game6.jpg";
+rating = "⭐⭐⭐⭐⭐ (4.8/5)";
+size = "📂 400MB";
+age = "🔞 7+";
+downloads = "⬇️ 200 triệu+";
+video = "videos/pubg.mp4";
+preview1 = "img/demo20.jpg";
+preview2 = "img/demo21.jpg";
+preview3 = "img/demo22.jpg";
+description = "PUBG là trò chơi sinh tồn bắn súng góc nhìn thứ nhất và thứ ba, nơi người chơi nhảy dù xuống một hòn đảo và chiến đấu để trở thành người sống sót cuối cùng. Trò chơi nổi bật với nhịp độ căng thẳng, chiến thuật đa dạng và nhiều loại vũ khí, phương tiện. Người chơi phải thu thập trang bị, né tránh vùng nguy hiểm và đối thủ để chiến thắng.";
+} else if ("7".equals(id)) {
+name = "Cyberpunk";
+price = "Miễn phí";
+img = "img/game7.jpg";
+rating = "⭐⭐⭐⭐⭐ (4.5/5)";
+size = "📂 3GB";
+age = "🔞 16+";
+downloads = "⬇️ 300 triệu+";
+video = "videos/Cyberpunk.mp4";
+preview1 = "img/demo23.jpg";
+preview2 = "img/demo24.jpg";
+preview3 = "img/demo25.jpg";
+description = "Cyberpunk 2077 là trò chơi nhập vai thế giới mở lấy bối cảnh tương lai dystopia, nơi người chơi vào vai V – một lính đánh thuê trong thành phố Night City. Trò chơi nổi bật với cốt truyện sâu sắc, đồ họa chân thực và nhiều lựa chọn tương tác ảnh hưởng đến diễn biến câu chuyện. Người chơi có thể tùy chỉnh nhân vật, vũ khí và kỹ năng để thực hiện nhiệm vụ.";
+} else if ("8".equals(id)) {
+name = "Among Us";
+price = "Miễn phí";
+img = "img/game8.jpg";
+rating = "⭐⭐⭐⭐ (4.3/5)";
+size = "📂 500MB";
+age = "🔞 7+";
+downloads = "⬇️ 500 triệu+";
+video = "videos/Among.mp4";
+preview1 = "img/demo26.jpg";
+preview2 = "img/demo27.jpg";
+preview3 = "img/demo28.jpg";
+description = "Among Us là trò chơi xã hội nhiều người chơi, nơi các thành viên phi hành đoàn phải hoàn thành nhiệm vụ trên tàu vũ trụ trong khi tìm ra kẻ mạo danh. Kẻ mạo danh sẽ cố gắng loại bỏ người khác mà không bị phát hiện. Trò chơi nổi bật với cơ chế suy luận, lừa dối và hợp tác giữa người chơi, mang đến trải nghiệm vừa căng thẳng vừa vui nhộn.";
+} else if ("9".equals(id)) {
+name = "Võ Lâm Truyền Kỳ";
+price = "Miễn phí";
+img = "img/game9.jpg";
+rating = "⭐⭐⭐⭐ (4.4/5)";
+size = "📂 350MB";
+age = "🔞 7+";
+downloads = "⬇️ 200 triệu+";
+video = "videos/Volamtruyenky.mp4";
+preview1 = "img/demo29.jpg";
+preview2 = "img/demo30.jpg";
+preview3 = "img/demo31.jpg";
+description = "Võ Lâm Truyền Kỳ là trò chơi nhập vai hành động trên di động với bối cảnh võ hiệp Trung Quốc, nơi người chơi luyện võ, hoàn thành nhiệm vụ và chiến đấu với kẻ thù. Trò chơi nổi bật với đồ họa 3D sống động, các chiêu thức võ thuật đa dạng và hệ thống PvP lôi cuốn. Người chơi có thể gia nhập bang hội, tham gia hoạt động thế giới và nâng cấp nhân vật.";
+} else if ("10".equals(id)) {
+name = "Hay Day";
+price = "Miễn phí";
+img = "img/game10.jpg";
+rating = "⭐⭐⭐⭐⭐ (4.6/5)";
+size = "📂 3GB";
+age = "🔞 12+";
+downloads = "⬇️ 50 triệu+";
+video = "videos/hayday.mp4";
+preview1 = "img/demo32.jpg";
+preview2 = "img/demo33.jpg";
+preview3 = "img/demo34.jpg";
+description = "Hay Day là trò chơi nông trại mô phỏng, nơi người chơi canh tác cây trồng, chăn nuôi thú và quản lý nông trại của mình. Trò chơi nổi bật với đồ họa tươi sáng, nhiệm vụ phong phú và khả năng giao thương với bạn bè. Người chơi có thể mở rộng nông trại, chế biến sản phẩm và tham gia các sự kiện đặc biệt.";
+} else if ("11".equals(id)) {
+name = "Liên Minh Huyền Thoại";
+price = "Miễn phí";
+img = "img/game11.jpg";
+rating = "⭐⭐⭐⭐ (4.1/5)";
+size = "📂 1GB";
+age = "🔞 7+";
+downloads = "⬇️ 500 triệu+";
+video = "videos/hayday.mp4";
+preview1 = "img/demo35.jpg";
+preview2 = "img/demo36.jpg";
+preview3 = "img/demo37.jpg";
+description = "Liên Minh Huyền Thoại là trò chơi MOBA nhiều người chơi, nơi hai đội 5 người chiến đấu để phá hủy căn cứ đối phương. Trò chơi nổi bật với hơn 160 tướng đa dạng, chiến thuật sâu sắc và khả năng phối hợp đồng đội. Người chơi cần nâng cấp tướng, kiểm soát bản đồ và phối hợp chiến lược để giành chiến thắng.";
+} else if ("12".equals(id)) {
+name = "Dota 2";
+price = "Miễn phí";
+img = "img/game12.jpg";
+rating = "⭐⭐⭐⭐ (4.3/5)";
+size = "📂 150MB";
+age = "🔞 7+";
+downloads = "⬇️ 1 tỷ+";
+description = "Dota 2 là trò chơi MOBA cạnh tranh cao, nơi hai đội 5 người điều khiển các anh hùng với kỹ năng riêng biệt để phá hủy căn cứ đối phương. Trò chơi nổi bật với chiến thuật phức tạp, hơn 120 anh hùng và các trận đấu căng thẳng. Người chơi phải phối hợp đồng đội, farm tài nguyên và lựa chọn trang bị hợp lý để thắng trận.";
+} else if ("13".equals(id)) {
+name = "Call of Duty";
+price = "Miễn phí (có IAP)";
+img = "img/game13.jpg";
+rating = "⭐⭐⭐⭐ (4.2/5)";
+size = "📂 250MB";
+age = "🔞 3+";
+downloads = "⬇️ 1 tỷ+";
+description = "Call of Duty là loạt trò chơi bắn súng góc nhìn thứ nhất nổi tiếng, với nhiều chế độ chơi từ chiến dịch cốt truyện đến đấu mạng trực tuyến. Trò chơi nổi bật với đồ họa chân thực, vũ khí đa dạng và nhịp độ hành động nhanh. Người chơi có thể nâng cấp vũ khí, tham gia các chế độ PvP và trải nghiệm các chiến dịch quân sự sống động.";
+} else {
+name = "Game không tồn tại";
+img = "img/notfound.png";
+price = "-";
+rating = "-";
+size = "-";
+age = "-";
+downloads = "-";
+}
+%>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= name %> - Chi tiết game</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+<body>
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999"></div>
+<%
+String loginError = (String) request.getAttribute("loginError");
+String enteredUsername = (String) request.getAttribute("enteredUsername");
+%>
+
+<!-- Modal Login (single source of truth) -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <!-- remove data-bs-dismiss so we control close behavior -->
+                <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="loginAlertArea">
+                    <% if (loginError != null) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-message"><%= loginError %></span>
+                        <span class="countdown"> (<span class="seconds">3</span>s)</span>
+                    </div>
+                    <% } %>
+                </div>
+
+                <form action="login" method="post" id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username"
+                               value="<%= enteredUsername != null ? enteredUsername : "" %>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <button type="submit" class="btn btn-primary me-3">Login</button>
+                        <a href="ForgotPassword" class="text-decoration-none">Forgot password?</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CSS form Login -->
+<style>
+    #loginModal .modal-header {
+        background: linear-gradient(135deg, #0d47a1, #1a237e);
+        color: #fff;
+        border-bottom: none;
+        padding: 1rem 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    /* nút close trắng cho nổi bật */
+    #loginModal .modal-header .btn-close {
+        filter: invert(1);
+        position: absolute;
+        right: 1rem;
+    }
+
+    /* Thu nhỏ modal tổng thể */
+    #loginModal .modal-dialog {
+        max-width: 380px;   /* gọn lại */
+        margin: 1.75rem auto;
+    }
+
+    /* Modal content */
+    #loginModal .modal-content {
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        border: none;
+        background: rgba(13, 71, 161, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+
+    /* Modal body */
+    #loginModal .modal-body {
+        padding: 1.5rem;
+        text-align: center; /* căn giữa nội dung */
+    }
+
+    /* Input */
+    #loginModal .form-control {
+        background: #2c3e50;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 14px;
+        padding: 10px;
+        margin-bottom: 1rem;
+        text-align: left; /* text trong input vẫn trái */
+    }
+
+    #loginModal .form-control:focus {
+        border: 1px solid #ff9800;
+        box-shadow: 0 0 6px rgba(255, 152, 0, 0.5);
+    }
+
+    /* Label */
+    #loginModal .form-label {
+        font-weight: 500;
+        color: white;
+        display: block;
+        text-align: left; /* label canh trái */
+    }
+
+    /* Nút Login */
+    #loginModal .btn-primary {
+        border-radius: 10px;
+        padding: 0.5rem 1.2rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #0d47a1, #1a237e);
+        border: none;
+        transition: 0.3s;
+    }
+
+    #loginModal .btn-primary:hover {
+        background: linear-gradient(135deg, #1565c0, #0d47a1);
+        transform: translateY(-2px);
+    }
+
+    /* Căn giữa hàng nút và link */
+    #loginModal .d-flex {
+        justify-content: center;  /* căn giữa */
+        gap: 1rem; /* khoảng cách nút và link */
+    }
+
+    /* Link Forgot */
+    #loginModal a.text-decoration-none {
+        font-size: 0.9rem;
+        color: white;
+        transition: color 0.3s;
+    }
+
+    #loginModal a.text-decoration-none:hover {
+        color: #ff9800;
+        text-decoration: underline;
+    }
+
+</style>
+<!-- Modal Đăng ký -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Register</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+
+                <!-- Alert hiển thị lỗi -->
+                <div id="registerAlert">
+                    <%
+                    String registerError = (String) request.getAttribute("registerError");
+                    if (registerError != null) {
+                    %>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <span class="alert-message"><%= registerError %></span>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                            registerModal.show();
+                        });
+                    </script>
+
+                    <%
+                    }
+                    %>
+                </div>
+
+                <!-- Form đăng ký -->
+                <form id="registerForm" action="register" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username"
+                               value="${enteredUsername != null ? enteredUsername : ''}" required>
+                    </div>
+                    <label class="form-label">Email</label>
+                    <div class="mb-3 d-flex align-items-center gap-2">
+
+                        <input type="email" class="form-control" id="email" name="email"
+                               value="${enteredEmail != null ? enteredEmail : ''}" required>
+                        <button type="button" class="btn btn-sendcode" id="sendOtpBtn">Send code</button>
+                    </div>
+
+
+                    <div class="mb-3" id="otpSection" style="display:${enteredEmail != null ? 'block' : 'none'};">
+                        <label class="form-label">OTP</label>
+                        <input type="text" class="form-control" id="otp" name="otp">
+                        <div class="form-text">Please enter the 6-digit code sent to your email</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        <div id="passwordMessage" class="form-text text-danger"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CSS form Register -->
+<!-- CSS form Register -->
+<style>
+    /* Modal chung */
+    #registerModal .modal-content {
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+        border: none;
+        background: rgba(13, 71, 161, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+
+    /* Header Register */
+    #registerModal .modal-header {
+        background: linear-gradient(135deg, #0d47a1, #1a237e);
+        /*background: rgba(27, 56, 92, 0.95); */
+        color: white;
+        border-bottom: none;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    #registerModal .modal-title {
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    #registerModal .modal-header .btn-close {
+        position: absolute;
+        right: 1rem;
+        filter: brightness(0) invert(1);
+    }
+
+    /* Body */
+    #registerModal .modal-body {
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 0 0 20px 20px;
+    }
+
+    /* Input */
+    #registerModal .form-control {
+        background: #2c3e50;   /* màu nền tối */
+        border: none;
+        border-radius: 6px;
+        color: #fff;           /* chữ trắng */
+        font-size: 14px;
+        padding: 10px;
+        transition: all 0.3s ease;
+    }
+
+    #registerModal .form-control:focus {
+        border: 1px solid #ff9800; /* viền cam khi focus */
+        box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
+    }
+
+    /* Label */
+    #registerModal .form-label {
+        font-weight: 500;
+    }
+
+    /* Nút Register */
+    #registerModal .btn-success {
+        border-radius: 12px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #0d47a1, #1a237e);
+        border: none;
+        transition: 0.3s;
+    }
+
+    #registerModal .btn-success:hover {
+        background: linear-gradient(135deg, #1565c0, #0d47a1);
+        transform: translateY(-2px);
+    }
+
+    /* Alert Register */
+    #registerAlert .alert {
+        border-radius: 12px;
+        font-size: 0.95rem;
+        padding: 0.8rem 1rem;
+    }
+
+    /* Ô email*/
+    #registerModal .form-control {
+        border-radius: 12px;
+        padding: 0.7rem 1rem;
+        border: 1px solid #cfd8dc;
+        background: #2c3e50;
+        transition: all 0.3s ease;
+    }
+
+    #registerModal .form-control:focus {
+        border-color: #0d47a1;
+        box-shadow: 0 0 8px rgba(13, 71, 161, 0.3);
+    }
+
+    /*Send code */
+    #registerModal .btn-sendcode {
+        border-radius: 12px;
+        padding: 0.6rem 1rem;
+        font-weight: 500;
+        background: linear-gradient(135deg, #1565c0, #0d47a1);
+        border: none;
+        color: #fff;
+        transition: 0.3s;
+        white-space: nowrap;   /* giữ chữ không xuống dòng */
+    }
+
+    #registerModal .btn-sendcode:hover {
+        background: linear-gradient(135deg, #1e88e5, #1565c0);
+        transform: translateY(-2px);
+    }
+</style>
+
+<!-- JS check form -->
+<script>
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const message = document.getElementById("passwordMessage");
+    const form = document.getElementById("registerForm");
+    const otpInput = document.getElementById("otp");
+    const otpSection = document.getElementById("otpSection");
+    const sendOtpBtn = document.getElementById("sendOtpBtn");
+
+    function checkPasswordMatch() {
+        if (confirmPasswordInput.value !== "" && passwordInput.value !== confirmPasswordInput.value) {
+            message.textContent = "❌ Mật khẩu không khớp!";
+        } else {
+            message.textContent = "";
+        }
+    }
+    passwordInput.addEventListener("input", checkPasswordMatch);
+    confirmPasswordInput.addEventListener("input", checkPasswordMatch);
+
+    form.addEventListener("submit", function (e) {
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            e.preventDefault();
+            alert("Mật khẩu nhập lại không khớp!");
+            return;
+        }
+        if (otpSection.style.display === "none") {
+            e.preventDefault();
+            alert("Bạn cần gửi OTP trước khi đăng ký!");
+            return;
+        }
+        if (otpInput.value.trim() === "") {
+            e.preventDefault();
+            alert("Vui lòng điền mã OTP được gửi đến email của bạn!");
+            return;
+        }
+    });
+
+    // Gửi OTP
+    sendOtpBtn.addEventListener("click", function () {
+        const email = document.getElementById("email").value;
+        if (!email) {
+            alert("Vui lòng nhập email!");
+            return;
+        }
+
+        fetch("sendOtp", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: "email=" + encodeURIComponent(email)
+        })
+            .then(res => res.text())
+            .then(data => {
+                if (data === "success") {
+                    alert("Mã OTP đã được gửi đến email của bạn!");
+                    otpSection.style.display = "block";
+                    otpInput.setAttribute("required", "true");
+
+                    // Disable nút 60s
+                    let countdown = 60;
+                    sendOtpBtn.disabled = true;
+                    sendOtpBtn.textContent = "Gửi lại (" + countdown + "s)";
+
+                    const interval = setInterval(() => {
+                        countdown--;
+                        if (countdown > 0) {
+                            sendOtpBtn.textContent = "Gửi mã (" + countdown + "s)";
+                        } else {
+                            clearInterval(interval);
+                            sendOtpBtn.disabled = false;
+                            sendOtpBtn.textContent = "Gửi mã";
+                        }
+                    }, 1000);
+
+                } else {
+                    alert("Không thể gửi OTP, vui lòng thử lại!\n" + data);
+                }
+            });
+    });
+</script>
+
+<%
+// Lấy giỏ hàng từ session
+List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+    int cartCount = 0;
+    if (cart != null) {
+    for (CartItem item : cart) {
+    cartCount += item.getQuantity();
+    }
+    }
+    %>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container px-4 px-lg-5">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold text-dark fs-4" href="Index.jsp">Game Store</a>
+
+            <!-- Nút toggle khi mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menu + Cart -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Menu -->
+                <ul class="navbar-nav ms-4 me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="Index.jsp">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="About.jsp">About us</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Shop
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="Index.jsp">All Game</a></li>
+                            <li><a class="dropdown-item" href="#!">Popular Items</a></li>
+                            <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+                <!-- Giỏ hàng -->
+                <form class="d-flex me-2" action="Cart">
+                    <button class="btn btn-outline-dark" type="submit">
+                        <i class="bi-cart-fill me-1"></i>
+                        <a href="Cart.jsp" style="text-decoration: none; color: inherit;">Cart</a>
+                        <span class="badge bg-dark text-white ms-1 rounded-pill"><%= cartCount %></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Đăng nhập / Đăng ký -->
+        <div class="d-flex ms-auto me-3">
+            <%
+            Object obj = session.getAttribute("user");
+            String username = null;
+
+            if (obj != null && obj instanceof model.User) {
+            model.User userObj = (model.User) obj;
+            username = userObj.getUserName();
+            %>
+            <span class="me-2">Xin chào, <b><%= username %></b></span>
+            <a href="logout" class="btn btn-outline-danger">Đăng xuất</a>
+            <%
+            } else {
+            %>
+            <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                Đăng nhập
+            </button>
+            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">
+                Đăng ký
+            </button>
+            <%
+            }
+            %>
+
+        </div>
+
+
+    </nav>
+    <header class="banner">
+        <!-- Menu nằm trong banner -->
+        <div class="steam-menu">
+            <div class="steam-menu-inner">
+                <a href="Index.jsp">Cửa hàng của bạn</a>
+                <a href="About.jsp">About</a>
+                <a href="NewGame.jsp">Sắp phát hành</a>
+                <!-- Nút Danh mục -->
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle">Danh mục</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-column">
+                            <h4>Thể loại</h4>
+                            <a href="#">Hành động</a>
+                            <a href="#">Phiêu lưu</a>
+                            <a href="#">Nhập vai (RPG)</a>
+                            <a href="#">Chiến thuật</a>
+                            <a href="#">Mô phỏng</a>
+                            <a href="#">Đua xe</a>
+                            <a href="#">Thể thao</a>
+                            <a href="#">Kinh dị</a>
+                            <a href="#">Puzzle</a>
+                        </div>
+                        <div class="dropdown-column">
+                            <h4>Chủ đề</h4>
+                            <a href="#">Anime</a>
+                            <a href="#">Khoa học viễn tưởng</a>
+                            <a href="#">Cyberpunk</a>
+                            <a href="#">Thế giới mở</a>
+                            <a href="#">Sinh tồn</a>
+                            <a href="#">Vũ trụ</a>
+                        </div>
+                        <div class="dropdown-column">
+                            <h4>Theo độ phổ biến</h4>
+                            <a href="#">Mới phát hành</a>
+                            <a href="#">Sắp ra mắt</a>
+                            <a href="#">Bán chạy nhất</a>
+                            <a href="#">Được đánh giá cao</a>
+                            <a href="#">Game hot</a>
+                        </div>
+                        <div class="dropdown-column">
+                            <h4>Theo nền tảng</h4>
+                            <a href="#">PC</a>
+                            <a href="#">Smart Phone</a>
+                            <a href="#">PlayStation</a>
+                            <a href="#">Xbox</a>
+                            <a href="#">Nintendo Switch</a>
+                            <a href="#">Mobile</a>
+                            <a href="#">VR</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">Cửa hàng điểm</a>
+                <a href="#">Labs</a>
+
+                <!-- Ô tìm kiếm -->
+                <div class="search-box">
+                    <input type="text" id="search" placeholder="Tìm kiếm game...">
+                    <button type="button">🔍</button>
+                    <div id="suggestions"></div>
+                </div>
+                <div id="no-result" style="display:none; color:red; margin-top:3px;">Không tìm thấy game</div>
+            </div>
+        </div>
+
+        <!--Js search Games and tra ve game search-->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const searchBar = document.getElementById("search");
+                const suggestions = document.getElementById("suggestions");
+                const noResult = document.getElementById("no-result");
+
+                const contextPath = "<%= request.getContextPath() %>" || "";
+
+                const games = [
+                    {name: "Liên Quân Mobile", img: contextPath + "/img/game1.jpg", anchor: "#lienquan"},
+                    {name: "Free Fire", img: contextPath + "/img/game2.jpg", anchor: "#freefire"},
+                    {name: "Zingspeed Mobile", img: contextPath + "/img/game3.jpg", anchor: "#zingspeed"},
+                    {name: "Chiến Cơ Huyền Thoại", img: contextPath + "/img/game4.jpg", anchor: "#chienco"},
+                    {name: "Genshin Impact", img: contextPath + "/img/game5.jpg", anchor: "#genshin"},
+                    {name: "PUBG Mobile", img: contextPath + "/img/game6.jpg", anchor: "#pubg"},
+                    {name: "Cyberpunk", img: contextPath + "/img/game7.jpg", anchor: "#cyberpunk"},
+                    {name: "Among Us", img: contextPath + "/img/game8.jpg", anchor: "#amongus"},
+                    {name: "Hay Day", img: contextPath + "/img/game10.jpg", anchor: "#hayday"},
+                    {name: "Lien Minh Huyen Thoai", img: contextPath + "/img/game11.jpg", anchor: "#lmth"},
+                    {name: "Dota", img: contextPath + "/img/game12.jpg", anchor: "#dota"},
+                    {name: "Call of Duty", img: contextPath + "/img/game13.jpg", anchor: "#duty"},
+                    {name: "Võ Lâm Truyền Kỳ", img: contextPath + "/img/game9.jpg", anchor: "#kiemhiep"}
+                ];
+
+                const placeholder = "data:image/svg+xml;utf8," + encodeURIComponent(
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#2b2b2b"/><text x="50%" y="50%" fill="#999" font-size="12" text-anchor="middle" dominant-baseline="middle">No Image</text></svg>'
+                );
+
+                function createSuggestionItem(game) {
+                    const div = document.createElement("div");
+                    div.className = "suggestion-item";
+
+                    const img = document.createElement("img");
+                    img.alt = game.name;
+                    img.src = game.img;
+                    img.onerror = function () {
+                        img.src = placeholder;
+                    };
+
+                    const span = document.createElement("span");
+                    span.textContent = game.name;
+
+                    div.appendChild(img);
+                    div.appendChild(span);
+
+                    div.onclick = () => {
+                        window.location.href = contextPath + "/Index.jsp" + game.anchor;
+                    };
+                    return div;
+                }
+
+                function searchGames() {
+                    const q = searchBar.value.trim().toLowerCase();
+                    suggestions.innerHTML = "";
+                    noResult.style.display = "none";
+
+                    if (!q) {
+                        suggestions.style.display = "none";
+                        return [];
+                    }
+
+                    const filtered = games.filter(g => g.name.toLowerCase().includes(q));
+
+                    if (filtered.length === 0) {
+                        suggestions.style.display = "none";
+                        noResult.style.display = "block";
+                    } else {
+                        filtered.forEach(game => {
+                            const item = createSuggestionItem(game);
+                            suggestions.appendChild(item);
+                        });
+                        suggestions.style.display = "block";
+                    }
+                    return filtered;
+                }
+
+                // input event
+                searchBar.addEventListener("input", searchGames);
+
+                // Enter key event
+                searchBar.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter") {
+                        const results = searchGames();
+                        if (results.length === 0) {
+                            alert("Không tìm thấy game");
+                        }
+                    }
+                });
+
+                // click ra ngoài ẩn suggestions & no-result
+                document.addEventListener("click", (e) => {
+                    if (!e.target.closest(".search-box")) {
+                        suggestions.style.display = "none";
+                        noResult.style.display = "none";
+                    }
+                });
+            });
+        </script>
+
+        <!-- Các ảnh banner -->
+        <div class="slides active" style="background-image: url('img/Aboutbanner.jpg');"></div>
+        <div class="slides" style="background-image: url('img/game1.jpg');"></div>
+        <div class="slides" style="background-image: url('img/game2.jpg');"></div>
+        <div class="slides" style="background-image: url('img/game3.jpg');"></div>
+        <div class="slides" style="background-image: url('img/game4.jpg');"></div>
+        <div class="slides" style="background-image: url('img/game5.jpg');"></div>
+        <div class="slides" style="background-image: url('img/game6.jpg');"></div>
+
+        <!-- Chấm tròn -->
+        <div class="dots">
+            <span class="dot active" onclick="currentSlide(0)"></span>
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            <span class="dot" onclick="currentSlide(4)"></span>
+            <span class="dot" onclick="currentSlide(5)"></span>
+            <span class="dot" onclick="currentSlide(6)"></span>
+        </div>
+    </header>
+
+
+    <!-- CSS Danh Muc-->
+    <style>
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+
+        /* Menu xổ ra - ẩn mặc định */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(27, 56, 92, 0.95); /* màu tối xanh đậm hơn */
+            padding: 20px;
+            border-radius: 4px;
+            min-width: 700px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+
+            /* grid layout */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        /* Hover vào Danh mục thì xổ ra */
+        .dropdown:hover .dropdown-menu {
+            display: grid;
+        }
+
+
+        /* Hover vào nút Danh mục thì hiện menu */
+        .dropdown:hover .dropdown-menu {
+            display: grid;
+        }
+
+        /* Cột bên trong */
+        .dropdown-column h4 {
+            margin-bottom: 10px;
+            color: #66c0f4;
+            font-size: 14px;
+            font-weight: bold;
+            border-bottom: 1px solid #2a475e;
+            padding-bottom: 5px;
+        }
+
+        .dropdown-column a {
+            display: block;
+            color: #c7d5e0;
+            font-size: 13px;
+            padding: 4px 0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .dropdown-column a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+    </style>
+
+    <!--Js chuyen dong banner-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let slideIndex = 0;
+            const slides = document.querySelectorAll(".slides");
+            const dots = document.querySelectorAll(".dot");
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.classList.remove("active");
+                    dots[i].classList.remove("active");
+                    if (i === index) {
+                        slide.classList.add("active");
+                        dots[i].classList.add("active");
+                    }
+                });
+            }
+
+            function changeSlide(n) {
+                slideIndex = (slideIndex + n + slides.length) % slides.length;
+                showSlide(slideIndex);
+            }
+
+            function currentSlide(n) {
+                slideIndex = n;
+                showSlide(slideIndex);
+            }
+
+            // Hiển thị slide đầu tiên
+            showSlide(slideIndex);
+
+            // Auto chạy mỗi 3 giây
+            setInterval(() => changeSlide(1), 3000);
+        });
+    </script>
+
+
+    <style>
+        /* Banner */
+        .banner {
+            position: relative;
+            width: 100%;
+            height: 550px; /* Chiều cao banner */
+            overflow: hidden;
+        }
+
+        /* Ảnh slide */
+        .slides {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 0;
+        }
+
+        .slides.active {
+            opacity: 1;
+        }
+
+
+        /* Logo + slogan */
+        .header-text {
+            position: absolute;
+            top: 70px; /* Cách mép trên */
+            left: 200px; /* Cách mép trái */
+            z-index: 15;
+            text-align: left; /* Canh trái */
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .header-text h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: yellow;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header-text h1 span {
+            color: #ffcc00;
+        }
+
+        .header-text p {
+            font-size: 1rem;
+            color: yellow;
+            margin: 5px 0 0;
+            font-style: italic;
+        }
+
+        /* Chấm tròn indicator */
+        .dots {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .dot {
+            cursor: pointer;
+            height: 12px;
+            width: 12px;
+            margin: 0 4px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: #ffd700; /* vàng nổi bật */
+        }
+
+        .dot:hover {
+            background-color: #fff;
+        }
+
+
+    </style>
+
+    <style>
+        /* Nền ngoài trong suốt */
+        /* Đặt menu dính trong banner */
+        .steam-menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10; /* nhỏ hơn header-text nhưng cao hơn ảnh */
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+
+        /* Nền bán trong suốt */
+        .steam-menu-inner {
+            max-width: 1500px;
+            width: 100%;
+            background: rgba(18, 57, 101, 0.8); /* xanh mờ */
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+
+        /* Link menu */
+        .steam-menu a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: 3px;
+        }
+
+        .steam-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Ô tìm kiếm */
+        .search-box {
+            position: relative;
+            width: 300px;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #search {
+            flex: 1;
+            padding: 6px 8px;
+            background: #305680;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        #suggestions {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: rgba(10, 18, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 99999;
+            color: #fff;
+            border-radius: 6px;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .suggestion-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .suggestion-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .search-box input::placeholder {
+            color: #cfd8dc;
+        }
+
+        .search-box button {
+            border: none;
+            background: #1b3b63;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background: #0f274a;
+        }
+
+    </style>
+    <!-- CSS -->
+    <style>
+        .thumb {
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .thumbs-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .equal-col {
+            display: flex;
+        }
+
+        .main-avatar {
+            width: 100%; /* full ngang cột */
+            height: 100%; /* cao bằng card bên cạnh */
+            object-fit: cover; /* cắt thừa, không méo */
+            border-radius: 10px;
+        }
+
+        .thumbs-row .thumb {
+            width: 23%; /* 4 cái gọn trong 1 hàng */
+            height: 100px;
+        }
+
+        .name-game{
+            text-align: center;
+            color:orange;
+        }
+
+    </style>
+
+    <!-- HTML hiển thị 3 cột -->
+    <div class="container mt-5">
+        <h3 class="name-game mt-3"><%= name %>
+        </h3>
+        <div class="row align-items-stretch">
+            <!-- Cột 1: Avatar + hình ảnh -->
+            <div class="col-md-4 d-flex flex-column equal-col">
+                <div class="p-3 w-100 h-100 d-flex flex-column">
+                    <!-- Avatar chính -->
+                    <img src="<%= img %>" alt="<%= name %>" class="img-fluid rounded shadow mb-3"/>
+
+                    <!-- Thumbnails -->
+                    <div class="thumbs-row d-flex justify-content-between gap-2">
+                        <video class="thumb"
+                               muted autoplay loop
+                               onclick="openVideoModal('<%= video %>')">
+                            <source src="<%= video %>" type="video/mp4">
+                        </video>
+                        <img src="<%= preview1 %>" class="thumb"
+                             onclick="openImageModal('<%= preview1 %>')"/>
+                        <img src="<%= preview2 %>" class="thumb"
+                             onclick="openImageModal('<%= preview2 %>')"/>
+                        <img src="<%= preview3 %>" class="thumb"
+                             onclick="openImageModal('<%= preview3 %>')"/>
+                    </div>
+                </div>
+                <!-- Modal ảnh -->
+                <div class="modal fade" id="imageModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content bg-dark">
+                            <div class="modal-body text-center">
+                                <img id="modalImage" class="img-fluid rounded"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal video -->
+                <div class="modal fade" id="videoModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content bg-dark border-0">
+                            <div class="modal-body p-0">
+                                <video id="modalVideo" class="w-100" controls muted autoplay></video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Cột 2: Thông tin chi tiết -->
+            <div class="col-md-4 d-flex equal-col">
+                <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
+                    <h4 class="mb-3">Thông tin chi tiết</h4>
+                    <p><strong>💲 Giá:</strong> <%= price %>
+                    </p>
+                    <p><strong>⭐ Đánh giá:</strong> <%= rating %>
+                    </p>
+                    <p><strong>📂 Dung lượng:</strong> <%= size %>
+                    </p>
+                    <p><strong>🔞 Độ tuổi:</strong> <%= age %>
+                    </p>
+                    <p><strong>⬇️ Lượt tải:</strong> <%= downloads %>
+                    </p>
+                    <p><strong>📝 Mô tả:</strong> <%= description %>
+                    </p>
+                    <!-- Nút hành động -->
+                    <div class="d-flex gap-2 mt-auto">
+                        <!-- Nút Mua ngay -->
+                        <form action="buy" method="post">
+                            <input type="hidden" name="gameId" value="<%= id %>">
+                            <button type="submit" class="btn btn-success w-100">🛒 Mua ngay</button>
+                        </form>
+
+                        <!-- Nút Thêm giỏ hàng -->
+                        <form action="AddToCart" method="post">
+                            <input type="hidden" name="gameId" value="<%= id %>">
+                            <button type="submit" class="btn btn-primary w-100">➕ Thêm giỏ hàng</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cột 3: Đánh giá & Bình luận -->
+            <div class="col-md-4 d-flex equal-col">
+                <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
+                    <h4 class="mb-3">Đánh giá & Bình luận</h4>
+                    <!-- Tổng điểm -->
+                    <div class="mb-3">
+                        <h5>⭐ 4.5 / 5</h5>
+                        <small>6.5 triệu lượt đánh giá</small>
+                    </div>
+                    <!-- Bình luận mẫu -->
+                    <div class="border rounded p-2 mb-2">
+                        <strong>Nguyễn Văn A</strong>
+                        <p>⭐⭐⭐⭐⭐</p>
+                        <p>Game rất hay, đồ họa đẹp và mượt.</p>
+                    </div>
+                    <div class="border rounded p-2 mb-2">
+                        <strong>Trần Thị B</strong>
+                        <p>⭐⭐⭐⭐</p>
+                        <p>Chơi vui nhưng hơi nặng máy.</p>
+                    </div>
+                    <div class="border rounded p-2 mb-2">
+                        <strong>Lê Văn C</strong>
+                        <p>⭐⭐⭐⭐⭐</p>
+                        <p>Update mới nhiều tính năng hấp dẫn 👍</p>
+                    </div>
+                    <!-- Nút xem thêm -->
+                    <div class="text-center mt-auto">
+                        <button class="btn btn-outline-primary btn-sm">Xem thêm bình luận</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="footer custom-footer mt-auto py-5 text-white">
+        <div class="container px-5">
+            <div class="row gy-4 gx-5">
+                <!-- Cột 1: Logo & mô tả -->
+
+                <div class="col-md-3">
+                    <a href="Index.jsp" class="logo-link">
+                        <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+                    </a>
+
+                    <p class="text-white-50">
+                        Trải nghiệm thế giới game đỉnh cao – nơi hội tụ những siêu phẩm nhập vai, hành động và phiêu lưu.
+                        GameStore mang đến không gian giải trí sống động, đậm chất công nghệ và đam mê, giá cả hợp lý và nhiều khuyến mãi hấp dẫn!.
+                    </p>
+                </div>
+
+                <!-- Cột 2: Liên kết nhanh -->
+                <div class="col-md-3">
+                    <h5 class="text-uppercase text-primary glow-title mb-3">Thông tin</h5>
+                    <ul class="list-unstyled text-white-50">
+                        <li><a href="#" class="footer-link">Hỗ trợ</a></li>
+                        <li><a href="About.jsp" class="footer-link">About us</a></li>
+                        <li><a href="TermsOfService.jsp" class="footer-link">Điều khoản dịch vụ</a></li>
+                        <li><a href="PrivacyPolicy.jsp" class="footer-link">Chính sách bảo mật</a></li>
+                        <li><a href="BuyingGuide.jsp" class="footer-link">Hướng dẫn mua hàng</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3">
+                    <h5 class="text-uppercase text-primary glow-title mb-3">Liên hệ</h5>
+                    <p><a href="tel:+84912345678" class="footer-link">+84 1900 1099 </a></p>
+                    <p><a href="mailto:support@gamestore.com" class="footer-link">support@gamestore.com</a></p>
+                    <p><a href="https://surl.li/bhtojh" target="_blank" class="footer-link">https://surl.li/bhtojh/</a></p>
+                </div>
+
+                <!-- Cột 3: Liên hệ & MXH -->
+                <div class="col-md-3">
+                    <h5 class="text-uppercase text-primary glow-title mb-3">Kết nối với chúng tôi</h5>
+                    <div class="social-icons">
+                        <a href="https://surl.li/bhtojh" class="social-link" target="_blank">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                    </div>
+                    <img src="img/qr.jpg" alt="QR Shop" class="qr-img">
+                </div>
+            </div>
+
+            <hr class="border-secondary my-4">
+
+            <div class="text-center text-white-50 small">
+                © 2025 <span class="fw-bold text-primary">GameStore</span>. All rights reserved.
+                | Designed by <span class="text-glow">Do Trong Tri</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================== CSS ===================== -->
+    <style>
+        .logo-link {
+            text-decoration: none !important;
+            color: inherit; /* Giữ nguyên màu chữ h3 */
+        }
+
+        .logo-link:hover {
+            color: #00e0ff; /* Thêm hiệu ứng hover nếu muốn */
+            text-shadow: 0 0 10px #00e0ff;
+        }
+
+        /* Nền xanh đen chuyển sắc */
+        .custom-footer {
+            background: linear-gradient(135deg, #0b0f29, #1b2347);
+            border-top: 2px solid #1e3a8a;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 -2px 20px rgba(0, 150, 255, 0.15);
+        }
+
+        /* Hiệu ứng text neon */
+        .neon-text {
+            color: #4f9eff;
+            text-shadow: 0 0 5px #4f9eff, 0 0 15px #4f9eff, 0 0 25px #007bff;
+            animation: flicker 3s infinite;
+        }
+
+        /* Hiệu ứng chớp sáng nhẹ */
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                opacity: 0.6;
+            }
+        }
+
+        /* Tiêu đề có ánh sáng */
+        .glow-title {
+            text-shadow: 0 0 8px rgba(79, 158, 255, 0.8);
+        }
+
+        /* Liên kết chân trang */
+        .footer-link {
+            color: #adb5bd;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 0;
+            transition: color 0.3s, transform 0.2s;
+        }
+
+        .footer-link:hover {
+            color: #4f9eff;
+            transform: translateX(4px);
+        }
+
+        /* Icon mạng xã hội */
+        .social-icons {
+            display: flex;
+            gap: 18px;
+            margin-top: 10px;
+        }
+
+        .social-link {
+            color: #ffffffcc;
+            font-size: 1.6rem;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .social-link:hover {
+            color: #4f9eff;
+            transform: scale(1.25) rotate(8deg);
+            text-shadow: 0 0 15px #4f9eff;
+        }
+
+        /* Glow tên tác giả */
+        .text-glow {
+            color: #4f9eff;
+            text-shadow: 0 0 10px #4f9eff;
+        }
+
+        .qr-img {
+            margin-top: 15px;
+            width: 160px;
+            border-radius: 5px;
+        }
+
+    </style>
+
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script>
+        // Mở modal ảnh
+        function openImageModal(src) {
+            document.getElementById("modalImage").src = src;
+            new bootstrap.Modal(document.getElementById('imageModal')).show();
+        }
+
+        function openVideoModal(src) {
+            const videoEl = document.getElementById("modalVideo");
+
+            // Gán src mới
+            videoEl.src = src;
+
+            // Hiện modal
+            const modal = new bootstrap.Modal(document.getElementById('videoModal'));
+            modal.show();
+
+            // Chạy video khi modal hiện
+            videoEl.play().catch(() => {
+                // fallback nếu trình duyệt chặn autoplay
+                console.log("Autoplay bị chặn, user cần bấm Play");
+            });
+        }
+
+        // Khi modal đóng thì dừng video và reset
+        document.getElementById('videoModal').addEventListener('hidden.bs.modal', () => {
+            const videoEl = document.getElementById("modalVideo");
+            videoEl.pause();
+            videoEl.currentTime = 0;
+            videoEl.removeAttribute("src"); // clear để lần sau load lại
+        });
+
+
+    </script>
+
+    <script>
+        <%
+                String showForm = (String) request.getAttribute("showForm");
+        if ("register".equals(showForm)) {
+        %>
+            var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+            registerModal.show();
+            <% } %>
+    </script>
+
+
+    <!-- dieu kien va JS hien thi loi buy sp -->
+    <% if (request.getAttribute("buyError") != null) { %>
+    <div id="buyAlert"
+         style="position: fixed; top: 20px; right: 20px;
+             background: #f44336; color: white; padding: 15px;
+             border-radius: 8px; z-index: 9999;
+             box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <%= request.getAttribute("buyError") %>
+    </div>
+
+    <script>
+        setTimeout(function () {
+            let alertBox = document.getElementById("buyAlert");
+            if (alertBox) {
+                alertBox.style.transition = "opacity 0.5s ease";
+                alertBox.style.opacity = "0";
+                setTimeout(() => alertBox.remove(), 500);
+            }
+        }, 3000);
+    </script>
+    <% } %>
+
+
+
+
+    <!-- dieu kien va JS hien thi loi Add cart -->
+    <% if (request.getAttribute("cartError") != null) { %>
+    <div id="cartAlert"
+         style="position: fixed; top: 20px; right: 20px; /* lệch xuống dưới */
+             background: #fff3cd; color: black; padding: 15px;
+             border-radius: 8px; z-index: 9999;
+             box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <%= request.getAttribute("cartError") %>
+    </div>
+
+    <script>
+        setTimeout(function () {
+            let alertBox = document.getElementById("cartAlert");
+            if (alertBox) {
+                alertBox.style.transition = "opacity 0.5s ease";
+                alertBox.style.opacity = "0";
+                setTimeout(() => alertBox.remove(), 500);
+            }
+        }, 3000);
+    </script>
+    <% } %>
+    <!-- FontAwesome icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (function () {
+            var hasLoginError = <%= (loginError != null) ? "true" : "false" %>;
+            if (!hasLoginError)
+                return;
+
+            if (typeof bootstrap === 'undefined') {
+                console.error("Bootstrap is not loaded yet.");
+                return;
+            }
+
+            var modalEl = document.getElementById('loginModal');
+            var modal = bootstrap.Modal.getOrCreateInstance(modalEl, {backdrop: 'static', keyboard: false});
+            var allowClose = false; // chỉ cho phép đóng khi user bấm nút close
+
+            // ngăn modal đóng nếu chưa cho phép
+            modalEl.addEventListener('hide.bs.modal', function (e) {
+                if (!allowClose) {
+                    e.preventDefault();
+                    // nếu có script khác cố tình hide, reopen 1 lần sau
+                    setTimeout(function () {
+                        modal.show();
+                    }, 50);
+                }
+            });
+
+            // bật modal
+            modal.show();
+
+            // cho nút close hoạt động an toàn
+            var closeBtn = document.getElementById('loginCloseBtn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function () {
+                    allowClose = true;
+                    modal.hide();
+                });
+            }
+
+            // Ẩn alert sau countdown (KHÔNG đóng modal)
+            var alert = modalEl.querySelector('#loginAlertArea .alert');
+            if (!alert)
+                return;
+            var secondsSpan = alert.querySelector('.seconds');
+            var remaining = secondsSpan ? parseInt(secondsSpan.textContent, 10) : 3;
+
+            var timer = setInterval(function () {
+                remaining--;
+                if (secondsSpan)
+                    secondsSpan.textContent = remaining;
+                if (remaining <= 0) {
+                    clearInterval(timer);
+                    alert.classList.remove('show');
+                    alert.classList.add('d-none');
+                }
+            }, 1000);
+        })();
+    </script>
+</body>
+</html>

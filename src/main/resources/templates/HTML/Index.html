@@ -536,13 +536,13 @@
         </script>
 
         <!-- Slides -->
-        <div class="slides active" style="background-image: url('img/Aboutbanner.jpg');"></div>
-        <div class="slides" style="background-image: url('img/game1.jpg');"></div>
-        <div class="slides" style="background-image: url('img/game2.jpg');"></div>
-        <div class="slides" style="background-image: url('img/game3.jpg');"></div>
-        <div class="slides" style="background-image: url('img/game4.jpg');"></div>
-        <div class="slides" style="background-image: url('img/game5.jpg');"></div>
-        <div class="slides" style="background-image: url('img/game6.jpg');"></div>
+        <div class="slides active" style="background-image: url('/img/Aboutbanner.jpg');"></div>
+        <div class="slides" style="background-image: url('/img/game1.jpg');"></div>
+        <div class="slides" style="background-image: url('/img/game2.jpg');"></div>
+        <div class="slides" style="background-image: url('/img/game3.jpg');"></div>
+        <div class="slides" style="background-image: url('/img/game4.jpg');"></div>
+        <div class="slides" style="background-image: url('/img/game5.jpg');"></div>
+        <div class="slides" style="background-image: url('/img/game6.jpg');"></div>
         <div class="dots">
             <span class="dot active" onclick="currentSlide(0)"></span>
             <span class="dot" onclick="currentSlide(1)"></span>
@@ -903,44 +903,7 @@
                             </div>
                         </div>
                     </div>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            // ==== Điều khiển video modal ====
-                            var modal = document.getElementById('gameTrailerModal');
-                            var video = document.getElementById('gameTrailerModalVideo');
-                            modal.addEventListener('shown.bs.modal', function () {
-                                video.play();
-                            });
-                            modal.addEventListener('hidden.bs.modal', function () {
-                                video.pause();
-                                video.currentTime = 0;
-                            });
 
-                            // ==== Điều khiển ảnh demo ====
-                            const demoThumbs = document.querySelectorAll(".demo-thumb");
-                            const modalImage = document.getElementById("modalImage");
-                            let currentIndex = 0;
-
-                            demoThumbs.forEach((img, index) => {
-                                img.addEventListener("click", function () {
-                                    currentIndex = index;
-                                    modalImage.src = this.src;
-                                    new bootstrap.Modal(document.getElementById('imageModal')).show();
-                                });
-                            });
-
-                            // Nút chuyển ảnh
-                            document.getElementById("prevImageBtn").addEventListener("click", function () {
-                                currentIndex = (currentIndex - 1 + demoThumbs.length) % demoThumbs.length;
-                                modalImage.src = demoThumbs[currentIndex].src;
-                            });
-
-                            document.getElementById("nextImageBtn").addEventListener("click", function () {
-                                currentIndex = (currentIndex + 1) % demoThumbs.length;
-                                modalImage.src = demoThumbs[currentIndex].src;
-                            });
-                        });
-                    </script>
                     <style>
                         .arrow-btn {
                             opacity: 0.7;
@@ -996,7 +959,7 @@
                         <form action="buy" method="post" class="me-2">
                             <input type="hidden" name="gameId" value="1">
                             <input type="hidden" name="sourcePage"
-                                   value="<%= request.getRequestURI().endsWith("GameDetail.jsp") ? "GameDetail.jsp" : "Index.jsp" %>">
+                                   value="<%= request.getRequestURI().endsWith('GameDetail.jsp') ? 'GameDetail.jsp' : 'Index.jsp'">
                             <button type="submit" class="btn btn-success">Mua</button>
                         </form>
 
@@ -1004,7 +967,7 @@
                         <form action="AddToCart" method="post">
                             <input type="hidden" name="gameId" value="1">
                             <input type="hidden" name="sourcePage"
-                                   value="<%= request.getRequestURI().endsWith("GameDetail.jsp") ? "GameDetail.jsp" : "Index.jsp" %>">
+                                   value="<%= request.getRequestURI().endsWith('GameDetail.jsp') ? 'GameDetail.jsp' : 'Index.jsp' %>">
                             <button class="btn btn-outline-dark flex-shrink-0" type="submit">
                                 <i class="bi-cart-fill me-1"></i>
                                 Add to cart
@@ -1029,6 +992,44 @@
                     </div>
                 </div>
             </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // ==== Điều khiển video modal ====
+                    var modal = document.getElementById('gameTrailerModal');
+                    var video = document.getElementById('gameTrailerModalVideo');
+                    modal.addEventListener('shown.bs.modal', function () {
+                        video.play();
+                    });
+                    modal.addEventListener('hidden.bs.modal', function () {
+                        video.pause();
+                        video.currentTime = 0;
+                    });
+
+                    // ==== Điều khiển ảnh demo ====
+                    const demoThumbs = document.querySelectorAll(".demo-thumb");
+                    const modalImage = document.getElementById("modalImage");
+                    let currentIndex = 0;
+
+                    demoThumbs.forEach((img, index) => {
+                        img.addEventListener("click", function () {
+                            currentIndex = index;
+                            modalImage.src = this.src;
+                            new bootstrap.Modal(document.getElementById('imageModal')).show();
+                        });
+                    });
+
+                    // Nút chuyển ảnh
+                    document.getElementById("prevImageBtn").addEventListener("click", function () {
+                        currentIndex = (currentIndex - 1 + demoThumbs.length) % demoThumbs.length;
+                        modalImage.src = demoThumbs[currentIndex].src;
+                    });
+
+                    document.getElementById("nextImageBtn").addEventListener("click", function () {
+                        currentIndex = (currentIndex + 1) % demoThumbs.length;
+                        modalImage.src = demoThumbs[currentIndex].src;
+                    });
+                });
+            </script>
             <style>
 
                 .media-section {
@@ -1968,7 +1969,7 @@
         /*<![CDATA[*/
         (function () {
             // ===== Flags từ server =====
-            var hasLoginError = [[${loginError != null}]];
+            var hasLoginError = /*[[${loginError != null}]]*/ false;
             var showForm = '[[${showForm}]]'; // '' nếu null
             var shouldOpenLogin = hasLoginError || (showForm === 'login');
 
@@ -2042,7 +2043,7 @@
 
     <script th:inline="javascript">
         /*<![CDATA[*/
-        let showForm = [[${showForm}]];
+        let showForm = '[[${showForm}]]';
         if (showForm === 'register') {
             const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
             registerModal.show();
