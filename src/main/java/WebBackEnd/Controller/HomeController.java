@@ -1,7 +1,10 @@
 package WebBackEnd.Controller;
 
+import WebBackEnd.SucDat.GameCore;
+import WebBackEnd.model.Entity.Game;
 import WebBackEnd.model.Entity.User;
 import WebBackEnd.repository.UserRepository;
+import WebBackEnd.service.GameSevice;
 import WebBackEnd.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,8 @@ public class HomeController {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private GameSevice  gameSevice;
 
 
     @GetMapping
@@ -29,6 +34,14 @@ public class HomeController {
         if (!model.containsAttribute("showForm")) {
             model.addAttribute("showForm", "");
         }
+        model.addAttribute("gameMain", gameSevice.findGameByStatus("main"));
+
+        model.addAttribute("listGame", gameSevice.list20GameIntoGame());
+        model.addAttribute("linkimage", GameCore.imageLinkGame(gameSevice.findGameByStatus("main").getImageLinks()));
+        for(Game a : gameSevice.list20GameIntoGame()){
+            System.out.println(a.getDeceptions()[4]);
+        }
+
         return "HTML/Index";
     }
 

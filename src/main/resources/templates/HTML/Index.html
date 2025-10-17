@@ -868,9 +868,9 @@
                         </div>
                         <!-- Ảnh demo (mở modal ảnh riêng) -->
                         <div class="demo-images d-flex flex-row gap-2">
-                            <img src="img/demo.jpg" class="img-fluid demo-thumb" alt="Demo 1">
-                            <img src="img/demo1.jpg" class="img-fluid demo-thumb" alt="Demo 2">
-                            <img src="img/demo3.jpg" class="img-fluid demo-thumb" alt="Demo 3">
+                            <img th:src="@{${linkimage[1]}}" class="img-fluid demo-thumb" alt="Demo 1">
+                            <img th:src="@{${linkimage[2]}}" class="img-fluid demo-thumb" alt="Demo 2">
+                            <img th:src="@{${linkimage[3]}}" class="img-fluid demo-thumb" alt="Demo 3">
                         </div>
                     </div>
                     <!-- Modal video (chỉ 1 lần) -->
@@ -879,7 +879,7 @@
                             <div class="modal-content bg-dark">
                                 <div class="modal-body p-0">
                                     <video id="gameTrailerModalVideo" class="w-100" controls>
-                                        <source src="videos/lienquan.mp4" type="video/mp4">
+                                        <source th:src="@{${linkimage[0]}}" type="video/mp4">
                                         Trình duyệt của bạn không hỗ trợ video.
                                     </video>
                                 </div>
@@ -926,12 +926,7 @@
                         <span class="text-decoration-line-through">$999.00</span>
                         <span>$999.00</span>
                     </div>
-                    <p class="lead">Liên Quân Mobile  là tựa game MOBA nổi tiếng trên di động, nơi người
-                        chơi tham gia các trận chiến 5v5 kịch tính. Game sở hữu hệ thống tướng đa dạng
-                        với nhiều kỹ năng độc đáo, cho phép người chơi thỏa sức lựa chọn chiến thuật. Đồ
-                        họa đẹp mắt, âm thanh sống động mang đến trải nghiệm chân thực và hấp dẫn. Đây là
-                        trò chơi đòi hỏi tinh thần đồng đội, kỹ năng cá nhân và tư duy chiến lược để giành
-                        chiến thắng.</p>
+                    <p class="lead" th:text="${gameMain.deception}"></p>
 
                     <!-- Thông tin game -->
                     <div class="game-stats d-flex align-items-center mb-3">
@@ -1240,23 +1235,23 @@
         </div>
 
         <!-- Modal chứa trailer -->
-        <div class="modal fade" id="gameTrailerModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Liên Quân Mobile thắng bại tại kỹ năng</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <!-- Video local -->
-                        <video id="gameTrailer" width="100%" controls>
-                            <source src="videos/lienquan.mp4" type="video/mp4">
-                            Trình duyệt của bạn không hỗ trợ video.
-                        </video>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--        <div class="modal fade" id="gameTrailerModal" tabindex="-1" aria-hidden="true">-->
+<!--            <div class="modal-dialog modal-lg modal-dialog-centered">-->
+<!--                <div class="modal-content">-->
+<!--                    <div class="modal-header">-->
+<!--                        <h5 class="modal-title">Liên Quân Mobile thắng bại tại kỹ năng</h5>-->
+<!--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                    </div>-->
+<!--                    <div class="modal-body text-center">-->
+<!--                        &lt;!&ndash; Video local &ndash;&gt;-->
+<!--                        <video id="gameTrailer" width="100%" controls>-->
+<!--                            <source src="videos/lienquan.mp4" type="video/mp4">-->
+<!--                            Trình duyệt của bạn không hỗ trợ video.-->
+<!--                        </video>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
 
         <!-- JS xử lý autoplay và pause khi đóng -->
     </section>
@@ -1265,18 +1260,24 @@
         <div class="container px-4 px-lg-5 mt-5">
             <h2 class="fw-bolder mb-4">Related products</h2>
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+                <th:block th:each ="game : ${listGame}">
+
+
                 <!-- Product 2: Free Fire -->
                 <div class="col mb-5">
                     <a href="GameDetail.html?id=2" style="text-decoration:none; color:inherit;">
                         <div id="freefire" class="card h-100">
-                            <img class="card-img-top" src="img/game2.jpg" alt="Free Fire"/>
+                            <img class="card-img-top" th:src="${game.linkImage[4]}" th:alt="${game.gameName}" />
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <h5 class="fw-bolder">Free Fire</h5>
+                                    <h5 class="fw-bolder" th:text ="${game.getGameName()}"></h5>
                                     <div class="d-flex justify-content-center small text-warning mb-2">
                                         <div class="bi-star-fill"></div>
                                     </div>
-                                    $40.00 - $80.00
+                                    <p th:text="'$' + ${game.price}"></p>
+
+
                                 </div>
                                 <div class="game-stats d-flex align-items-center mb-3">
                                     <div class="stat-item text-center">
@@ -1284,16 +1285,17 @@
                                         <div class="small text-muted">7,5 Tr đánh giá</div>
                                     </div>
                                     <div class="stat-item text-center">
-                                        <strong>2.0 GB</strong>
+                                        <strong th:text="|${game.getDeceptions()[1]}|"></strong>
                                         <div class="small text-muted">Dung lượng</div>
                                     </div>
                                     <div class="stat-item text-center">
-                                        <strong>1 T+</strong>
+                                        <strong th:text="${game.getDeceptions()[2]}"></strong>
                                         <div class="small text-muted">Lượt tải xuống</div>
                                     </div>
                                     <div class="stat-item text-center">
-                                        <span class="age-box">12+</span>
-                                        <div class="small text-muted">12 tuổi trở lên</div>
+                                        <span class="age-box" th:text="${game.getDeceptions()[4]}"></span>
+                                        <div class="small text-muted" th:text="${game.getDeceptions()[4]} + ' tuổi trở lên'"></div>
+
                                     </div>
                                 </div>
                             </div>
@@ -1304,488 +1306,9 @@
                     </a>
                 </div>
                 <!-- Product 3: Zing Speed Mobile -->
-                <div id="zingspeed" class="col mb-5">
-                    <a href="GameDetail.html?id=3" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <!-- Sale badge-->
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-                                Sale
-                            </div>
-                            <!-- Product image-->
-                            <img class="card-img-top" src="img/game3.jpg" alt="Zing Speed Mobile"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">Zing Speed Mobile</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <span class="text-muted text-decoration-line-through">$20.00</span>
-                                    $18.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>3,5 ★</strong>
-                                        <div class="small text-muted">3,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>3.5 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>30 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">18+</span>
-                                        <div class="small text-muted">18 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Continue for other products similarly (IDs 4 to 13) -->
-                <!-- Product 4: Genshin Impact -->
-                <div id="genshin" class="col mb-5">
-                    <a href="GameDetail.html?id=4" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-                                Sale
-                            </div>
-                            <img class="card-img-top" src="img/game5.jpg" alt="Genshin Impact"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">Genshin Impact</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <span class="text-muted text-decoration-line-through">$50.00</span>
-                                    $25.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>4,5 ★</strong>
-                                        <div class="small text-muted">7,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>5.0 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>90 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">18+</span>
-                                        <div class="small text-muted">18 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Product 5: Chiến Cơ Huyền Thoại -->
-                <div id="" class="col mb-5">
-                    <a href="GameDetail.html?id=5" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="img/game4.jpg" alt="Chiến Cơ Huyền Thoại"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">Chiến Cơ Huyền Thoại</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    $40.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>4,0 ★</strong>
-                                        <div class="small text-muted">5,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>1.2 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>10 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">12+</span>
-                                        <div class="small text-muted">12 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Product 6: PUBG Mobile -->
-                <div id="pubg" class="col mb-5">
-                    <a href="GameDetail.html?id=6" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="img/game6.jpg" alt="PUBG Mobile"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">PUBG Mobile</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    $40.00 - $80.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>4,5 ★</strong>
-                                        <div class="small text-muted">6,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>3.5 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>5 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">12+</span>
-                                        <div class="small text-muted">12 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Product 7: Cyberpunk -->
-                <div id="cyberpunk" class="col mb-5">
-                    <a href="GameDetail.html?id=7" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-                                Sale
-                            </div>
-                            <img class="card-img-top" src="img/game7.jpg" alt="Cyberpunk"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">Cyberpunk</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <span class="text-muted text-decoration-line-through">$20.00</span>
-                                    $18.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>4,9 ★</strong>
-                                        <div class="small text-muted">9,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>4.5 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>50 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">18+</span>
-                                        <div class="small text-muted">18 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Product 8: Among Us -->
-                <div id="among" class="col mb-5">
-                    <a href="GameDetail.html?id=8" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-                                Sale
-                            </div>
-                            <img class="card-img-top" src="img/game8.jpg" alt="Among Us"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">Among Us</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <span class="text-muted text-decoration-line-through">$50.00</span>
-                                    $25.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>3,5 ★</strong>
-                                        <div class="small text-muted">6,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>2.0 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>20 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">12+</span>
-                                        <div class="small text-muted">12 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Product 9: Võ Lâm Truyền Kỳ -->
-                <div id="kiemhiep" class="col mb-5">
-                    <a href="GameDetail.html?id=9" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="img/game9.jpg" alt="Võ Lâm Truyền Kỳ"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">Võ Lâm Truyền Kỳ</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    $40.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>3,0 ★</strong>
-                                        <div class="small text-muted">6,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>1.5 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>20 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">12+</span>
-                                        <div class="small text-muted">12 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Product 10: Hay Day -->
-                <div id="hayday" class="col mb-5">
-                    <a href="GameDetail.html?id=10" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="img/game10.jpg" alt="Hay Day"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">Hay Day</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    $30.00 - $40.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>4,0 ★</strong>
-                                        <div class="small text-muted">4,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>2.5 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>1 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">12+</span>
-                                        <div class="small text-muted">12 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Product 11: Liên Minh Huyền Thoại -->
-                <div id="lmth" class="col mb-5">
-                    <a href="GameDetail.html?id=11" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-                                Sale
-                            </div>
-                            <img class="card-img-top" src="img/game11.jpg" alt="Liên Minh Huyền Thoại"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">Liên Minh Huyền Thoại</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <span class="text-muted text-decoration-line-through">$20.00</span>
-                                    $15.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>5.0 ★</strong>
-                                        <div class="small text-muted">10 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>5.5 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>90 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">18+</span>
-                                        <div class="small text-muted">18 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Product 12: Dota 2 -->
-                <div id="dota" class="col mb-5">
-                    <a href="GameDetail.html?id=12" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-                                Sale
-                            </div>
-                            <img class="card-img-top" src="img/game12.jpg" alt="Dota 2"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">Dota 2</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <span class="text-muted text-decoration-line-through">$90.00</span>
-                                    $85.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>4,5 ★</strong>
-                                        <div class="small text-muted">7,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>4.0 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>60 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">18+</span>
-                                        <div class="small text-muted">18 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <!-- Product 13: Call of Duty -->
-                <div id="chienco" class="col mb-5">
-                    <a href="GameDetail.html?id=13" style="text-decoration: none; color: inherit;">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="img/game13.jpg" alt="Call of Duty"/>
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">Call of Duty</h5>
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    $199.00
-                                </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
-                                    <div class="stat-item text-center">
-                                        <strong>4,9 ★</strong>
-                                        <div class="small text-muted">5,5 Tr đánh giá</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>4.2 GB</strong>
-                                        <div class="small text-muted">Dung lượng</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <strong>10 Tr+</strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
-                                    </div>
-                                    <div class="stat-item text-center">
-                                        <span class="age-box">18+</span>
-                                        <div class="small text-muted">18 tuổi trở lên</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between">
-                                <!-- Buy & Add to cart removed for static page -->
-                            </div>
-                        </div>
-                    </a>
-                </div>
+
+                </th:block>
+
             </div>
         </div>
     </section>

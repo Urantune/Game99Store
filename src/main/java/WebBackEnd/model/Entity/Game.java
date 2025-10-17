@@ -1,6 +1,7 @@
 package WebBackEnd.model.Entity;
 
 
+import WebBackEnd.SucDat.GameCore;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -14,25 +15,29 @@ public class Game {
     @Column(name = "game_id")
     private UUID gameId;
     @Column(name = "gameName")
-    private String game_name;
+    private String gameName;
     @Column(name = "price")
-    private double game_price;
+    private double price;
     @Column(name = "version")
     private String game_version;
     @Column(name = "status")
-    private String game_status;
+    private String status;
     @Column(name = "category")
     private String game_category;
     @Column(name ="locateGame")
     private String locate_game;
+    @Column(name = "deception")
+    private String deception;
+    @Column(name ="imageLinks")
+    private String imageLinks;
 
-    public Game(String locate_game, String game_category, String game_status, String game_version, double game_price, String game_name, UUID gameId) {
+    public Game(String locate_game, String game_category, String status, String game_version, double price, String gameName, UUID gameId) {
         this.locate_game = locate_game;
         this.game_category = game_category;
-        this.game_status = game_status;
+        this.status = status;
         this.game_version = game_version;
-        this.game_price = game_price;
-        this.game_name = game_name;
+        this.price = price;
+        this.gameName = gameName;
         this.gameId = gameId;
     }
 
@@ -40,7 +45,21 @@ public class Game {
 
     }
 
+    public String getImageLinks() {
+        return imageLinks;
+    }
 
+    public void setImageLinks(String imageLinks) {
+        this.imageLinks = imageLinks;
+    }
+
+    public String getDeception() {
+        return deception;
+    }
+
+    public void setDeception(String deception) {
+        this.deception = deception;
+    }
 
     public UUID getGameId() {
         return gameId;
@@ -50,20 +69,20 @@ public class Game {
         this.gameId = gameId;
     }
 
-    public String getGame_name() {
-        return game_name;
+    public String getGameName() {
+        return gameName;
     }
 
-    public void setGame_name(String game_name) {
-        this.game_name = game_name;
+    public void setGameName(String game_name) {
+        this.gameName = game_name;
     }
 
-    public double getGame_price() {
-        return game_price;
+    public double getPrice() {
+        return price;
     }
 
-    public void setGame_price(double game_price) {
-        this.game_price = game_price;
+    public void setPrice(double game_price) {
+        this.price = game_price;
     }
 
     public String getGame_version() {
@@ -74,12 +93,12 @@ public class Game {
         this.game_version = game_version;
     }
 
-    public String getGame_status() {
-        return game_status;
+    public String getStatus() {
+        return status;
     }
 
-    public void setGame_status(String game_status) {
-        this.game_status = game_status;
+    public void setStatus(String game_status) {
+        this.status = game_status;
     }
 
     public String getGame_category() {
@@ -97,4 +116,16 @@ public class Game {
     public void setLocate_game(String locate_game) {
         this.locate_game = locate_game;
     }
+
+    public String[] getDeceptions() {
+        return GameCore.deceptionGame(deception);
+    }
+
+    public String[] getLinkImage(){
+        return GameCore.imageLinkGame(imageLinks);
+    }
 }
+
+
+
+
