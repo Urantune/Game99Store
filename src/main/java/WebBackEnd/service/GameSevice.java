@@ -56,5 +56,11 @@ public class GameSevice {
         gameRepository.deleteById(id);
     }
 
+    public Game findGameById(UUID gameId){
+        return gameRepository.findByGameId(gameId)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Game not found: " + gameId));
+    }
+
+
 
 }

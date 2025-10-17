@@ -1251,7 +1251,7 @@
 
                 <!-- Product 2: Free Fire -->
                 <div class="col mb-5">
-                    <a href="GameDetail.html?id=2" style="text-decoration:none; color:inherit;">
+                    <a th:href="@{'/welcome/gamedetail/' + ${game.getGameId()}}" style="text-decoration:none; color:inherit;">
                         <div id="freefire" class="card h-100">
                             <img class="card-img-top" th:src="${game.linkImage[4]}" th:alt="${game.gameName}" />
                             <div class="card-body p-4">

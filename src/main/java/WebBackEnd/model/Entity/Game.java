@@ -12,7 +12,7 @@ public class Game {
 
     @Id
     @GeneratedValue
-    @Column(name = "game_id")
+    @Column(name = "game_id", columnDefinition = "uniqueidentifier")
     private UUID gameId;
     @Column(name = "gameName")
     private String gameName;

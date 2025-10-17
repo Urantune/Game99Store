@@ -112,8 +112,10 @@ public class HomeController {
         return "HTML/BuyGuide";
     }
 
-    @GetMapping("/gamedetail")
-    public String gameDetail(Model model) {
+    @GetMapping("/gamedetail/{game_id}")
+    public String gameDetail(@PathVariable(value = "game_id") UUID game_id,Model model) {
+        Game game = gameSevice.findGameById(game_id);
+        model.addAttribute("gameChoose", game);
         return  "HTML/GameDetail";
     }
 
