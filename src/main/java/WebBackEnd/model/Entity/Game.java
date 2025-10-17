@@ -118,10 +118,12 @@ public class Game {
     }
 
     public String[] getDeceptions() {
+
         return GameCore.deceptionGame(deception);
     }
 
     public String[] getLinkImage(){
+
         return GameCore.imageLinkGame(imageLinks);
     }
 }

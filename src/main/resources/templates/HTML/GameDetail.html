@@ -270,55 +270,57 @@
 <div class="container mt-5">
     <h3 class="name-game mt-3" th:text="${game.gameName}">Tên game</h3>
     <div class="row align-items-stretch">
+
         <!-- Cột 1 -->
         <div class="col-md-4 d-flex flex-column equal-col">
             <div class="p-3 w-100 h-100 d-flex flex-column">
-                <!-- Ảnh bìa lớn: linkImage[4] -->
+                <!-- Ảnh bìa lớn -->
                 <img id="mainImg"
-                     th:src="${(game.linkImage != null and #arrays.length(game.linkImage) > 4) ? game.linkImage[4] : '/img/notfound.png'}"
+                     th:src="'/'+${game.linkImage[4]}"
                      src="/img/notfound.png"
                      alt="Game" class="img-fluid rounded shadow mb-3"/>
 
                 <div class="thumbs-row d-flex justify-content-between gap-2">
-                    <!-- Video: linkImage[0] -->
+                    <!-- Video -->
                     <video class="thumb" muted autoplay loop id="thumbVideo"
-                           th:if="${game.linkImage != null and #arrays.length(game.linkImage) > 0}"
                            th:attr="onclick=|openVideoModal('${game.linkImage[0]}')|">
-                        <source th:src="${game.linkImage[0]}" type="video/mp4"/>
+                        <source th:src="'/'+${game.linkImage[0]}" type="video/mp4"/>
                     </video>
 
-                    <!-- Thumbs: linkImage[1..3] -->
+                    <!-- Thumbs -->
                     <img class="thumb" id="thumb1"
-                         th:if="${game.linkImage != null and #arrays.length(game.linkImage) > 1}"
                          th:src="${game.linkImage[1]}"
-                         th:attr="onclick=|openImageModal('${game.linkImage[1]}')|"/>
+                         th:attr="onclick=|openImageModal('/'+'${game.linkImage[1]}')|"/>
 
                     <img class="thumb" id="thumb2"
-                         th:if="${game.linkImage != null and #arrays.length(game.linkImage) > 2}"
                          th:src="${game.linkImage[2]}"
-                         th:attr="onclick=|openImageModal('${game.linkImage[2]}')|"/>
+                         th:attr="onclick=|openImageModal('/'+'${game.linkImage[2]}')|"/>
 
                     <img class="thumb" id="thumb3"
-                         th:if="${game.linkImage != null and #arrays.length(game.linkImage) > 3}"
                          th:src="${game.linkImage[3]}"
-                         th:attr="onclick=|openImageModal('${game.linkImage[3]}')|"/>
+                         th:attr="onclick=|openImageModal('/'+'${game.linkImage[3]}')|"/>
                 </div>
             </div>
 
             <!-- Modal ảnh -->
             <div class="modal fade" id="imageModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content bg-dark"><div class="modal-body text-center">
-                        <img id="modalImage" class="img-fluid rounded"/>
-                    </div></div>
+                    <div class="modal-content bg-dark">
+                        <div class="modal-body text-center">
+                            <img id="modalImage" class="img-fluid rounded"/>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <!-- Modal video -->
             <div class="modal fade" id="videoModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content bg-dark border-0"><div class="modal-body p-0">
-                        <video id="modalVideo" class="w-100" controls muted autoplay></video>
-                    </div></div>
+                    <div class="modal-content bg-dark border-0">
+                        <div class="modal-body p-0">
+                            <video id="modalVideo" class="w-100" controls muted autoplay></video>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -328,28 +330,22 @@
             <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
                 <h4 class="mb-3">Thông tin chi tiết</h4>
                 <p><strong>💲 Giá:</strong>
-                    <span id="price"
-                          th:text="${game.price != null ? #numbers.formatDecimal(game.price, 1, 'COMMA', 2, 'POINT') : '-'}">-</span>
+                    <span id="price" th:text="${game.price}">-</span>
                 </p>
                 <p><strong>⭐ Đánh giá:</strong>
-                    <span id="rating"
-                          th:text="${(game.deceptions != null and #arrays.length(game.deceptions) > 3) ? game.deceptions[3] : '-'}">-</span>
+                    <span id="rating" th:text="${game.deceptions[3]}">-</span>
                 </p>
                 <p><strong>📂 Dung lượng:</strong>
-                    <span id="size"
-                          th:text="${(game.deceptions != null and #arrays.length(game.deceptions) > 1) ? game.deceptions[1] : '-'}">-</span>
+                    <span id="size" th:text="${game.deceptions[1]}">-</span>
                 </p>
                 <p><strong>🔞 Độ tuổi:</strong>
-                    <span id="age"
-                          th:text="${(game.deceptions != null and #arrays.length(game.deceptions) > 4) ? game.deceptions[4] : '-'}">-</span>
+                    <span id="age" th:text="${game.deceptions[4]}">-</span>
                 </p>
                 <p><strong>⬇️ Lượt tải:</strong>
-                    <span id="downloads"
-                          th:text="${(game.deceptions != null and #arrays.length(game.deceptions) > 2) ? game.deceptions[2] : '-'}">-</span>
+                    <span id="downloads" th:text="${game.deceptions[2]}">-</span>
                 </p>
                 <p><strong>📝 Mô tả:</strong>
-                    <span id="description"
-                          th:text="${(game.deceptions != null and #arrays.length(game.deceptions) > 0) ? game.deceptions[0] : '-'}">-</span>
+                    <span id="description" th:text="${game.deceptions[0]}">-</span>
                 </p>
 
                 <div class="d-flex gap-2 mt-auto">
@@ -365,33 +361,9 @@
             </div>
         </div>
 
-        <!-- Cột 3 -->
-        <div class="col-md-4 d-flex equal-col">
-            <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
-                <h4 class="mb-3">Đánh giá & Bình luận</h4>
-                <div class="mb-3">
-                    <h5>⭐ 4.5 / 5</h5>
-                    <small>6.5 triệu lượt đánh giá</small>
-                </div>
-                <div class="border rounded p-2 mb-2">
-                    <strong>Nguyễn Văn A</strong>
-                    <p>⭐⭐⭐⭐⭐</p><p>Game rất hay, đồ họa đẹp và mượt.</p>
-                </div>
-                <div class="border rounded p-2 mb-2">
-                    <strong>Trần Thị B</strong>
-                    <p>⭐⭐⭐⭐</p><p>Chơi vui nhưng hơi nặng máy.</p>
-                </div>
-                <div class="border rounded p-2 mb-2">
-                    <strong>Lê Văn C</strong>
-                    <p>⭐⭐⭐⭐⭐</p><p>Update mới nhiều tính năng hấp dẫn 👍</p>
-                </div>
-                <div class="text-center mt-auto">
-                    <button class="btn btn-outline-primary btn-sm">Xem thêm bình luận</button>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
+
 
 <!-- ======= FOOTER ======= -->
 <footer class="footer custom-footer mt-auto py-5 text-white">

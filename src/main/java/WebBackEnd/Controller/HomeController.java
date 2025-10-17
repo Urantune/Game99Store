@@ -38,9 +38,9 @@ public class HomeController {
 
         model.addAttribute("listGame", gameSevice.list20GameIntoGame());
         model.addAttribute("linkimage", GameCore.imageLinkGame(gameSevice.findGameByStatus("main").getImageLinks()));
-        for(Game a : gameSevice.list20GameIntoGame()){
-            System.out.println(a.getDeceptions()[4]);
-        }
+//        for(Game a : gameSevice.list20GameIntoGame()){
+//            System.out.println(a.getDeceptions()[4]);
+//        }
 
         return "HTML/Index";
     }
@@ -115,7 +115,8 @@ public class HomeController {
     @GetMapping("/gamedetail/{game_id}")
     public String gameDetail(@PathVariable(value = "game_id") UUID game_id,Model model) {
         Game game = gameSevice.findGameById(game_id);
-        model.addAttribute("gameChoose", game);
+        System.out.println(game.getGameName());
+        model.addAttribute("game", game);
         return  "HTML/GameDetail";
     }
 
