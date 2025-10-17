@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 
 @Service
@@ -41,6 +42,18 @@ public class GameSevice {
         List<Game> list = gameRepository.show20GameRandom();
 
     return list;
+    }
+
+    public List<Game> findAllGame(){
+        return gameRepository.findAll();
+    }
+
+    public Game saveGame(Game game){
+        return gameRepository.save(game);
+    }
+
+    public void deleteGame(UUID id){
+        gameRepository.deleteById(id);
     }
 
 

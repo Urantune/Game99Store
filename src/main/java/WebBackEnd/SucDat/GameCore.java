@@ -13,4 +13,9 @@ public class GameCore {
         return deceptions;
     }
 
+    public void payMent(){
+
+
+    }
+
 }
