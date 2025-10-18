@@ -28,6 +28,9 @@ public class UserGame {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "status")
+    private int status;
+
     public UserGame() {}
 
     public UserGame(User user, Game game, LocalDateTime purchaseDate, Double price) {

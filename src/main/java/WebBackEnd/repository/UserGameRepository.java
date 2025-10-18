@@ -31,6 +31,15 @@ public interface UserGameRepository extends JpaRepository<UserGame, UserGameId> 
            """)
     List<Game> findGamesOwnedByUser(UUID userId);
 
+        @Query("""
+               select ug.game
+               from UserGame ug
+               where ug.id.userId = ?1 
+                              and ug.status = 0
+               order by ug.purchaseDate desc
+               """)
+        List<Game> findGamesCartByUser(UUID userId);
+
 
 
 

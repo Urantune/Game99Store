@@ -360,15 +360,18 @@
                 <ul class="navbar-nav d-flex flex-row mb-0">
                     <!-- Admin link removed (static) -->
                 </ul>
-                <!-- Right: Cart + User info -->
+
                 <div class="d-flex align-items-center">
 
-                    <a th:href="@{/welcome/Cart}" class="btn btn-outline-dark me-2">
+
+                    <a th:if="${session.username != null}"
+                       th:href="@{/welcome/Cart/{id}(id=${session.id})}"
+                       class="btn btn-outline-dark me-2">
                         <i class="bi-cart-fill me-1"></i>
                         Cart
-                        <span class="badge bg-dark text-white ms-1 rounded-pill"
-                              th:text="${cart != null ? cart.size() : 0}">0</span>
+
                     </a>
+
 
                     <!-- Nếu chưa login -->
                     <div th:if="${session.username == null}">

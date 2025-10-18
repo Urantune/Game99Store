@@ -24,4 +24,8 @@ public class UserGameService {
     public List<Game> showGameInProfile(UUID userId){
         return userGameRepository.findGamesOwnedByUser(userId);
     }
+
+    public List<Game> showGameInCart(UUID userId){
+        return userGameRepository.findGamesCartByUser(userId);
+    }
 }

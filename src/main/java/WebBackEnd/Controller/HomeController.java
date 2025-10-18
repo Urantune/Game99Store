@@ -28,7 +28,7 @@ public class HomeController {
     @Autowired
     private UserService userService;
     @Autowired
-    private GameSevice  gameSevice;
+    private GameSevice gameSevice;
     @Autowired
     private UserGameService userGameService;
 
@@ -42,7 +42,9 @@ public class HomeController {
 
         model.addAttribute("listGame", gameSevice.list20GameIntoGame());
         model.addAttribute("linkimage", GameCore.imageLinkGame(gameSevice.findGameByStatus("main").getImageLinks()));
-//        for(Game a : gameSevice.list20GameIntoGame()){
+
+
+        //        for(Game a : gameSevice.list20GameIntoGame()){
 //            System.out.println(a.getDeceptions()[4]);
 //        }
 //        UUID uid = UUID.fromString("6CE0FCF6-B584-4A63-AEDF-FAED48E78665");
@@ -60,10 +62,18 @@ public class HomeController {
     }
 
 
-    @GetMapping("/Cart")
-    public String payMent(Model model) {
-        return "HTML/Cart.html";
-    }
+
+        @GetMapping("/Cart/{id}")
+        public String payMent(@PathVariable UUID id, Model model) {
+            model.addAttribute("listGame", userGameService.showGameInCart(id));
+            model.addAttribute("user", userService.findById(id));
+            for (Game a : userGameService.showGameInProfile(id)) {
+                System.out.println(a.getGameName());
+            }
+
+            return "HTML/Cart";
+        }
+
 
 
 
@@ -109,9 +119,6 @@ public class HomeController {
     }
 
 
-
-
-
     @GetMapping("/about")
     public String controllAbout(Model model) {
         return "HTML/About";
@@ -123,11 +130,10 @@ public class HomeController {
     }
 
     @GetMapping("/gamedetail/{game_id}")
-    public String gameDetail(@PathVariable(value = "game_id") UUID game_id,Model model) {
+    public String gameDetail(@PathVariable(value = "game_id") UUID game_id, Model model) {
         Game game = gameSevice.findGameById(game_id);
-        System.out.println(game.getGameName());
         model.addAttribute("game", game);
-        return  "HTML/GameDetail";
+        return "HTML/GameDetail";
     }
 
     @GetMapping("/Newgame")
@@ -141,26 +147,28 @@ public class HomeController {
     }
 
     @GetMapping("/support")
-    public String support(Model model) {return "HTML/Support";}
+    public String support(Model model) {
+        return "HTML/Support";
+    }
 
     @GetMapping("/supporttransaction")
-    public String supporttransaction(Model model) {return "HTML/SupportTransaction";}
+    public String supporttransaction(Model model) {
+        return "HTML/SupportTransaction";
+    }
 
     @GetMapping("/termsofservice")
     public String termsofservice() {
         return "HTML/TermsOfService";
     }
 
-        @GetMapping("/profile/{id}")
-        public String userDetail(@PathVariable(value = "id") UUID id,
-                Model model) {
-            model.addAttribute("listGame", userGameService.showGameInProfile(id));
-            model.addAttribute("user",userService.findById(id));
-            for(Game a : userGameService.showGameInProfile(id)) {
-                System.out.println(a.getGameName());
-            }
-            return "HTML/ProfileUser";
-        }
+    @GetMapping("/profile/{id}")
+    public String userDetail(@PathVariable(value = "id") UUID id,
+                             Model model) {
+        model.addAttribute("listGame", userGameService.showGameInProfile(id));
+        model.addAttribute("user", userService.findById(id));
+
+        return "HTML/ProfileUser";
+    }
 
 //    @PostMapping("/home")
 //    public String doLogin(@RequestParam("username") String username,
