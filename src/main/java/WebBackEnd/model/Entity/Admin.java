@@ -8,8 +8,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "admims")
 public class Admin {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "admin_id")

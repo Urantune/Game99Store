@@ -29,8 +29,6 @@ public class AdminController {
     private GameSevice  gameSevice;
 
     public String homeAdmin(Model model) {
-
-
         return "admin";
     }
 
@@ -60,5 +58,10 @@ public class AdminController {
     public String editGame(@PathVariable(value="game") Game game,Model model){
         gameSevice.saveGame(game);
         return "editgame";
+    }
+
+    @GetMapping("/welcomeAdmin")
+    public String welcomeAmin(Model model){
+        return "IndexAdmin";
     }
 }
