@@ -1,9 +1,9 @@
 <!-- templates/game-detail.html -->
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Chi tiết game</title>
+    <title th:text="${game.gameName} + ' - Chi tiết game'">Chi tiết game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Bootstrap & Icons CDN -->
@@ -48,7 +48,7 @@
         .profile-name{font-size:14px;color:#333;margin-top:5px;transition:color .3s}
         .profile-link:hover .profile-name{color:#FFD700}
 
-        /* Banner, menu, search… (giữ nguyên cảm giác giao diện) */
+        /* Banner, menu, search… */
         .banner{position:relative;width:100%;height:550px;overflow:hidden}
         .slides{position:absolute;width:100%;height:100%;background-size:cover;background-position:center;opacity:0;transition:opacity 1s ease-in-out;z-index:0}
         .slides.active{opacity:1}
@@ -268,35 +268,59 @@
 
 <!-- ======= BODY: 3 cột ======= -->
 <div class="container mt-5">
-    <h3 class="name-game mt-3" id="gameName">Tên game</h3>
+    <h3 class="name-game mt-3" th:text="${game.gameName}">Tên game</h3>
     <div class="row align-items-stretch">
+
         <!-- Cột 1 -->
         <div class="col-md-4 d-flex flex-column equal-col">
             <div class="p-3 w-100 h-100 d-flex flex-column">
-                <img id="mainImg" src="/img/notfound.png" alt="Game" class="img-fluid rounded shadow mb-3"/>
+                <!-- Ảnh bìa lớn -->
+                <img id="mainImg"
+                     th:src="'/'+${game.linkImage[4]}"
+                     src="/img/notfound.png"
+                     alt="Game" class="img-fluid rounded shadow mb-3"/>
 
                 <div class="thumbs-row d-flex justify-content-between gap-2">
-                    <video class="thumb" muted autoplay loop id="thumbVideo"></video>
-                    <img class="thumb" id="thumb1"/>
-                    <img class="thumb" id="thumb2"/>
-                    <img class="thumb" id="thumb3"/>
+                    <!-- Video -->
+                    <video class="thumb" muted autoplay loop id="thumbVideo"
+                           th:attr="onclick=|openVideoModal('${game.linkImage[0]}')|">
+                        <source th:src="'/'+${game.linkImage[0]}" type="video/mp4"/>
+                    </video>
+
+                    <!-- Thumbs -->
+                    <img class="thumb" id="thumb1"
+                         th:src="${game.linkImage[1]}"
+                         th:attr="onclick=|openImageModal('/'+'${game.linkImage[1]}')|"/>
+
+                    <img class="thumb" id="thumb2"
+                         th:src="${game.linkImage[2]}"
+                         th:attr="onclick=|openImageModal('/'+'${game.linkImage[2]}')|"/>
+
+                    <img class="thumb" id="thumb3"
+                         th:src="${game.linkImage[3]}"
+                         th:attr="onclick=|openImageModal('/'+'${game.linkImage[3]}')|"/>
                 </div>
             </div>
 
             <!-- Modal ảnh -->
             <div class="modal fade" id="imageModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content bg-dark"><div class="modal-body text-center">
-                        <img id="modalImage" class="img-fluid rounded"/>
-                    </div></div>
+                    <div class="modal-content bg-dark">
+                        <div class="modal-body text-center">
+                            <img id="modalImage" class="img-fluid rounded"/>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <!-- Modal video -->
             <div class="modal fade" id="videoModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content bg-dark border-0"><div class="modal-body p-0">
-                        <video id="modalVideo" class="w-100" controls muted autoplay></video>
-                    </div></div>
+                    <div class="modal-content bg-dark border-0">
+                        <div class="modal-body p-0">
+                            <video id="modalVideo" class="w-100" controls muted autoplay></video>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -305,53 +329,41 @@
         <div class="col-md-4 d-flex equal-col">
             <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
                 <h4 class="mb-3">Thông tin chi tiết</h4>
-                <p><strong>💲 Giá:</strong> <span id="price">-</span></p>
-                <p><strong>⭐ Đánh giá:</strong> <span id="rating">-</span></p>
-                <p><strong>📂 Dung lượng:</strong> <span id="size">-</span></p>
-                <p><strong>🔞 Độ tuổi:</strong> <span id="age">-</span></p>
-                <p><strong>⬇️ Lượt tải:</strong> <span id="downloads">-</span></p>
-                <p><strong>📝 Mô tả:</strong> <span id="description">-</span></p>
+                <p><strong>💲 Giá:</strong>
+                    <span id="price" th:text="${game.price}">-</span>
+                </p>
+                <p><strong>⭐ Đánh giá:</strong>
+                    <span id="rating" th:text="${game.deceptions[3]}">-</span>
+                </p>
+                <p><strong>📂 Dung lượng:</strong>
+                    <span id="size" th:text="${game.deceptions[1]}">-</span>
+                </p>
+                <p><strong>🔞 Độ tuổi:</strong>
+                    <span id="age" th:text="${game.deceptions[4]}">-</span>
+                </p>
+                <p><strong>⬇️ Lượt tải:</strong>
+                    <span id="downloads" th:text="${game.deceptions[2]}">-</span>
+                </p>
+                <p><strong>📝 Mô tả:</strong>
+                    <span id="description" th:text="${game.deceptions[0]}">-</span>
+                </p>
 
                 <div class="d-flex gap-2 mt-auto">
                     <form id="buyForm" class="w-100">
-                        <input type="hidden" name="gameId" id="buyGameId"/>
+                        <input type="hidden" name="gameId" id="buyGameId" th:value="${game.gameId}"/>
                         <button type="submit" class="btn btn-success w-100">🛒 Mua ngay</button>
                     </form>
                     <form id="addCartForm" class="w-100">
-                        <input type="hidden" name="gameId" id="cartGameId"/>
+                        <input type="hidden" name="gameId" id="cartGameId" th:value="${game.gameId}"/>
                         <button type="submit" class="btn btn-primary w-100">➕ Thêm giỏ hàng</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Cột 3 -->
-        <div class="col-md-4 d-flex equal-col">
-            <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
-                <h4 class="mb-3">Đánh giá & Bình luận</h4>
-                <div class="mb-3">
-                    <h5>⭐ 4.5 / 5</h5>
-                    <small>6.5 triệu lượt đánh giá</small>
-                </div>
-                <div class="border rounded p-2 mb-2">
-                    <strong>Nguyễn Văn A</strong>
-                    <p>⭐⭐⭐⭐⭐</p><p>Game rất hay, đồ họa đẹp và mượt.</p>
-                </div>
-                <div class="border rounded p-2 mb-2">
-                    <strong>Trần Thị B</strong>
-                    <p>⭐⭐⭐⭐</p><p>Chơi vui nhưng hơi nặng máy.</p>
-                </div>
-                <div class="border rounded p-2 mb-2">
-                    <strong>Lê Văn C</strong>
-                    <p>⭐⭐⭐⭐⭐</p><p>Update mới nhiều tính năng hấp dẫn 👍</p>
-                </div>
-                <div class="text-center mt-auto">
-                    <button class="btn btn-outline-primary btn-sm">Xem thêm bình luận</button>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
+
 
 <!-- ======= FOOTER ======= -->
 <footer class="footer custom-footer mt-auto py-5 text-white">
@@ -403,111 +415,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- ======= PAGE LOGIC (JS THUẦN) ======= -->
+<!-- ======= PAGE LOGIC (JS THUẦN — KHÔNG GHI ĐÈ DỮ LIỆU TỪ SERVER) ======= -->
 <script>
-    // --- Helpers lấy id từ URL: hỗ trợ /games?id=.. hoặc /games/{id}
-    function getGameId() {
-        const usp = new URLSearchParams(location.search);
-        if (usp.get('id')) return usp.get('id');
-        const parts = location.pathname.split('/').filter(Boolean);
-        const idx = parts.indexOf('games');
-        if (idx !== -1 && parts[idx+1]) return parts[idx+1];
-        return null;
-    }
-
-    // --- Data: chuyển toàn bộ "if (id)" trong JSP thành object map
-    const GAMES = {
-        "1": { name:"Liên Quân Mobile", price:"$999.00", img:"/img/game1.jpg",
-            rating:"⭐⭐⭐⭐☆ (4.0/5)", size:"2.5 GB", age:"12+", downloads:"50 Tr+",
-            description:"Liên Quân Mobile là tựa game MOBA nổi tiếng...",
-            video:"/videos/lienquan.mp4", preview1:"/img/demo.jpg", preview2:"/img/demo1.jpg", preview3:"/img/demo3.jpg" },
-        "2": { name:"Free Fire", price:"Miễn phí", img:"/img/game2.jpg",
-            rating:"⭐ (1/5)", size:"2.0 GB", age:"12+", downloads:"1 T+",
-            description:"Free Fire là một trò chơi bắn súng sinh tồn...",
-            video:"/videos/freefire.mp4", preview1:"/img/demo4.jpg", preview2:"/img/demo5.jpg", preview3:"/img/demo6.jpg" },
-        "3": { name:"Zing Speed Mobile", price:"Miễn phí", img:"/img/game3.jpg",
-            rating:"⭐⭐⭐⭐⭐ (3.5/5)", size:"3.5 GB", age:"18+", downloads:"30 Tr+",
-            description:"ZingSpeed Mobile là trò chơi đua xe tốc độ cao...",
-            video:"/videos/zingspeed.mp4", preview1:"/img/demo7.jpg", preview2:"/img/demo8.jpg", preview3:"/img/demo9.jpg" },
-        "4": { name:"Genshin Impact", price:"Miễn phí", img:"/img/game5.jpg",
-            rating:"⭐⭐⭐⭐⭐ (4.7/5)", size:"📂 15GB", age:"🔞 12+", downloads:"⬇️ 100 triệu+",
-            description:"Genshin Impact là trò chơi nhập vai phiêu lưu...",
-            video:"/videos/GenshinImpact.mp4", preview1:"/img/demo14.jpg", preview2:"/img/demo15.jpg", preview3:"/img/demo16.jpg" },
-        "5": { name:"Chiến Cơ Huyền Thoại", price:"$5.00", img:"/img/game4.jpg",
-            rating:"⭐⭐⭐⭐ (4.2/5)", size:"📂 300MB", age:"🔞 7+", downloads:"⬇️ 100 triệu+",
-            description:"Chiến Cơ Huyền Thoại là trò chơi bắn máy bay...",
-            video:"/videos/ccht.mp4", preview1:"/img/demo17.jpg", preview2:"/img/demo18.jpg", preview3:"/img/demo19.jpg" },
-        "6": { name:"PUBG Mobile", price:"$29.99", img:"/img/game6.jpg",
-            rating:"⭐⭐⭐⭐⭐ (4.8/5)", size:"📂 400MB", age:"🔞 7+", downloads:"⬇️ 200 triệu+",
-            description:"PUBG là trò chơi sinh tồn bắn súng...",
-            video:"/videos/pubg.mp4", preview1:"/img/demo20.jpg", preview2:"/img/demo21.jpg", preview3:"/img/demo22.jpg" },
-        "7": { name:"Cyberpunk", price:"Miễn phí", img:"/img/game7.jpg",
-            rating:"⭐⭐⭐⭐⭐ (4.5/5)", size:"📂 3GB", age:"🔞 16+", downloads:"⬇️ 300 triệu+",
-            description:"Cyberpunk 2077 là trò chơi nhập vai thế giới mở...",
-            video:"/videos/Cyberpunk.mp4", preview1:"/img/demo23.jpg", preview2:"/img/demo24.jpg", preview3:"/img/demo25.jpg" },
-        "8": { name:"Among Us", price:"Miễn phí", img:"/img/game8.jpg",
-            rating:"⭐⭐⭐⭐ (4.3/5)", size:"📂 500MB", age:"🔞 7+", downloads:"⬇️ 500 triệu+",
-            description:"Among Us là trò chơi xã hội nhiều người chơi...",
-            video:"/videos/Among.mp4", preview1:"/img/demo26.jpg", preview2:"/img/demo27.jpg", preview3:"/img/demo28.jpg" },
-        "9": { name:"Võ Lâm Truyền Kỳ", price:"Miễn phí", img:"/img/game9.jpg",
-            rating:"⭐⭐⭐⭐ (4.4/5)", size:"📂 350MB", age:"🔞 7+", downloads:"⬇️ 200 triệu+",
-            description:"Võ Lâm Truyền Kỳ là trò chơi nhập vai hành động...",
-            video:"/videos/Volamtruyenky.mp4", preview1:"/img/demo29.jpg", preview2:"/img/demo30.jpg", preview3:"/img/demo31.jpg" },
-        "10":{ name:"Hay Day", price:"Miễn phí", img:"/img/game10.jpg",
-            rating:"⭐⭐⭐⭐⭐ (4.6/5)", size:"📂 3GB", age:"🔞 12+", downloads:"⬇️ 50 triệu+",
-            description:"Hay Day là trò chơi nông trại mô phỏng...",
-            video:"/videos/hayday.mp4", preview1:"/img/demo32.jpg", preview2:"/img/demo33.jpg", preview3:"/img/demo34.jpg" },
-        "11":{ name:"Liên Minh Huyền Thoại", price:"Miễn phí", img:"/img/game11.jpg",
-            rating:"⭐⭐⭐⭐ (4.1/5)", size:"📂 1GB", age:"🔞 7+", downloads:"⬇️ 500 triệu+",
-            description:"LMHT là trò chơi MOBA 5v5...",
-            video:"/videos/LMHT.mp4", preview1:"/img/demo35.jpg", preview2:"/img/demo36.jpg", preview3:"/img/demo37.jpg" },
-        "12":{ name:"Dota 2", price:"Miễn phí", img:"/img/game12.jpg",
-            rating:"⭐⭐⭐⭐ (4.3/5)", size:"📂 150MB", age:"🔞 7+", downloads:"⬇️ 1 tỷ+",
-            description:"Dota 2 là trò chơi MOBA cạnh tranh cao...",
-            video:"/videos/Dota2.mp4", preview1:"/img/demo38.jpg", preview2:"/img/demo39.jpg", preview3:"/img/demo40.jpg" },
-        "13":{ name:"Call of Duty", price:"Miễn phí (có IAP)", img:"/img/game13.jpg",
-            rating:"⭐⭐⭐⭐ (4.2/5)", size:"📂 250MB", age:"🔞 3+", downloads:"⬇️ 1 tỷ+",
-            description:"Call of Duty là series bắn súng FPS nổi tiếng...",
-            video:"/videos/CallofDuty.mp4", preview1:"/img/demo41.jpg", preview2:"/img/demo42.jpg", preview3:"/img/demo43.jpg" }
-    };
-
-    // --- Render game theo id
-    function renderGame() {
-        const id = getGameId();
-        const g = GAMES[id] || {
-            name:"Game không tồn tại", price:"-", img:"/img/notfound.png",
-            rating:"-", size:"-", age:"-", downloads:"-",
-            description:"-", video:"", preview1:"", preview2:"", preview3:""
-        };
-
-        document.title = `${g.name} - Chi tiết game`;
-        document.getElementById('gameName').textContent = g.name;
-        document.getElementById('mainImg').src = g.img;
-        document.getElementById('price').textContent = g.price;
-        document.getElementById('rating').textContent = g.rating;
-        document.getElementById('size').textContent = g.size;
-        document.getElementById('age').textContent = g.age;
-        document.getElementById('downloads').textContent = g.downloads;
-        document.getElementById('description').textContent = g.description;
-
-        const v = document.getElementById('thumbVideo');
-        v.innerHTML = g.video ? `<source src="${g.video}" type="video/mp4">` : '';
-        v.onclick = () => g.video && openVideoModal(g.video);
-
-        const t1 = document.getElementById('thumb1');
-        const t2 = document.getElementById('thumb2');
-        const t3 = document.getElementById('thumb3');
-        [t1,t2,t3].forEach((el,i)=>{
-            const src = g[`preview${i+1}`];
-            el.src = src || '/img/notfound.png';
-            el.onclick = () => openImageModal(src || '/img/notfound.png');
-        });
-
-        // set hidden inputs cho forms
-        document.getElementById('buyGameId').value = id || '';
-        document.getElementById('cartGameId').value = id || '';
-    }
-
     // --- Search box demo (static)
     const gamesForSearch = [
         {name:"Liên Quân Mobile", img:"/img/game1.jpg", anchor:"#lienquan"},
@@ -598,7 +507,7 @@
 
     // --- Image/Video modal
     function openImageModal(src){
-        document.getElementById("modalImage").src = src;
+        document.getElementById("modalImage").src = src || '/img/notfound.png';
         new bootstrap.Modal(document.getElementById('imageModal')).show();
     }
     function openVideoModal(src){
@@ -765,9 +674,6 @@
             }, 3000);
         }
     })();
-
-    // --- Init
-    renderGame();
 </script>
 </body>
 </html>

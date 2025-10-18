@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value="controllthing")
+@RequestMapping(value="/controllthing")
 public class AdminController {
 
 
@@ -44,6 +44,11 @@ public class AdminController {
     public String editUser(@PathVariable(value="user") User user, Model model) {
         userService.save(user);
         return "login";
+    }
+
+    @GetMapping("/dunglai")
+    public String check(Model model) {
+        return "HTML/hehe";
     }
 
     @GetMapping("/editgame")
