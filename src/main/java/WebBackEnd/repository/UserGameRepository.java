@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserGameRepository extends JpaRepository<UserGame, UserGameId> {
 
@@ -20,6 +21,16 @@ public interface UserGameRepository extends JpaRepository<UserGame, UserGameId> 
         ORDER BY COUNT(ug.user.id) DESC
     """)
     List<Game> findTopDownloadedGames(Pageable pageable);
+
+
+    @Query("""
+           select ug.game
+           from UserGame ug
+           where ug.id.userId = ?1
+           order by ug.purchaseDate desc
+           """)
+    List<Game> findGamesOwnedByUser(UUID userId);
+
 
 
 

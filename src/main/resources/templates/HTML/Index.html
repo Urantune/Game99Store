@@ -382,7 +382,15 @@
 
                     <!-- Nếu đã login -->
                     <div th:if="${session.username != null}" class="d-flex align-items-center">
-                        <span class="me-3">Xin chào, <b th:text="${session.username}"></b> 👋</span>
+
+                        <a th:href="@{/welcome/profile/{id}(id = ${session.id})}" class="d-inline-flex align-items-center">
+                            <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
+                                 alt="Avatar"
+                                 class="rounded-circle me-2"
+                                 style="width:35px;height:35px;object-fit:cover;border:2px solid #666;cursor:pointer;">
+                        </a>
+
+                        <span class="me-3"><b th:text="${session.username}"></b> 👋</span>
                         <a th:href="@{/logout}" class="btn btn-danger">Đăng xuất</a>
                     </div>
 

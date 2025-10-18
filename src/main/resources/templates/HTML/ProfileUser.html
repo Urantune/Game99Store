@@ -23,7 +23,7 @@
         </div>
 
         <div class="d-flex align-items-center justify-content-center mt-2">
-            <h2 class="m-0" id="displayName" style="font-size:1.5rem;" th:text="${user.username}">User Name</h2>
+            <h2 class="m-0"  style="font-size:1.5rem;" th:text="${user.username}">User Name</h2>
         </div>
 
         <!-- Modal chọn ảnh avatar -->
@@ -47,16 +47,16 @@
         </div>
 
         <div class="info mt-3">
-            <p>Email: <span id="emailMasked">user***@example.com</span></p>
+            <p>Email: <span id="emailMasked" th:text="${user.getEmail()}"></span></p>
             <p>
-                Số điện thoại: <span id="phoneDisplay">----------</span>
+                Số điện thoại: <span id="phoneDisplay">0 9 0 chiên bò chiên chưa chính </span>
                 <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editPhoneModal">⚙️</button>
             </p>
             <p>
-                Quốc gia: <span id="countryDisplay">----------</span>
+                Quốc gia: <span id="countryDisplay">Việt Nam</span>
                 <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editCountryModal">⚙️</button>
             </p>
-            <p>Bảo mật: <span style="color:gray">Chưa cài đặt</span></p>
+            <p>Bảo mật: <span style="color:gray">Đang bị hack</span></p>
             <a th:href="@{/logout}" href="/logout" class="btn btn-outline-danger mt-2">Đăng xuất</a>
         </div>
     </div>
@@ -66,19 +66,17 @@
         <h2>🎮 Thư viện game</h2>
         <div class="games" id="gameLibrary">
             <!-- Demo games (static) -->
-            <div class="game-card">
-                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg" alt="CSGO">
-                <p>CS:GO</p>
+            <div class="game-card" th:each="a : ${listGame}">
+                <div style="width:140px; height:84px; overflow:hidden;"
+                     th:with="imgs=${a.linkImage}">
+                    <img th:src="${#arrays.length(imgs) > 4 ? '/' + imgs[4] : '/img/notfound.png'}"
+                         style="width:100%; height:100%; object-fit:cover;">
+
+                </div>
+
+                <p th:text="${a.gameName}">CS:GO</p>
             </div>
-            <div class="game-card">
-                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg" alt="Dota 2">
-                <p>Dota 2</p>
-            </div>
-            <div class="game-card">
-                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg" alt="GTA V">
-                <p>GTA V</p>
-            </div>
-        </div>
+ </div>
 
         <h2 style="margin-top:20px;">🏆 Thành tích</h2>
         <div class="achievements">

@@ -3,8 +3,10 @@ package WebBackEnd.Controller;
 import WebBackEnd.SucDat.GameCore;
 import WebBackEnd.model.Entity.Game;
 import WebBackEnd.model.Entity.User;
+import WebBackEnd.model.Entity.UserGame;
 import WebBackEnd.repository.UserRepository;
 import WebBackEnd.service.GameSevice;
+import WebBackEnd.service.UserGameService;
 import WebBackEnd.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class HomeController {
     private UserService userService;
     @Autowired
     private GameSevice  gameSevice;
+    @Autowired
+    private UserGameService userGameService;
 
 
     @GetMapping
@@ -41,6 +45,11 @@ public class HomeController {
 //        for(Game a : gameSevice.list20GameIntoGame()){
 //            System.out.println(a.getDeceptions()[4]);
 //        }
+//        UUID uid = UUID.fromString("6CE0FCF6-B584-4A63-AEDF-FAED48E78665");
+//        for (Game a : userGameService.showGameInProfile(uid)) {
+//            System.out.println(a.getGameName());
+//        }
+
 
         return "HTML/Index";
     }
@@ -63,6 +72,7 @@ public class HomeController {
         user.setScore(0);
         user.setStatus("active");
         user.setDateCreateAccount(LocalDateTime.now());
+        user.setStatus("1");
         userRepository.save(user);
 
 
@@ -72,11 +82,10 @@ public class HomeController {
 
 
     @PostMapping("/login")
-    public String login(
-            @RequestParam String username,
-            @RequestParam String password,
-            RedirectAttributes ra,
-            HttpSession session) {
+    public String login(@RequestParam String username,
+                        @RequestParam String password,
+                        RedirectAttributes ra,
+                        HttpSession session) {
 
         var user = userService.findByUsername(username);
 
@@ -93,8 +102,9 @@ public class HomeController {
             return "redirect:/welcome";
         }
 
+        session.setAttribute("id", user.getId());
+        session.setAttribute("username", user.getUsername());
 
-        session.setAttribute("username", username);
         return "redirect:/welcome";
     }
 
@@ -141,11 +151,16 @@ public class HomeController {
         return "HTML/TermsOfService";
     }
 
-    @GetMapping("/profile")
-    public String userDetail(Model model,User user) {
-        model.addAttribute("user",user);
-        return "HTML/ProfileUser";
-    }
+        @GetMapping("/profile/{id}")
+        public String userDetail(@PathVariable(value = "id") UUID id,
+                Model model) {
+            model.addAttribute("listGame", userGameService.showGameInProfile(id));
+            model.addAttribute("user",userService.findById(id));
+            for(Game a : userGameService.showGameInProfile(id)) {
+                System.out.println(a.getGameName());
+            }
+            return "HTML/ProfileUser";
+        }
 
 //    @PostMapping("/home")
 //    public String doLogin(@RequestParam("username") String username,

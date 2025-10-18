@@ -14,16 +14,16 @@ public class UserGame {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", columnDefinition = "uniqueidentifier")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("gameId")
-    @JoinColumn(name = "game_id")
+    @JoinColumn(name = "game_id", columnDefinition = "uniqueidentifier")
     private Game game;
 
     @Column(name = "purchase_date")
-    private java.time.LocalDateTime purchaseDate;
+    private LocalDateTime purchaseDate;
 
     @Column(name = "price")
     private Double price;
