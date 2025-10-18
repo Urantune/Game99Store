@@ -130,9 +130,12 @@ public class HomeController {
     }
 
     @GetMapping("/gamedetail/{game_id}")
-    public String gameDetail(@PathVariable(value = "game_id") UUID game_id, Model model) {
+    public String gameDetail( ,@PathVariable(value = "game_id") UUID game_id, Model model) {
         Game game = gameSevice.findGameById(game_id);
         model.addAttribute("game", game);
+//        System.out.println(userService.findById(id));
+//            model.addAttribute("user", userService.findById(id));
+
         return "HTML/GameDetail";
     }
 
