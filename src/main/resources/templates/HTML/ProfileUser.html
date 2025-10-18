@@ -1,0 +1,504 @@
+<!-- src/main/resources/templates/ProfileUser.html -->
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Profile User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <style>
+        /* ==================== RESET & BASE ==================== */
+        body{background:#121212;color:#f5f5f5;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;margin:0;padding:20px}
+        .container{display:flex;gap:20px}
+
+        /* ==================== CARD ==================== */
+        .card{background:#1e1e1e;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.5);padding:20px;margin-bottom:20px}
+        .card h2{color:#ffcd39}
+        .card:hover{transform:none;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+
+        /* ==================== SIDEBAR TRÁI ==================== */
+        .avatar img{border:3px solid #0d6efd;margin-bottom:10px}
+        .avatar h2{font-size:1.5rem;font-weight:bold;color:#fff}
+        .info p{margin:8px 0;color:#ccc}
+        .btn-outline-light{border:1px solid #aaa;color:#ddd}
+        .btn-outline-light:hover{color:#0d6efd;border-color:#0d6efd}
+        a.btn-outline-danger{border:1px solid #dc3545;color:#dc3545;transition:.2s}
+        a.btn-outline-danger:hover{background:#dc3545;color:#fff}
+
+        /* ==================== THƯ VIỆN GAME ==================== */
+        .games{display:flex;gap:15px;margin-top:10px;flex-wrap:wrap}
+        .game-card{width:160px;text-align:center;background:#2a2a2a;border-radius:10px;padding:10px;transition:transform .3s ease,background .3s ease;cursor:pointer}
+        .game-card img{width:100%;border-radius:8px}
+        .game-card p{margin-top:8px;color:#f5f5f5;font-weight:500}
+        .game-card:hover{transform:scale(1.08);background:#333}
+
+        /* ==================== THÀNH TÍCH ==================== */
+        .achievements ul{list-style:none;padding:0}
+        .achievements li{background:#263226;margin:6px 0;padding:10px 14px;border-radius:6px;color:#a9f7b2;font-size:.95rem}
+
+        /* ==================== BÁNH RĂNG (chỉ icon) ==================== */
+        .info .btn-outline-light{border:none!important;background:transparent!important;color:#bbb;padding:0;font-size:1rem;margin-left:6px}
+        .info .btn-outline-light:hover,.info .btn-outline-light:focus{background:none!important;color:#bbb;box-shadow:none!important}
+
+        /* ==================== WALLET ==================== */
+        .wallet{text-align:center;background:linear-gradient(135deg,#ff9a9e,#fad0c4);color:#222;border:none}
+        .wallet h2{color:black}
+
+        /* ==================== TRANSACTIONS ==================== */
+        .transactions table{width:100%;border-collapse:collapse;font-size:.95rem}
+        .transactions th,.transactions td{padding:10px;border-bottom:1px solid #444;text-align:left}
+        .transactions th{background:#2c2c2c;color:#f0f0f0;font-weight:bold}
+        .transactions tr:nth-child(even){background:#252525}
+
+        /* ==================== SETTINGS ==================== */
+        .settings button{display:block;width:100%;margin:8px 0;padding:10px;border:none;border-radius:6px;background:#2a2a2a;color:#ddd;cursor:pointer;transition:background .2s ease,transform .2s ease}
+        .settings button:hover{background:#333;transform:translateX(3px)}
+
+        /* ==================== MODAL DARK ==================== */
+        .modal-content{background:#1e1e1e;color:#fff;border-radius:10px}
+        .modal-header,.modal-footer{border-color:#333}
+        .modal-title{color:#fff;font-weight:600}
+        .btn-close{filter:invert(1)}
+        .form-control,.form-select{background:#2a2a2a;border:1px solid #444;color:#f5f5f5}
+        .form-control:focus,.form-select:focus{border-color:#0d6efd;box-shadow:none}
+
+        .achievement{background:radial-gradient(circle at top,#19002b 0%,#0a0a0a 100%)}
+
+        /* Toast + hover */
+        .wallet:hover{transform:scale(1.03);box-shadow:0 0 20px rgba(0,0,0,.2)}
+        .toast-message{position:fixed;bottom:20px;right:20px;background:#333;color:#fff;padding:12px 18px;border-radius:8px;opacity:0;transition:opacity .5s ease;z-index:9999}
+        .toast-message.show{opacity:1}
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 992px){.container{flex-direction:column}}
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar trái -->
+    <div class="card bg-dark text-light p-3 rounded-3 shadow" style="flex:1;">
+        <div class="avatar text-center">
+            <!-- Avatar hiện tại -->
+            <img src="/img/demo.jpg" alt="Avatar" id="currentAvatar"
+                 class="rounded-circle"
+                 style="width:120px;height:120px;object-fit:cover;border:2px solid #666;cursor:pointer;">
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center mt-2">
+            <h2 class="m-0" id="displayName" style="font-size:1.5rem;">User Name</h2>
+        </div>
+
+        <!-- Modal chọn ảnh avatar -->
+        <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-light">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="avatarModalLabel">Chọn ảnh đại diện</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <form id="avatarForm">
+                            <div class="d-flex flex-wrap justify-content-center gap-2" id="avatarOptions">
+                                <!-- ảnh lựa chọn render bằng JS -->
+                            </div>
+                            <button type="submit" class="btn btn-success mt-3">Lưu ảnh</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info mt-3">
+            <p>Email: <span id="emailMasked">user***@example.com</span></p>
+            <p>
+                Số điện thoại: <span id="phoneDisplay">----------</span>
+                <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editPhoneModal">⚙️</button>
+            </p>
+            <p>
+                Quốc gia: <span id="countryDisplay">----------</span>
+                <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editCountryModal">⚙️</button>
+            </p>
+            <p>Bảo mật: <span style="color:gray">Chưa cài đặt</span></p>
+            <a th:href="@{/logout}" href="/logout" class="btn btn-outline-danger mt-2">Đăng xuất</a>
+        </div>
+    </div>
+
+    <!-- Giữa -->
+    <div class="card" style="flex:2;">
+        <h2>🎮 Thư viện game</h2>
+        <div class="games" id="gameLibrary">
+            <!-- Demo games (static) -->
+            <div class="game-card">
+                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg" alt="CSGO">
+                <p>CS:GO</p>
+            </div>
+            <div class="game-card">
+                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg" alt="Dota 2">
+                <p>Dota 2</p>
+            </div>
+            <div class="game-card">
+                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg" alt="GTA V">
+                <p>GTA V</p>
+            </div>
+        </div>
+
+        <h2 style="margin-top:20px;">🏆 Thành tích</h2>
+        <div class="achievements">
+            <ul id="achievementList">
+                <li>🔥 Hoàn thành 100 giờ chơi GTA V</li>
+                <li>🎯 Rank Immortal trong Dota 2</li>
+                <li>⚡ MVP 50 trận trong CS:GO</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Sidebar phải -->
+    <div style="flex:1;">
+        <!-- Ví GamePay -->
+        <div id="walletCard" class="card wallet text-center p-4 shadow-lg" style="cursor:pointer;transition:transform .3s;">
+            <h2 class="mb-2" style="color:#222;">💰 Ví GamePay</h2>
+            <p class="text-muted mb-0" id="walletStatus">Chưa kích hoạt</p>
+        </div>
+
+        <!-- Modal kích hoạt -->
+        <div id="activateWalletModal" class="modal fade" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content p-4 achievement">
+                    <h4 class="text-center mb-3" style="color:#ffcd39;">Ví GamePay</h4>
+                    <p>Liên kết để tận hưởng nhiều ưu đãi hơn!</p>
+                    <p class="text-white">
+                        Bằng việc chọn "Kích hoạt", bạn đồng ý liên kết tài khoản GameStore với tài khoản GamePay của bạn theo
+                        <a th:href="@{/terms}" href="/TermsOfService">Điều khoản dịch vụ</a> và
+                        <a th:href="@{/privacy}" href="/PrivacyPolicy">Chính sách bảo mật</a>.
+                    </p>
+                    <form id="activateWalletForm">
+                        <div class="mb-3">
+                            <label class="form-label">Mật khẩu kích hoạt ví</label>
+                            <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fw-bold" id="pinCode" name="pinCode" required placeholder="****">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success px-4">Kích hoạt</button>
+                            <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popup nhập PIN -->
+        <div id="pinPopup" class="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);justify-content:center;align-items:center;">
+            <div style="background:radial-gradient(circle at top,#19002b 0%,#0a0a0a 100%);padding:30px;border-radius:10px;width:350px;text-align:center;">
+                <h5 style="color:#ffcd39;">Ví GamePay</h5>
+                <p class="text-white">Vui lòng nhập mật khẩu của ví</p>
+                <input type="password" id="walletPin" maxlength="4" class="form-control mb-3 text-center" style="letter-spacing:5px;font-size:20px;">
+                <div id="pinError" class="text-danger mb-2"></div>
+                <button class="btn btn-primary px-4" id="verifyPinBtn">Xác nhận</button>
+                <button class="btn btn-secondary px-3" id="closePinBtn">Hủy</button>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="toast-message"></div>
+
+        <div class="card transactions mt-3">
+            <h2>🧾 Thông tin</h2>
+            <h5 class="mt-2 text-white">1. Lịch sử giao dịch</h5>
+            <h5 class="mt-3 text-white">2. Game đã mua</h5>
+            <h5 class="mt-3 text-white">3. Yêu cầu hoàn tiền</h5>
+            <h5 class="mt-3 text-white">4. Giao dịch đang xử lý</h5>
+            <h5 class="mt-3 text-white">5. Thông báo</h5>
+        </div>
+
+        <div class="card settings">
+            <h2>⚙️ Cài đặt</h2>
+            <button id="btnChangePassword">Đổi mật khẩu</button>
+            <button id="btnManageContact">Quản lý Email/Phone</button>
+            <button id="btnToggle2FA">Bật/Tắt 2FA</button>
+            <button id="btnPrivacy">Cài đặt riêng tư</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modals: Đổi tên / Phone / Country -->
+<div class="modal fade" id="editNameModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-white">
+                <h5 class="modal-title">Đổi tên hiển thị</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="newName" class="form-control" value="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="saveNameBtn" data-bs-dismiss="modal">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editPhoneModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Nhập số điện thoại</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="newPhone" class="form-control" placeholder="Nhập số điện thoại">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="savePhoneBtn" data-bs-dismiss="modal">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editCountryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Chọn quốc gia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <select id="newCountry" class="form-select">
+                    <option value="">-- Chọn quốc gia --</option>
+                    <option value="Việt Nam">Việt Nam</option>
+                    <option value="Hoa Kỳ">Hoa Kỳ</option>
+                    <option value="Nhật Bản">Nhật Bản</option>
+                    <option value="Hàn Quốc">Hàn Quốc</option>
+                    <option value="Pháp">Pháp</option>
+                    <option value="Anh">Anh</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="saveCountryBtn" data-bs-dismiss="modal">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    /**
+     * =============== GHI CHÚ QUAN TRỌNG ===============
+     * - File này chạy độc lập, KHÔNG cần truyền model từ Controller.
+     * - Dữ liệu demo (username/email/avatar/wallet) lấy từ localStorage hoặc default.
+     * - Khi có API Spring Boot, chỉ cần sửa các URL fetch() (đánh dấu TODO) bên dưới.
+     */
+
+// ======= Demo "database" qua localStorage =======
+    const STORAGE_KEYS = {
+        name: 'gs_profile_name',
+        email: 'gs_profile_email',
+        phone: 'gs_profile_phone',
+        country: 'gs_profile_country',
+        avatar: 'gs_profile_avatar',
+        walletPin: 'gs_wallet_pin',
+        walletActive: 'gs_wallet_active'
+    };
+
+    // ======= Defaults nếu chưa có dữ liệu =======
+    const DEFAULTS = {
+        name: 'Do Trong Tri',
+        email: 'user@example.com',
+        phone: '',
+        country: '',
+        avatars: [
+            '/img/demo1.jpg',
+            '/img/demo3.jpg',
+            '/img/demo4.jpg',
+            '/img/a.png'
+        ]
+    };
+
+    // ======= Helpers =======
+    const $ = (sel)=>document.querySelector(sel);
+    function maskEmail(email){
+        if(!email || !email.includes('@')) return email || '';
+        const [name,domain] = email.split('@');
+        if(name.length <= 2) return '*@' + domain;
+        return name.slice(0,2) + '*'.repeat(Math.max(1,name.length-2)) + '@' + domain;
+    }
+    function showToast(msg,isError){
+        const toast = $('#toast');
+        toast.textContent = msg;
+        toast.style.background = isError ? '#e74c3c' : '#2ecc71';
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'),3000);
+    }
+
+    // ======= Khởi tạo dữ liệu từ localStorage =======
+    function initProfile(){
+        const name = localStorage.getItem(STORAGE_KEYS.name) || DEFAULTS.name;
+        const email = localStorage.getItem(STORAGE_KEYS.email) || DEFAULTS.email;
+        const phone = localStorage.getItem(STORAGE_KEYS.phone) || '';
+        const country = localStorage.getItem(STORAGE_KEYS.country) || '';
+        let avatar = localStorage.getItem(STORAGE_KEYS.avatar);
+
+        if(!avatar){
+            const randomIndex = Math.floor(Math.random()*DEFAULTS.avatars.length);
+            avatar = DEFAULTS.avatars[randomIndex];
+            localStorage.setItem(STORAGE_KEYS.avatar, avatar);
+        }
+
+        // Gán ra UI
+        $('#displayName').innerText = name;
+        $('#emailMasked').innerText = maskEmail(email);
+        $('#phoneDisplay').innerText = phone || '----------';
+        $('#countryDisplay').innerText = country || '----------';
+        $('#currentAvatar').src = avatar;
+
+        // Modal đổi tên preload
+        $('#newName').value = name;
+
+        // Render danh sách avatar trong modal
+        renderAvatarOptions(avatar);
+    }
+
+    function renderAvatarOptions(current){
+        const wrap = document.getElementById('avatarOptions');
+        wrap.innerHTML = '';
+        DEFAULTS.avatars.forEach(src=>{
+            const label = document.createElement('label');
+            label.style.cursor='pointer';
+            label.innerHTML = `
+      <input type="radio" name="avatar" value="${src}" style="display:none;" ${src===current?'checked':''}>
+      <img src="${src}" class="rounded-circle border border-2"
+           style="width:80px;height:80px;cursor:pointer;border-color:${src===current?'lime':'transparent'};">
+    `;
+            label.querySelector('img').addEventListener('click', (e)=>{
+                // clear viền
+                wrap.querySelectorAll('img').forEach(i=>i.style.borderColor='transparent');
+                e.target.style.borderColor='lime';
+                label.querySelector('input').checked = true;
+                // xem trước
+                document.getElementById('currentAvatar').src = src;
+            });
+            wrap.appendChild(label);
+        });
+    }
+
+    // ======= Avatar modal events =======
+    document.getElementById('currentAvatar').addEventListener('click', ()=>{
+        const avatarModal = new bootstrap.Modal(document.getElementById('avatarModal'));
+        avatarModal.show();
+    });
+
+    document.getElementById('avatarForm').addEventListener('submit',(e)=>{
+        e.preventDefault();
+        const chosen = document.querySelector('input[name="avatar"]:checked');
+        if(chosen){
+            localStorage.setItem(STORAGE_KEYS.avatar, chosen.value);
+            document.getElementById('currentAvatar').src = chosen.value;
+            showToast('✅ Cập nhật avatar thành công!', false);
+            bootstrap.Modal.getInstance(document.getElementById('avatarModal')).hide();
+        }
+    });
+
+    // ======= Name / Phone / Country =======
+    document.getElementById('saveNameBtn').addEventListener('click', ()=>{
+        const newName = document.getElementById('newName').value.trim();
+        if(newName){
+            localStorage.setItem(STORAGE_KEYS.name, newName);
+            document.getElementById('displayName').innerText = newName;
+            showToast('✅ Đổi tên thành công!', false);
+        }
+    });
+
+    document.getElementById('savePhoneBtn').addEventListener('click', ()=>{
+        const newPhone = document.getElementById('newPhone').value.trim();
+        if(newPhone){
+            localStorage.setItem(STORAGE_KEYS.phone, newPhone);
+            document.getElementById('phoneDisplay').innerText = newPhone;
+            showToast('✅ Lưu số điện thoại!', false);
+        }
+    });
+
+    document.getElementById('saveCountryBtn').addEventListener('click', ()=>{
+        const newCountry = document.getElementById('newCountry').value;
+        if(newCountry){
+            localStorage.setItem(STORAGE_KEYS.country, newCountry);
+            document.getElementById('countryDisplay').innerText = newCountry;
+            showToast('✅ Cập nhật quốc gia!', false);
+        }
+    });
+
+    // ======= Wallet (không cần Controller) =======
+    // Lưu trạng thái ví và PIN trong localStorage. Khi có API thật, thay các phần TODO.
+    function isWalletActivated(){
+        return localStorage.getItem(STORAGE_KEYS.walletActive) === 'true';
+    }
+    function updateWalletUI(){
+        document.getElementById('walletStatus').textContent = isWalletActivated() ? 'Đã kích hoạt' : 'Chưa kích hoạt';
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+        initProfile();
+        updateWalletUI();
+
+        const walletCard = document.getElementById('walletCard');
+        const activateModal = new bootstrap.Modal(document.getElementById('activateWalletModal'));
+
+        walletCard.addEventListener('click', ()=>{
+            if(isWalletActivated()){
+                openPinPopup();
+            }else{
+                activateModal.show();
+            }
+        });
+
+        // Kích hoạt ví
+        document.getElementById('activateWalletForm').addEventListener('submit', (e)=>{
+            e.preventDefault();
+            const pin = document.getElementById('pinCode').value;
+            if(!/^\d{4}$/.test(pin)){
+                showToast('⚠️ Mật khẩu phải gồm đúng 4 chữ số!', true);
+                return;
+            }
+
+            // TODO: Gọi API Spring: POST /wallet/activate với body {pinCode}
+            // fetch('/wallet/activate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pinCode:pin})})
+
+            // Demo localStorage:
+            localStorage.setItem(STORAGE_KEYS.walletPin, pin);
+            localStorage.setItem(STORAGE_KEYS.walletActive, 'true');
+            updateWalletUI();
+            activateModal.hide();
+            showToast('✅ Ví GamePay đã được kích hoạt!', false);
+        });
+
+        // Verify PIN
+        document.getElementById('verifyPinBtn').addEventListener('click', verifyPin);
+        document.getElementById('closePinBtn').addEventListener('click', closePinPopup);
+    });
+
+    function openPinPopup(){
+        document.getElementById('pinPopup').style.display = 'flex';
+        document.getElementById('walletPin').value = '';
+        document.getElementById('pinError').textContent = '';
+    }
+    function closePinPopup(){
+        document.getElementById('pinPopup').style.display = 'none';
+    }
+    function verifyPin(){
+        const pin = document.getElementById('walletPin').value.trim();
+
+        // TODO: Gọi API Spring: POST /wallet/verify {pinCode: pin}
+        // fetch('/wallet/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pinCode:pin})})
+
+        // Demo local:
+        const saved = localStorage.getItem(STORAGE_KEYS.walletPin);
+        if(pin === saved){
+            // Điều hướng trang ví (Spring Controller mapping /wallet)
+            window.location.href = '/wallet';
+        }else{
+            document.getElementById('pinError').textContent = 'PIN không đúng. Vui lòng thử lại.';
+        }
+    }
+</script>
+</body>
+</html>

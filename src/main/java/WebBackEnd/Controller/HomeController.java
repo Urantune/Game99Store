@@ -141,6 +141,12 @@ public class HomeController {
         return "HTML/TermsOfService";
     }
 
+    @GetMapping("/profile")
+    public String userDetail(Model model,User user) {
+        model.addAttribute("user",user);
+        return "HTML/ProfileUser";
+    }
+
 //    @PostMapping("/home")
 //    public String doLogin(@RequestParam("username") String username,
 //                          @RequestParam("password") String password,

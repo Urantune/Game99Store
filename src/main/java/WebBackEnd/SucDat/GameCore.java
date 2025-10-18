@@ -1,5 +1,7 @@
 package WebBackEnd.SucDat;
 
+import WebBackEnd.model.Entity.*;
+
 public class GameCore {
 
 
@@ -13,7 +15,7 @@ public class GameCore {
         return deceptions;
     }
 
-    public void payMent(){
+    public void payMent(User user,Game game, Vouncher vouncher){
 
 
     }
