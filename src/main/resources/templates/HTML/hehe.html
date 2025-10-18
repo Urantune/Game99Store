@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>=))</title>
     <style>
-        /* Toàn trang canh giữa */
+
         html, body {
             height: 100%;
             margin: 0;
@@ -12,8 +12,8 @@
 
         body {
             display: flex;
-            align-items: center;        /* canh dọc */
-            justify-content: center;    /* canh ngang */
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(135deg, #0f172a 0%, #0b1220 100%);
             color: #fff;
             font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
@@ -24,17 +24,16 @@
 
         h1 {
             margin: 0;
-            /* responsive font size: between 32px and 96px depending on viewport */
-            font-size: clamp(32px, 8vw, 96px);
+           font-size: clamp(32px, 8vw, 96px);
             line-height: 1;
             letter-spacing: -0.02em;
             text-transform: none;
-            -webkit-user-select: none; /* tránh bị bôi đen dễ nhìn */
+            -webkit-user-select: none;
             user-select: none;
             text-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.02);
         }
 
-        /* Tùy chọn: làm responsive nhỏ hơn trên mobile */
+
         @media (max-width: 420px) {
             body { padding: 24px; }
             h1 { font-size: clamp(24px, 12vw, 48px); }
