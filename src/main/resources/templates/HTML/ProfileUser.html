@@ -1,32 +1,23 @@
-<!-- src/main/resources/templates/ProfileUser.html -->
 <!doctype html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>Profile User</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-
     <link rel="stylesheet" th:href="@{/Accest/css/ProfileUser.css}">
-
 </head>
 <body>
 <div class="container">
-    <!-- Sidebar trái -->
     <div class="card bg-dark text-light p-3 rounded-3 shadow" style="flex:1;">
         <div class="avatar text-center">
-            <!-- Avatar hiện tại -->
-            <img src="/img/demo.jpg" alt="Avatar" id="currentAvatar"
-                 class="rounded-circle"
-                 style="width:120px;height:120px;object-fit:cover;border:2px solid #666;cursor:pointer;">
+            <img src="/img/demo.jpg" alt="Avatar" id="currentAvatar" class="rounded-circle" style="width:120px;height:120px;object-fit:cover;border:2px solid #666;cursor:pointer;">
         </div>
 
         <div class="d-flex align-items-center justify-content-center mt-2">
-            <h2 class="m-0"  style="font-size:1.5rem;" th:text="${user.username}">User Name</h2>
+            <h2 id="displayName" class="m-0" style="font-size:1.5rem;" th:text="${user.username}">User Name</h2>
         </div>
 
-        <!-- Modal chọn ảnh avatar -->
         <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content bg-dark text-light">
@@ -36,9 +27,7 @@
                     </div>
                     <div class="modal-body text-center">
                         <form id="avatarForm">
-                            <div class="d-flex flex-wrap justify-content-center gap-2" id="avatarOptions">
-                                <!-- ảnh lựa chọn render bằng JS -->
-                            </div>
+                            <div class="d-flex flex-wrap justify-content-center gap-2" id="avatarOptions"></div>
                             <button type="submit" class="btn btn-success mt-3">Lưu ảnh</button>
                         </form>
                     </div>
@@ -49,34 +38,28 @@
         <div class="info mt-3">
             <p>Email: <span id="emailMasked" th:text="${user.getEmail()}"></span></p>
             <p>
-                Số điện thoại: <span id="phoneDisplay">0 9 0 chiên bò chiên chưa chính </span>
+                Số điện thoại: <span id="phoneDisplay">----------</span>
                 <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editPhoneModal">⚙️</button>
             </p>
             <p>
-                Quốc gia: <span id="countryDisplay">Việt Nam</span>
+                Quốc gia: <span id="countryDisplay">----------</span>
                 <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editCountryModal">⚙️</button>
             </p>
-            <p>Bảo mật: <span style="color:gray">Đang bị hack</span></p>
+            <p>Bảo mật: <span style="color:gray">—</span></p>
             <a th:href="@{/logout}" href="/logout" class="btn btn-outline-danger mt-2">Đăng xuất</a>
         </div>
     </div>
 
-    <!-- Giữa -->
     <div class="card" style="flex:2;">
         <h2>🎮 Thư viện game</h2>
         <div class="games" id="gameLibrary">
-            <!-- Demo games (static) -->
-            <div class="game-card" th:each="a : ${listGame}">
-                <div style="width:140px; height:84px; overflow:hidden;"
-                     th:with="imgs=${a.linkImage}">
-                    <img th:src="${#arrays.length(imgs) > 4 ? '/' + imgs[4] : '/img/notfound.png'}"
-                         style="width:100%; height:100%; object-fit:cover;">
-
+            <div class="game-card" th:each="a : ${listGame}" th:with="imgs=${a.linkImage}">
+                <div style="width:140px; height:84px; overflow:hidden;">
+                    <img th:src="${#arrays.length(imgs) > 4 ? '/' + imgs[4] : '/img/notfound.png'}" style="width:100%; height:100%; object-fit:cover;">
                 </div>
-
                 <p th:text="${a.gameName}">CS:GO</p>
             </div>
- </div>
+        </div>
 
         <h2 style="margin-top:20px;">🏆 Thành tích</h2>
         <div class="achievements">
@@ -88,15 +71,12 @@
         </div>
     </div>
 
-    <!-- Sidebar phải -->
     <div style="flex:1;">
-        <!-- Ví GamePay -->
         <div id="walletCard" class="card wallet text-center p-4 shadow-lg" style="cursor:pointer;transition:transform .3s;">
             <h2 class="mb-2" style="color:#222;">💰 Ví GamePay</h2>
             <p class="text-muted mb-0" id="walletStatus">Chưa kích hoạt</p>
         </div>
 
-        <!-- Modal kích hoạt -->
         <div id="activateWalletModal" class="modal fade" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content p-4 achievement">
@@ -121,7 +101,6 @@
             </div>
         </div>
 
-        <!-- Popup nhập PIN -->
         <div id="pinPopup" class="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);justify-content:center;align-items:center;">
             <div style="background:radial-gradient(circle at top,#19002b 0%,#0a0a0a 100%);padding:30px;border-radius:10px;width:350px;text-align:center;">
                 <h5 style="color:#ffcd39;">Ví GamePay</h5>
@@ -133,7 +112,6 @@
             </div>
         </div>
 
-        <!-- Toast -->
         <div id="toast" class="toast-message"></div>
 
         <div class="card transactions mt-3">
@@ -155,7 +133,6 @@
     </div>
 </div>
 
-<!-- Modals: Đổi tên / Phone / Country -->
 <div class="modal fade" id="editNameModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -213,18 +190,9 @@
     </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    /**
-     * =============== GHI CHÚ QUAN TRỌNG ===============
-     * - File này chạy độc lập, KHÔNG cần truyền model từ Controller.
-     * - Dữ liệu demo (username/email/avatar/wallet) lấy từ localStorage hoặc default.
-     * - Khi có API Spring Boot, chỉ cần sửa các URL fetch() (đánh dấu TODO) bên dưới.
-     */
-
-// ======= Demo "database" qua localStorage =======
     const STORAGE_KEYS = {
         name: 'gs_profile_name',
         email: 'gs_profile_email',
@@ -235,21 +203,14 @@
         walletActive: 'gs_wallet_active'
     };
 
-    // ======= Defaults nếu chưa có dữ liệu =======
     const DEFAULTS = {
         name: 'Do Trong Tri',
         email: 'user@example.com',
         phone: '',
         country: '',
-        avatars: [
-            '/img/demo1.jpg',
-            '/img/demo3.jpg',
-            '/img/demo4.jpg',
-            '/img/a.png'
-        ]
+        avatars: ['/img/demo1.jpg','/img/demo3.jpg','/img/demo4.jpg','/img/a.png']
     };
 
-    // ======= Helpers =======
     const $ = (sel)=>document.querySelector(sel);
     function maskEmail(email){
         if(!email || !email.includes('@')) return email || '';
@@ -265,7 +226,6 @@
         setTimeout(()=>toast.classList.remove('show'),3000);
     }
 
-    // ======= Khởi tạo dữ liệu từ localStorage =======
     function initProfile(){
         const name = localStorage.getItem(STORAGE_KEYS.name) || DEFAULTS.name;
         const email = localStorage.getItem(STORAGE_KEYS.email) || DEFAULTS.email;
@@ -279,17 +239,12 @@
             localStorage.setItem(STORAGE_KEYS.avatar, avatar);
         }
 
-        // Gán ra UI
         $('#displayName').innerText = name;
         $('#emailMasked').innerText = maskEmail(email);
         $('#phoneDisplay').innerText = phone || '----------';
         $('#countryDisplay').innerText = country || '----------';
         $('#currentAvatar').src = avatar;
-
-        // Modal đổi tên preload
         $('#newName').value = name;
-
-        // Render danh sách avatar trong modal
         renderAvatarOptions(avatar);
     }
 
@@ -300,23 +255,19 @@
             const label = document.createElement('label');
             label.style.cursor='pointer';
             label.innerHTML = `
-      <input type="radio" name="avatar" value="${src}" style="display:none;" ${src===current?'checked':''}>
-      <img src="${src}" class="rounded-circle border border-2"
-           style="width:80px;height:80px;cursor:pointer;border-color:${src===current?'lime':'transparent'};">
-    `;
+        <input type="radio" name="avatar" value="${src}" style="display:none;" ${src===current?'checked':''}>
+        <img src="${src}" class="rounded-circle border border-2" style="width:80px;height:80px;cursor:pointer;border-color:${src===current?'lime':'transparent'};">
+      `;
             label.querySelector('img').addEventListener('click', (e)=>{
-                // clear viền
                 wrap.querySelectorAll('img').forEach(i=>i.style.borderColor='transparent');
                 e.target.style.borderColor='lime';
                 label.querySelector('input').checked = true;
-                // xem trước
                 document.getElementById('currentAvatar').src = src;
             });
             wrap.appendChild(label);
         });
     }
 
-    // ======= Avatar modal events =======
     document.getElementById('currentAvatar').addEventListener('click', ()=>{
         const avatarModal = new bootstrap.Modal(document.getElementById('avatarModal'));
         avatarModal.show();
@@ -333,7 +284,6 @@
         }
     });
 
-    // ======= Name / Phone / Country =======
     document.getElementById('saveNameBtn').addEventListener('click', ()=>{
         const newName = document.getElementById('newName').value.trim();
         if(newName){
@@ -361,8 +311,6 @@
         }
     });
 
-    // ======= Wallet (không cần Controller) =======
-    // Lưu trạng thái ví và PIN trong localStorage. Khi có API thật, thay các phần TODO.
     function isWalletActivated(){
         return localStorage.getItem(STORAGE_KEYS.walletActive) === 'true';
     }
@@ -385,7 +333,6 @@
             }
         });
 
-        // Kích hoạt ví
         document.getElementById('activateWalletForm').addEventListener('submit', (e)=>{
             e.preventDefault();
             const pin = document.getElementById('pinCode').value;
@@ -393,11 +340,6 @@
                 showToast('⚠️ Mật khẩu phải gồm đúng 4 chữ số!', true);
                 return;
             }
-
-            // TODO: Gọi API Spring: POST /wallet/activate với body {pinCode}
-            // fetch('/wallet/activate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pinCode:pin})})
-
-            // Demo localStorage:
             localStorage.setItem(STORAGE_KEYS.walletPin, pin);
             localStorage.setItem(STORAGE_KEYS.walletActive, 'true');
             updateWalletUI();
@@ -405,7 +347,6 @@
             showToast('✅ Ví GamePay đã được kích hoạt!', false);
         });
 
-        // Verify PIN
         document.getElementById('verifyPinBtn').addEventListener('click', verifyPin);
         document.getElementById('closePinBtn').addEventListener('click', closePinPopup);
     });
@@ -420,14 +361,8 @@
     }
     function verifyPin(){
         const pin = document.getElementById('walletPin').value.trim();
-
-        // TODO: Gọi API Spring: POST /wallet/verify {pinCode: pin}
-        // fetch('/wallet/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pinCode:pin})})
-
-        // Demo local:
         const saved = localStorage.getItem(STORAGE_KEYS.walletPin);
         if(pin === saved){
-            // Điều hướng trang ví (Spring Controller mapping /wallet)
             window.location.href = '/wallet';
         }else{
             document.getElementById('pinError').textContent = 'PIN không đúng. Vui lòng thử lại.';
