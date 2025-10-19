@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value="/controllthing")
+@RequestMapping(value="/welcomeAdmin")
 public class AdminController {
 
 
@@ -60,8 +60,8 @@ public class AdminController {
         return "editgame";
     }
 
-    @GetMapping("/welcomeAdmin")
+    @GetMapping
     public String welcomeAmin(Model model){
-        return "IndexAdmin";
+        return "ADMIN/IndexAdmin";
     }
 }
