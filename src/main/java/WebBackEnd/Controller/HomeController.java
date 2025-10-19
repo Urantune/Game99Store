@@ -17,6 +17,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -78,17 +80,73 @@ public class HomeController {
 
 
     @PostMapping("/register")
-    public String register(User user, Model model) {
+    @ResponseBody
+    public Map<String, Object> registerAjax(@RequestBody User user) {
+        Map<String, Object> response = new HashMap<>();
+        String username = user.getUsername();
+        String email = user.getEmail();
+
+        // Rỗng hoặc khoảng trắng
+        if (username == null || username.trim().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Tên tài khoản không được để trống");
+            return response;
+        }
+
+        // Ký tự chữ, số, dấu chấm, gạch dưới
+        if (!username.matches("^[a-zA-Z0-9._]+$")) {
+            response.put("status", "error");
+            response.put("message", "Tên tài khoản chỉ được chứa chữ, số, dấu chấm hoặc gạch dưới");
+            return response;
+        }
+
+        // Không bắt đầu kết thúc bằng '.' hoặc '_'
+        if (username.startsWith(".") || username.startsWith("_") ||
+                username.endsWith(".") || username.endsWith("_")) {
+            response.put("status", "error");
+            response.put("message", "Tên tài khoản không được bắt đầu hoặc kết thúc bằng dấu chấm hoặc gạch dưới");
+            return response;
+        }
+
+        // Không có ký tự đặc biệt liền nhau
+        if (username.contains("..") || username.contains("__") ||
+                username.contains("._") || username.contains("_.")) {
+            response.put("status", "error");
+            response.put("message", "Tên tài khoản không được chứa ký tự đặc biệt liên tiếp");
+            return response;
+        }
+
+        // Độ dài
+        if (username.length() < 3 || username.length() > 20) {
+            response.put("status", "error");
+            response.put("message", "Tên tài khoản phải có độ dài từ 3 đến 20 ký tự");
+            return response;
+        }
+
+        // Trùng username
+        if (userRepository.existsByUsername(username)) {
+            response.put("status", "error");
+            response.put("message", "Tên tài khoản đã tồn tại");
+            return response;
+        }
+
+
+        user.setUsername(username);
+        user.setEmail(email);
         user.setScore(0);
         user.setStatus("active");
         user.setDateCreateAccount(LocalDateTime.now());
-        user.setStatus("1");
         userRepository.save(user);
 
-
-        model.addAttribute("registerSuccess", "Đăng ký thành công! Hãy đăng nhập.");
-        return "redirect:/welcome";
+        response.put("status", "success");
+        response.put("message", "Đăng ký thành công! Hãy đăng nhập.");
+        return response;
     }
+
+
+
+
+
 
 
     @PostMapping("/login")
