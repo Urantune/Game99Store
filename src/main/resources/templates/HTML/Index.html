@@ -504,19 +504,24 @@
     // sendOtpBtn.addEventListener("click", function () { ... });
 </script>
 <!-- Navigation-->
+<!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#0f1c2e;">
     <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
         <!-- Logo -->
         <a href="Index.html" class="logo-link text-white fs-4">
             <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
         </a>
-        <!-- Left nav links -->
-        <ul class="navbar-nav d-flex flex-row mb-0">
-            <!-- Admin link removed (static) -->
+
+        <!-- Menu phụ giữa -->
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">TIN TỨC</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">SỰ KIỆN</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">TOP GAME</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">GIẢM GIÁ</a></li>
         </ul>
 
+        <!-- Cụm nút bên phải -->
         <div class="d-flex align-items-center">
-
 
             <a th:if="${session.username != null}"
                th:href="@{/welcome/Cart/{id}(id=${session.id})}"
@@ -524,7 +529,6 @@
                 <i class="bi-cart-fill me-1"></i>
                 Cart
             </a>
-
 
             <!-- Nếu chưa login -->
             <style>
@@ -555,11 +559,21 @@
                     transform: translateY(-2px);
                 }
                 /* Bo góc & đệm */
-
                 .btn-login, .btn-register {
                     border-radius: 8px;
                     padding: 8px 18px;
                     font-weight: 600;
+                }
+
+                /* ===== MENU GIỮA ===== */
+                .navbar-nav .nav-link {
+                    transition: color 0.3s ease, transform 0.2s ease;
+                    font-size: 1.05rem;
+                    letter-spacing: 0.5px;
+                }
+                .navbar-nav .nav-link:hover {
+                    color: #0dcaf0;
+                    transform: translateY(-2px);
                 }
             </style>
 
@@ -586,6 +600,7 @@
                       th:text="${session.username}"></span>
             </div>
         </div>
+
         <style>
             /* Nút Cart màu xanh lá */
             .btn-cart {
@@ -595,19 +610,34 @@
                 font-weight: 500;
                 transition: all 0.3s ease;
             }
-
-            /* Hiệu ứng hover mượt và nổi khối */
             .btn-cart:hover {
                 background: linear-gradient(90deg, #20c997, #28a745);
                 transform: translateY(-2px);
                 box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
                 color: #fff !important;
             }
+            /* ===== MENU GIỮA ===== */
+            .navbar-nav .nav-link {
+                text-transform: uppercase;         /* In hoa toàn bộ */
+                font-size: 1.1rem;                 /* To chữ hơn một chút */
+                font-weight: 700;                  /* Đậm hơn */
+                letter-spacing: 0.5px;             /* Giãn nhẹ chữ cho đẹp */
+                transition: color 0.3s ease, transform 0.2s ease, border-bottom 0.2s ease;
+                padding-bottom: 4px;
+                border-bottom: 2px solid transparent; /* Gạch chân ẩn ban đầu */
+            }
+
+            .navbar-nav .nav-link:hover {
+                color: #0dcaf0;                    /* Màu cyan sáng khi hover */
+                transform: translateY(-2px);
+                border-bottom: 2px solid #0dcaf0;  /* Gạch sáng khi hover */
+            }
 
         </style>
-
     </div>
 </nav>
+
+
 <link rel="stylesheet" href="css/profile-user.css">
 
 <!-- Header banner with slides and search -->
