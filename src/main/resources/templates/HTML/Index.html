@@ -1513,7 +1513,17 @@
                     <a th:href="@{'/welcome/gamedetail/' + ${game.getGameId()}}"
                        style="text-decoration:none; color:inherit;">
                         <div id="freefire" class="card h-100">
-                            <img class="card-img-top" th:src="${game.linkImage[4]}" th:alt="${game.gameName}"/>
+                            <img class="card-img-top"
+                                 th:if="${#lists.size(game.linkImage) > 4}"
+                                 th:src="@{${game.linkImage[4]}}"
+                                 th:alt="${game.gameName}" />
+
+                            <!-- Nếu không có ảnh thứ 5, hiển thị ảnh mặc định -->
+                            <img class="card-img-top"
+                                 th:if="${#lists.size(game.linkImage) <= 4}"
+                                 th:src="@{/img/default.jpg}"
+                                 th:alt="${game.gameName}" />
+
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <h5 class="fw-bolder" th:text="${game.getGameName()}"></h5>
