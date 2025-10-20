@@ -10,6 +10,7 @@ import WebBackEnd.service.UserGameService;
 import WebBackEnd.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -150,31 +151,27 @@ public class HomeController {
 
 
     @PostMapping("/login")
-    public String login(@RequestParam String username,
-                        @RequestParam String password,
-                        RedirectAttributes ra,
-                        HttpSession session) {
+    @ResponseBody
+    public ResponseEntity<?> login(@RequestParam String username,
+                                   @RequestParam String password,
+                                   HttpSession session) {
 
         var user = userService.findByUsername(username);
 
         if (user == null) {
-            ra.addFlashAttribute("showForm", "login");
-            ra.addFlashAttribute("loginError", "Tài khoản không tồn tại!");
-            return "redirect:/welcome";
+            return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản không tồn tại!"));
         }
 
         if (!password.equals(user.getPassword())) {
-            ra.addFlashAttribute("showForm", "login");
-            ra.addFlashAttribute("loginError", "Sai mật khẩu!");
-            ra.addFlashAttribute("enteredUsername", username);
-            return "redirect:/welcome";
+            return ResponseEntity.badRequest().body(Map.of("error", "Sai mật khẩu!"));
         }
 
         session.setAttribute("id", user.getId());
         session.setAttribute("username", user.getUsername());
 
-        return "redirect:/welcome";
+        return ResponseEntity.ok(Map.of("success", true));
     }
+
 
 
     @GetMapping("/about")
