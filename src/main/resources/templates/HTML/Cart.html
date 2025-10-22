@@ -53,7 +53,6 @@
                        th:attr="data-price=${item.price}">
             </td>
 
-            <!-- Ảnh: lấy phần tử thứ 4 (index 4) trong getLinkImage() -->
             <td>
                 <div class="thumb-wrap"
                      th:with="imgs=${item.linkImage},
@@ -65,7 +64,10 @@
             <td th:text="${item.gameName}">Tên game</td>
 
             <!-- Giá: item.price là double -->
-            <td th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'POINT')} + '₫'">0₫</td>
+            <td th:text="'$'+${#numbers.formatDecimal(item.price, 1, 2)}">0.00</td>
+
+
+
 
             <td>
                 <form th:action="@{/cart/remove}" method="post" style="display:inline;">

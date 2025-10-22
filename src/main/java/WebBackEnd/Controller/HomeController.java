@@ -135,12 +135,12 @@ public class HomeController {
         user.setUsername(username);
         user.setEmail(email);
         user.setScore(0);
-        user.setStatus("active");
+        user.setStatus("wait");
         user.setDateCreateAccount(LocalDateTime.now());
         userRepository.save(user);
 
         response.put("status", "success");
-        response.put("message", "Đăng ký thành công! Hãy đăng nhập.");
+        response.put("message", "Đăng ký thành công! Một đường link xác thực tài khoảng đã được gửi vào email của bạn .");
         return response;
     }
 
@@ -164,6 +164,9 @@ public class HomeController {
 
         if (!password.equals(user.getPassword())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Sai mật khẩu!"));
+        }
+        if(user.getStatus().equals("wait")){
+            return ResponseEntity.badRequest().body(Map.of("error","Tài khoảng chưa được kích hoạt"));
         }
 
         session.setAttribute("id", user.getId());
@@ -226,6 +229,11 @@ public class HomeController {
         model.addAttribute("user", userService.findById(id));
 
         return "HTML/ProfileUser";
+    }
+
+    @PostMapping("/addGameToCard")
+    public String addGameToCard(){
+        return "redirect:welcome/gamedetail/{game_id}";
     }
 
 //    @PostMapping("/home")
