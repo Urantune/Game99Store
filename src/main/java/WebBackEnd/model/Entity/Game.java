@@ -23,7 +23,7 @@ public class Game {
     @Column(name = "status")
     private String status;
     @Column(name = "category")
-    private String game_category;
+    private String gameCategory;
     @Column(name ="locateGame")
     private String locate_game;
     @Column(name = "deception")
@@ -31,9 +31,9 @@ public class Game {
     @Column(name ="imageLinks")
     private String imageLinks;
 
-    public Game(String locate_game, String game_category, String status, String game_version, double price, String gameName, UUID gameId) {
+    public Game(String locate_game, String gameCategory, String status, String game_version, double price, String gameName, UUID gameId) {
         this.locate_game = locate_game;
-        this.game_category = game_category;
+        this.gameCategory = gameCategory;
         this.status = status;
         this.game_version = game_version;
         this.price = price;
@@ -101,12 +101,12 @@ public class Game {
         this.status = game_status;
     }
 
-    public String getGame_category() {
-        return game_category;
+    public String getGameCategory() {
+        return gameCategory;
     }
 
-    public void setGame_category(String game_category) {
-        this.game_category = game_category;
+    public void setGameCategory(String game_category) {
+        this.gameCategory = game_category;
     }
 
     public String getLocate_game() {

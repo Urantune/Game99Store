@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán - Game Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Duma khuc1 nay lam sao-->
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}">
+    <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : ''}">
+
+    <style>
+        body { background: rgba(18,57,101,0.8); font-family: Arial, sans-serif; }
+        .checkout { max-width: 1050px; margin: 50px auto; background: rgba(0,60,100,0.6);
+            padding: 22px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,.45); color:#fff; }
+        .title { font-size: 28px; font-weight: 800; color:#FFD700; text-align:center; margin-bottom: 16px;}
+        .summary-card { background: rgba(0,0,0,.25); border-radius: 14px; padding: 16px; }
+        .money-badge { font-size: 28px; font-weight: 800; color:#00E676; }
+        .subtle { color:#cfd8dc; }
+        .table thead { background: linear-gradient(135deg, #002b5c, #004080); color:#fff; }
+        .thumb { width:140px; height:84px; border-radius:10px; overflow:hidden; }
+        .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+        .pill { border-radius: 999px; padding:6px 12px; background: rgba(255,255,255,.08); }
+        .btn-primary { background: linear-gradient(135deg, #007BFF, #004080); border:none; border-radius:10px; padding:10px 18px; }
+        .btn-primary:hover { background: linear-gradient(135deg, #0056b3, #002b5c); transform: translateY(-1px); }
+        .btn-success { background: linear-gradient(135deg, #28a745, #006400); border:none; border-radius:10px; padding:12px 22px; font-weight:700;}
+        .btn-success:hover { background: linear-gradient(135deg, #218838, #004d00); transform: translateY(-1px); }
+        .btn-remove { background: linear-gradient(135deg, #ff4d4d, #800000); border:none; border-radius:10px; color:#fff; padding:8px 14px; }
+        .price-neg { color:#FF7043; font-weight:700; }
+        .price-pos { color:#00E676; font-weight:700; }
+        .total-row { background: rgba(255,215,0,0.16); }
+        .hint { font-size: 12px; color:#B0BEC5; }
+        .divider { height:1px; background: rgba(255,255,255,0.1); margin: 14px 0; }
+    </style>
+</head>
+<body>
+<div class="checkout">
+    <div class="title">Thanh toán</div>
+
+    <div class="row g-3">
+
+        <div class="col-lg-7">
+            <div class="pill mb-2">Sản phẩm trong đơn</div>
+
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th style="width:160px;">Ảnh</th>
+                    <th>Game</th>
+                    <th style="width:160px;" class="text-end">Giá</th>
+                    <th style="width:120px;">Xoá</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${listGame == null or #lists.isEmpty(listGame)}">
+                    <td colspan="4" class="text-center subtle">Không có game trong giỏ.</td>
+                </tr>
+
+                <tr th:each="item : ${listGame}">
+                    <td>
+                        <div class="thumb"
+                             th:with="imgs=${item.linkImage != null ? item.linkImage : new String[0]},
+                                      path=${#arrays.length(imgs)>4 ? '/' + imgs[4] : '/img/notfound.png'}">
+                            <img th:src="@{${path}}" alt="thumb">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="fw-bold" th:text="${item.gameName}">Tên game</div>
+                        <div class="hint" th:text="'Mã: ' + ${item.gameId}">Mã: ...</div>
+
+                        <input type="hidden" name="selectedIds" th:value="${item.gameId}" form="checkoutForm">
+                    </td>
+                    <td class="text-end">
+                        <span class="line-price"
+                              th:attr="data-price=${item.price}"
+                              th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'POINT')} + ' ₫'">0 ₫</span>
+                    </td>
+                    <td>
+                        <form th:action="@{/cart/remove}" method="post" style="display:inline;">
+                            <input type="hidden" name="gameId" th:value="${item.gameId}">
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn btn-remove btn-sm">Xoá</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <a th:href="@{/welcome}" class="btn btn-primary">← Tiếp tục mua sắm</a>
+        </div>
+
+
+        <div class="col-lg-5">
+            <div class="summary-card">
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="subtle">Số dư ví của bạn</div>
+                    <div class="fw-bold" id="walletBadge"
+                         th:text="${walletBalance != null ? #numbers.formatDecimal(walletBalance, 0, 'POINT', 0, 'POINT') + ' ₫' : '0 ₫'}">0 ₫</div>
+                </div>
+
+                <div class="divider"></div>
+
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="subtle">Thành tiền (ước tính)</div>
+                    <div class="money-badge" id="headlineTotal">0 ₫</div>
+                </div>
+
+                <div class="divider"></div>
+
+
+                <div>
+                    <label for="voucherInput" class="form-label mb-1">Mã Voucher</label>
+                    <input id="voucherInput" name="voucherShown" type="text" class="form-control" placeholder="Nhập mã giảm giá">
+                    <div class="hint mt-1">* Mã sẽ gửi lên server, chiết khấu tính ở backend.</div>
+                </div>
+
+                <div class="divider"></div>
+
+
+                <div class="table-responsive">
+                    <table class="table table-sm text-white align-middle mb-2">
+                        <tbody>
+                        <tr>
+                            <td class="subtle">Tạm tính</td>
+                            <td class="text-end" id="cellSubtotal">0 ₫</td>
+                        </tr>
+                        <tr>
+                            <td class="subtle">Giảm giá (voucher)</td>
+                            <td class="text-end price-neg" id="cellDiscount">− 0 ₫</td>
+                        </tr>
+                        <tr class="total-row fw-bold">
+                            <td>Thành tiền</td>
+                            <td class="text-end price-pos" id="cellGrand">0 ₫</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <form id="checkoutForm" th:action="@{/buy}" method="post" class="mt-2">
+
+                    <input type="hidden" name="voucherCode" id="voucherHidden">
+                     <input type="hidden" name="subtotal" id="subtotalHidden">
+                    <input type="hidden" name="grandTotal" id="grandHidden">
+                    <input type="hidden" name="walletBalance" th:value="${walletBalance != null ? walletBalance : 0}">
+                    <input type="hidden" name="userId" th:value="${user != null ? user.userId : null}">
+                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="btn btn-success w-100" id="btnCheckout">Thanh toán</button>
+                </form>
+
+                <div class="hint mt-2">
+                    * Voucher và sử dụng ví sẽ được áp ở backend theo chính sách của bạn.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function(){
+        const fmtVND = n => (n || 0).toLocaleString('vi-VN') + ' ₫';
+
+        const linePrices    = document.querySelectorAll('.line-price');
+        const headlineTotal = document.getElementById('headlineTotal');
+        const cellSubtotal  = document.getElementById('cellSubtotal');
+        const cellDiscount  = document.getElementById('cellDiscount'); // FE để 0, BE xử lý
+        const cellGrand     = document.getElementById('cellGrand');
+
+        const voucherInput  = document.getElementById('voucherInput');
+        const voucherHidden = document.getElementById('voucherHidden');
+        const subtotalH     = document.getElementById('subtotalHidden');
+        const grandH        = document.getElementById('grandHidden');
+
+        function getSubtotal(){
+            let sum = 0;
+            linePrices.forEach(el=>{
+                const v = parseFloat(el.getAttribute('data-price') || '0') || 0;
+                sum += v;
+            });
+            return sum;
+        }
+
+        function render(){
+            const subtotal = getSubtotal();
+            const discount = 0; // FE không tính voucher
+            const grand = Math.max(0, subtotal - discount);
+
+            headlineTotal.textContent = fmtVND(grand);
+            cellSubtotal.textContent  = fmtVND(subtotal);
+            cellDiscount.textContent  = '− ' + fmtVND(discount);
+            cellGrand.textContent     = fmtVND(grand);
+
+            voucherHidden.value = (voucherInput.value || '').trim();
+            subtotalH.value     = Math.round(subtotal);
+            grandH.value        = Math.round(grand);
+        }
+
+        voucherInput && voucherInput.addEventListener('input', render);
+        render();
+    })();
+</script>
+
+
+<script th:inline="javascript">
+    const games = /*[[${games}]]*/ [];
+    console.log(games);
+</script>
+</body>
+</html>

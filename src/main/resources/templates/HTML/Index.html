@@ -650,42 +650,48 @@
             <div class="dropdown">
                 <div class="dropdown-toggle text-decoration-none text-white">Categories</div>
                 <div class="dropdown-menu">
+
                     <div class="dropdown-column">
                         <h4>Games</h4>
-                        <a href="#">Action</a>
-                        <a href="#">Adventure</a>
-                        <a href="#">Horror</a>
-                        <a href="#">Puzzle</a>
+                        <a th:href="@{/welcome/category/{product}(product='Action')}">Action</a>
+                        <a th:href="@{/welcome/category/{product}(product='Adventure')}">Adventure</a>
+                        <a th:href="@{/welcome/category/{product}(product='Horror')}">Horror</a>
+                        <a th:href="@{/welcome/category/{product}(product='Puzzle')}">Puzzle</a>
                     </div>
+
                     <div class="dropdown-column">
                         <h4>Genres</h4>
-                        <a href="#">Anime</a>
-                        <a href="#">Sci-Fi</a>
-                        <a href="#">Cyberpunk</a>
-                        <a href="#">Open World</a>
-                        <a href="#">Survival</a>
-                        <a href="#">Space</a>
+                        <a th:href="@{/welcome/category/{product}(product='Anime')}">Anime</a>
+                        <a th:href="@{/welcome/category/{product}(product='Sci-Fi')}">Sci-Fi</a>
+                        <a th:href="@{/welcome/category/{product}(product='Cyberpunk')}">Cyberpunk</a>
+                        <a th:href="@{/welcome/category/{product}(product='Open World')}">Open World</a>
+                        <a th:href="@{/welcome/category/{product}(product='Survival')}">Survival</a>
+                        <a th:href="@{/welcome/category/{product}(product='Space')}">Space</a>
                     </div>
+
                     <div class="dropdown-column">
                         <h4>By Popularity</h4>
-                        <a href="#">New Releases</a>
-                        <a href="#">Coming Soon</a>
-                        <a href="#">Best Sellers</a>
-                        <a href="#">Top Rated</a>
-                        <a href="#">Hot Games</a>
+                        <a th:href="@{/welcome/category/{product}(product='New Releases')}">New Releases</a>
+                        <a th:href="@{/welcome/category/{product}(product='Coming Soon')}">Coming Soon</a>
+                        <a th:href="@{/welcome/category/{product}(product='Best Sellers')}">Best Sellers</a>
+                        <a th:href="@{/welcome/category/{product}(product='Top Rated')}">Top Rated</a>
+                        <a th:href="@{/welcome/category/{product}(product='Hot Games')}">Hot Games</a>
                     </div>
+
                     <div class="dropdown-column">
                         <h4>By Platform</h4>
-                        <a href="#">PC</a>
-                        <a href="#">Smartphone</a>
-                        <a href="#">PlayStation</a>
-                        <a href="#">Xbox</a>
-                        <a href="#">Nintendo Switch</a>
-                        <a href="#">Mobile</a>
-                        <a href="#">VR</a>
+                        <a th:href="@{/welcome/category/{product}(product='PC')}">PC</a>
+                        <a th:href="@{/welcome/category/{product}(product='Smartphone')}">Smartphone</a>
+                        <a th:href="@{/welcome/category/{product}(product='PlayStation')}">PlayStation</a>
+                        <a th:href="@{/welcome/category/{product}(product='Xbox')}">Xbox</a>
+                        <a th:href="@{/welcome/category/{product}(product='Nintendo Switch')}">Nintendo Switch</a>
+                        <a th:href="@{/welcome/category/{product}(product='Mobile')}">Mobile</a>
+                        <a th:href="@{/welcome/category/{product}(product='VR')}">VR</a>
                     </div>
+
                 </div>
             </div>
+
             <a href="#">Point Store</a>
             <a th:href="@{/welcome/support}">Support</a>
             <!-- Search Box -->

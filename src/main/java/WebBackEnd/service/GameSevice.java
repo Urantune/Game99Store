@@ -61,6 +61,12 @@ public class GameSevice {
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Game not found: " + gameId));
     }
 
+    public List<Game> findGamesByCetagory(String cetagory){
+        return gameRepository.findByGameCategoryIgnoreCase(cetagory);
+    }
+
+
+
 
 
 }

@@ -16,12 +16,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -82,6 +84,14 @@ public class HomeController {
             return "HTML/Cart";
         }
 
+    @GetMapping("/buy")
+    public String buy(Model model) {
+        List<Game> games = gameSevice.findAllGame();
+        model.addAttribute("games", games); // KHÔNG chuyển thành chuỗi JSON
+        return "HTML/Buy";
+    }
+
+
 
 
 
@@ -92,21 +102,21 @@ public class HomeController {
         String username = user.getUsername();
         String email = user.getEmail();
 
-        // Rỗng hoặc khoảng trắng
+
         if (username == null || username.trim().isEmpty()) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản không được để trống");
             return response;
         }
 
-        // Ký tự chữ, số, dấu chấm, gạch dưới
+
         if (!username.matches("^[a-zA-Z0-9._]+$")) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản chỉ được chứa chữ, số, dấu chấm hoặc gạch dưới");
             return response;
         }
 
-        // Không bắt đầu kết thúc bằng '.' hoặc '_'
+
         if (username.startsWith(".") || username.startsWith("_") ||
                 username.endsWith(".") || username.endsWith("_")) {
             response.put("status", "error");
@@ -114,7 +124,7 @@ public class HomeController {
             return response;
         }
 
-        // Không có ký tự đặc biệt liền nhau
+
         if (username.contains("..") || username.contains("__") ||
                 username.contains("._") || username.contains("_.")) {
             response.put("status", "error");
@@ -122,19 +132,20 @@ public class HomeController {
             return response;
         }
 
-        // Độ dài
+
         if (username.length() < 3 || username.length() > 20) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản phải có độ dài từ 3 đến 20 ký tự");
             return response;
         }
 
-        // Trùng username
+
         if (userRepository.existsByUsername(username)) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản đã tồn tại");
             return response;
         }
+
 
 
         user.setUsername(username);
@@ -188,6 +199,8 @@ public class HomeController {
 
 
 
+
+
     @PostMapping("/login")
     @ResponseBody
     public ResponseEntity<?> login(@RequestParam String username,
@@ -224,6 +237,17 @@ public class HomeController {
     public String buyguide() {
         return "HTML/BuyGuide";
     }
+
+    @GetMapping("/category/{product}")
+    public String category(@PathVariable("product") String product, Model model) {
+        List<Game> games = gameSevice.findGamesByCetagory(product);
+        model.addAttribute("listGame", games);
+        model.addAttribute("currentCategory", product);
+        model.addAttribute("tieude",product);
+        return "HTML/Category";
+    }
+
+
 
     @GetMapping("/gamedetail/{game_id}")
     public String gameDetail( @PathVariable(value = "game_id") UUID game_id, Model model,HttpSession session) {
@@ -278,10 +302,7 @@ public class HomeController {
         return "redirect:welcome/gamedetail/{game_id}";
     }
 
-    @GetMapping("/category")
-    public String category(Model model) {
-        return "HTML/Category";
-    }
+
 
 //    @PostMapping("/home")
 //    public String doLogin(@RequestParam("username") String username,
