@@ -2,6 +2,7 @@ package WebBackEnd.service;
 
 
 import WebBackEnd.model.Entity.Game;
+import WebBackEnd.model.Entity.User;
 import WebBackEnd.model.Entity.UserGame;
 import WebBackEnd.repository.UserGameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,10 @@ public class UserGameService {
 
     public List<Game> showGameInCart(UUID userId){
         return userGameRepository.findGamesCartByUser(userId);
+    }
+
+
+    public boolean findUserGameByUserAndGame(User user, Game game){
+        return userGameRepository.existsUserGameByUserAndGame(user,game);
     }
 }

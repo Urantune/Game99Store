@@ -1,11 +1,13 @@
 package WebBackEnd.Controller;
 
 import WebBackEnd.SucDat.GameCore;
+import WebBackEnd.SucDat.SendMailTest;
 import WebBackEnd.model.Entity.Game;
 import WebBackEnd.model.Entity.User;
 import WebBackEnd.model.Entity.UserGame;
 import WebBackEnd.repository.UserRepository;
 import WebBackEnd.service.GameSevice;
+import WebBackEnd.service.MailService;
 import WebBackEnd.service.UserGameService;
 import WebBackEnd.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -34,6 +37,8 @@ public class HomeController {
     private GameSevice gameSevice;
     @Autowired
     private UserGameService userGameService;
+    @Autowired
+    private SendMailTest  sendMailTest;
 
 
     @GetMapping
@@ -139,6 +144,39 @@ public class HomeController {
         user.setDateCreateAccount(LocalDateTime.now());
         userRepository.save(user);
 
+
+        String input = "wait"+ user.getId();
+        String fi;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(input.getBytes());
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b));
+            }
+            fi= sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        String title = "Xác nhận tài khoản của bạn";
+
+        String link = "https://a7c804c1ed63.ngrok-free.app/veryAccount/done/"
+                + user.getId() + "/" + fi;
+
+        String content =
+                "<p>Hãy nhấp vào liên kết dưới đây để kích hoạt tài khoản của bạn:</p>"
+                        + "<p><a href=\"" + link + "\">Nhấn vào đây để kích hoạt</a></p>"
+                        + "<p>Nếu không bấm được, copy link sau dán vào trình duyệt:<br>"
+                        + link + "</p>";
+
+
+        sendMailTest.testSend(user.getEmail(), title, content);
+
+
+
         response.put("status", "success");
         response.put("message", "Đăng ký thành công! Một đường link xác thực tài khoảng đã được gửi vào email của bạn .");
         return response;
@@ -188,11 +226,15 @@ public class HomeController {
     }
 
     @GetMapping("/gamedetail/{game_id}")
-    public String gameDetail( @PathVariable(value = "game_id") UUID game_id, Model model) {
+    public String gameDetail( @PathVariable(value = "game_id") UUID game_id, Model model,HttpSession session) {
         Game game = gameSevice.findGameById(game_id);
+        UUID user_id = (UUID) session.getAttribute("id");
         model.addAttribute("game", game);
+        model.addAttribute("UserGame",userGameService.findUserGameByUserAndGame(userService.findById(user_id),gameSevice.findGameById(game_id)));
+        System.out.println(userGameService.findUserGameByUserAndGame(userService.findById(user_id),gameSevice.findGameById(game_id)));
 //        System.out.println(userService.findById(id));
 //            model.addAttribute("user", userService.findById(id));
+//        System.out.println(userService.findById(user_id).getUsername());
 
         return "HTML/GameDetail";
     }
@@ -234,6 +276,11 @@ public class HomeController {
     @PostMapping("/addGameToCard")
     public String addGameToCard(){
         return "redirect:welcome/gamedetail/{game_id}";
+    }
+
+    @GetMapping("/category")
+    public String category(Model model) {
+        return "HTML/Category";
     }
 
 //    @PostMapping("/home")

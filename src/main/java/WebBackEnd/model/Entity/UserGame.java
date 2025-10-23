@@ -25,20 +25,18 @@ public class UserGame {
     @Column(name = "purchase_date")
     private LocalDateTime purchaseDate;
 
-    @Column(name = "price")
-    private Double price;
 
     @Column(name = "status")
     private int status;
 
     public UserGame() {}
 
-    public UserGame(User user, Game game, LocalDateTime purchaseDate, Double price) {
+    public UserGame(User user, Game game, LocalDateTime purchaseDate) {
         this.id = new UserGameId(user.getId(), game.getGameId());
         this.user = user;
         this.game = game;
         this.purchaseDate = purchaseDate;
-        this.price = price;
+
     }
 
 // Nho them cai me gi quen roi

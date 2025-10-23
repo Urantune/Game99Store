@@ -1,6 +1,7 @@
 package WebBackEnd.repository;
 
 import WebBackEnd.model.Entity.Game;
+import WebBackEnd.model.Entity.User;
 import WebBackEnd.model.Entity.UserGame;
 import WebBackEnd.model.Entity.UserGameId;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +41,7 @@ public interface UserGameRepository extends JpaRepository<UserGame, UserGameId> 
                """)
         List<Game> findGamesCartByUser(UUID userId);
 
-
+        boolean existsUserGameByUserAndGame(User user, Game game);
 
 
 
