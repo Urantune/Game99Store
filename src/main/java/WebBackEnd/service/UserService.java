@@ -1,6 +1,6 @@
 package WebBackEnd.service;
 
-import WebBackEnd.model.Entity.User;
+import WebBackEnd.Entity.User;
 import WebBackEnd.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

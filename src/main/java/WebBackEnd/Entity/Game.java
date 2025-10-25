@@ -1,4 +1,4 @@
-package WebBackEnd.model.Entity;
+package WebBackEnd.Entity;
 
 
 import WebBackEnd.SucDat.GameCore;

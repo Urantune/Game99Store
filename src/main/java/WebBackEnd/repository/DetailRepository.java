@@ -1,6 +1,6 @@
 package WebBackEnd.repository;
 
-import WebBackEnd.model.Entity.Detail_Specical;
+import WebBackEnd.Entity.Detail_Specical;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

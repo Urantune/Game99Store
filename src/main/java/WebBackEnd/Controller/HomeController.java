@@ -2,10 +2,10 @@
 
     import WebBackEnd.SucDat.GameCore;
     import WebBackEnd.SucDat.SendMailTest;
-    import WebBackEnd.model.Entity.Feedback;
-    import WebBackEnd.model.Entity.Game;
-    import WebBackEnd.model.Entity.User;
-    import WebBackEnd.model.Entity.UserGame;
+    import WebBackEnd.Entity.Feedback;
+    import WebBackEnd.Entity.Game;
+    import WebBackEnd.Entity.User;
+    import WebBackEnd.Entity.UserGame;
     import WebBackEnd.repository.UserRepository;
     import WebBackEnd.service.*;
     import jakarta.servlet.http.HttpServletRequest;
@@ -15,12 +15,10 @@
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.Model;
     import org.springframework.web.bind.annotation.*;
-    import com.fasterxml.jackson.databind.ObjectMapper;
     import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
     import java.security.MessageDigest;
-    import java.time.LocalDate;
     import java.time.LocalDateTime;
     import java.util.*;
 

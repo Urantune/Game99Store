@@ -1,9 +1,9 @@
 package WebBackEnd.service;
 
 
-import WebBackEnd.model.Entity.Game;
-import WebBackEnd.model.Entity.User;
-import WebBackEnd.model.Entity.UserGame;
+import WebBackEnd.Entity.Game;
+import WebBackEnd.Entity.User;
+import WebBackEnd.Entity.UserGame;
 import WebBackEnd.repository.UserGameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

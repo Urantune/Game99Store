@@ -1,9 +1,6 @@
-package WebBackEnd.model.Entity;
+package WebBackEnd.Entity;
 
-import WebBackEnd.SucDat.GameCore;
-import WebBackEnd.service.UserService;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

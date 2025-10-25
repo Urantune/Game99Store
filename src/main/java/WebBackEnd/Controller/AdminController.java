@@ -1,8 +1,8 @@
 package WebBackEnd.Controller;
 
 
-import WebBackEnd.model.Entity.Game;
-import WebBackEnd.model.Entity.User;
+import WebBackEnd.Entity.Game;
+import WebBackEnd.Entity.User;
 import WebBackEnd.service.AdminSevice;
 import WebBackEnd.service.GameSevice;
 import WebBackEnd.service.UserService;

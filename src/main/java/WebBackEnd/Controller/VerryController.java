@@ -1,8 +1,7 @@
 package WebBackEnd.Controller;
 
 
-import WebBackEnd.model.Entity.Detail_Specical;
-import WebBackEnd.model.Entity.User;
+import WebBackEnd.Entity.User;
 import WebBackEnd.service.DetailService;
 import WebBackEnd.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.MessageDigest;
 
-import java.util.List;
 import java.util.UUID;
 
 @Controller

@@ -1,9 +1,9 @@
 package WebBackEnd.repository;
 
-import WebBackEnd.model.Entity.Game;
-import WebBackEnd.model.Entity.User;
-import WebBackEnd.model.Entity.UserGame;
-import WebBackEnd.model.Entity.UserGameId;
+import WebBackEnd.Entity.Game;
+import WebBackEnd.Entity.User;
+import WebBackEnd.Entity.UserGame;
+import WebBackEnd.Entity.UserGameId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

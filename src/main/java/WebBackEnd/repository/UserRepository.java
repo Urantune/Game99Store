@@ -1,7 +1,6 @@
 package WebBackEnd.repository;
 
-import WebBackEnd.model.Entity.Game;
-import WebBackEnd.model.Entity.User;
+import WebBackEnd.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

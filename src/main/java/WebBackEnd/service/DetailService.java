@@ -1,8 +1,7 @@
 package WebBackEnd.service;
 
-import WebBackEnd.model.Entity.Detail_Specical;
+import WebBackEnd.Entity.Detail_Specical;
 import WebBackEnd.repository.DetailRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,8 +1,7 @@
-        package WebBackEnd.model.Entity;
+        package WebBackEnd.Entity;
 
         import jakarta.persistence.*;
 
-        import java.time.LocalDate;
         import java.time.LocalDateTime;
         import java.util.UUID;
 

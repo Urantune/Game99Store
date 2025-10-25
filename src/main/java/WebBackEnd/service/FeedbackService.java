@@ -1,9 +1,8 @@
 package WebBackEnd.service;
 
-import WebBackEnd.model.Entity.Feedback;
+import WebBackEnd.Entity.Feedback;
 import WebBackEnd.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

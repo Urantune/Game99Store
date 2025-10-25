@@ -1,6 +1,8 @@
 package WebBackEnd.SucDat;
 
-import WebBackEnd.model.Entity.*;
+import WebBackEnd.Entity.Game;
+import WebBackEnd.Entity.User;
+import WebBackEnd.Entity.Vouncher;
 import WebBackEnd.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,7 +29,7 @@ public class GameCore {
         return userService.findById(userId).getUsername();
     }
 
-    public void payMent(User user,Game game, Vouncher vouncher){
+    public void payMent(User user, Game game, Vouncher vouncher){
 
     }
 
