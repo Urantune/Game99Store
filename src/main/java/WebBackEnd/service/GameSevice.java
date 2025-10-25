@@ -1,6 +1,6 @@
 package WebBackEnd.service;
 
-import WebBackEnd.model.Entity.Game;
+import WebBackEnd.Entity.Game;
 import WebBackEnd.repository.GameRepository;
 import WebBackEnd.repository.UserGameRepository;
 import WebBackEnd.repository.UserRepository;
@@ -9,9 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 
@@ -60,6 +58,12 @@ public class GameSevice {
         return gameRepository.findByGameId(gameId)
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Game not found: " + gameId));
     }
+
+    public List<Game> findGamesByCetagory(String cetagory){
+        return gameRepository.findByGameCategoryIgnoreCase(cetagory);
+    }
+
+
 
 
 

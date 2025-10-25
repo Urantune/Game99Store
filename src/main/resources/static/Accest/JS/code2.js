@@ -1,8 +1,8 @@
 ;(function(){
     'use strict';
     var ACTION='redirect';
-    var REDIRECT_TO='/controllthing/dunglai';
-    var OPEN_URL='/controllthing/dunglai';
+    var REDIRECT_TO='/welcomeAdmin/dunglai';
+    var OPEN_URL='/welcomeAdmin/dunglai';
     var STORAGE_KEY='DEVTOOLS_BLOCKED';
 
     var fired=false, intervalId=null, probeId=null, zooming=false, zoomTimer=null;

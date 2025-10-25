@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${game.gameName} + ' - Chi tiết game'">Chi tiết game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- CSS libs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"/>
+
+    <style>
+        /* ======= existing styles (rút gọn giữ nguyên phần cần) ======= */
+        #loginModal .modal-header{background:linear-gradient(135deg,#0d47a1,#1a237e);color:#fff;border-bottom:none;padding:1rem 1.2rem;display:flex;justify-content:center;align-items:center;position:relative}
+        #loginModal .modal-header .btn-close{filter:invert(1);position:absolute;right:1rem}
+        #loginModal .modal-dialog{max-width:380px;margin:1.75rem auto}
+        #loginModal .modal-content{border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.25);border:none;background:rgba(13,71,161,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden}
+        #loginModal .modal-body{padding:1.5rem;text-align:center}
+        #loginModal .form-control{background:#2c3e50;border:none;border-radius:8px;color:#fff;font-size:14px;padding:10px;margin-bottom:1rem;text-align:left}
+        #loginModal .form-control:focus{border:1px solid #ff9800;box-shadow:0 0 6px rgba(255,152,0,.5)}
+        #loginModal .form-label{font-weight:500;color:#fff;display:block;text-align:left}
+        #loginModal .btn-primary{border-radius:10px;padding:.5rem 1.2rem;font-weight:600;background:linear-gradient(135deg,#0d47a1,#1a237e);border:none;transition:.3s}
+        #loginModal .btn-primary:hover{background:linear-gradient(135deg,#1565c0,#0d47a1);transform:translateY(-2px)}
+        #loginModal .d-flex{justify-content:center;gap:1rem}
+        #loginModal a.text-decoration-none{font-size:.9rem;color:#fff;transition:color .3s}
+        #loginModal a.text-decoration-none:hover{color:#ff9800;text-decoration:underline}
+
+        #registerModal .modal-content{border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,.25);border:none;background:rgba(13,71,161,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden}
+        #registerModal .modal-header{background:linear-gradient(135deg,#0d47a1,#1a237e);color:#fff;border-bottom:none;padding:1rem 1.5rem;display:flex;justify-content:center;align-items:center;position:relative}
+        #registerModal .modal-title{font-weight:600;font-size:1.2rem}
+        #registerModal .modal-header .btn-close{position:absolute;right:1rem;filter:brightness(0) invert(1)}
+        #registerModal .modal-body{padding:2rem;background:rgba(255,255,255,.15);border-radius:0 0 20px 20px}
+        #registerModal .form-control{background:#2c3e50;border:1px solid #cfd8dc;border-radius:12px;color:#fff;font-size:14px;padding:.7rem 1rem;transition:all .3s}
+        #registerModal .form-control:focus{border-color:#0d47a1;box-shadow:0 0 8px rgba(13,71,161,.3)}
+        #registerModal .btn-success{border-radius:12px;padding:.6rem 1.5rem;font-weight:600;background:linear-gradient(135deg,#0d47a1,#1a237e);border:none;transition:.3s}
+        #registerModal .btn-success:hover{background:linear-gradient(135deg,#1565c0,#0d47a1);transform:translateY(-2px)}
+        #registerModal .btn-sendcode{border-radius:12px;padding:.6rem 1rem;font-weight:500;background:linear-gradient(135deg,#1565c0,#0d47a1);border:none;color:#fff;transition:.3s;white-space:nowrap}
+        #registerModal .btn-sendcode:hover{background:linear-gradient(135deg,#1e88e5,#1565c0);transform:translateY(-2px)}
+
+        .profile-link{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;transition:all .3s}
+        .profile-avatar{width:50px;height:50px;object-fit:cover;border-radius:50%;border:2px solid transparent;transition:all .3s}
+        .profile-link:hover .profile-avatar{border-color:#FFD700;box-shadow:0 0 8px rgba(13,71,161,.5)}
+        .profile-name{font-size:14px;color:#333;margin-top:5px;transition:color .3s}
+        .profile-link:hover .profile-name{color:#FFD700}
+
+        .banner{position:relative;width:100%;height:550px;overflow:hidden}
+        .slides{position:absolute;width:100%;height:100%;background-size:cover;background-position:center;opacity:0;transition:opacity 1s ease-in-out;z-index:0}
+        .slides.active{opacity:1}
+        .dots{position:absolute;bottom:20px;width:100%;text-align:center}
+        .dot{cursor:pointer;height:12px;width:12px;margin:0 4px;background-color:rgba(255,255,255,.5);border-radius:50%;display:inline-block;transition:background-color .3s}
+        .dot.active{background-color:#ffd700}
+        .steam-menu{position:absolute;top:0;left:0;width:100%;z-index:10;display:flex;justify-content:center;padding:10px 0}
+        .steam-menu-inner{max-width:1500px;width:100%;background:rgba(18,57,101,.8);padding:8px 12px;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:20px}
+        .steam-menu a{color:#fff;text-decoration:none;margin-right:20px;font-size:14px;font-weight:500;padding:6px 10px;border-radius:3px}
+        .steam-menu a:hover{background:rgba(255,255,255,.1)}
+        .search-box{position:relative;width:300px;margin-left:auto;display:flex;align-items:center;gap:6px}
+        #search{flex:1;padding:6px 8px;background:#305680;color:#fff;border:none;border-radius:4px}
+        #suggestions{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(10,18,30,.95);border:1px solid rgba(255,255,255,.06);display:none;max-height:300px;overflow-y:auto;z-index:99999;color:#fff;border-radius:6px}
+        .suggestion-item{display:flex;align-items:center;gap:10px;padding:8px;cursor:pointer}
+        .suggestion-item img{width:40px;height:40px;object-fit:cover;border-radius:6px}
+        .suggestion-item:hover{background:rgba(255,255,255,.03)}
+
+        .thumbs-row{display:flex;justify-content:center;gap:10px}
+        .equal-col{display:flex}
+        .name-game{text-align:center;color:orange}
+
+        .thumb-100{width:90px;height:90px;object-fit:cover;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer;transition:transform .3s}
+        .thumb-100:hover{ transform: scale(1.1); }
+        .thumb-video-100{width:90px;height:90px;object-fit:cover;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer;transition:transform .3s}
+        .thumb-video-100:hover{ transform: scale(1.1); }
+
+        .custom-footer{background:linear-gradient(135deg,#0b0f29,#1b2347);border-top:2px solid #1e3a8a;font-family:'Poppins',sans-serif;box-shadow:0 -2px 20px rgba(0,150,255,.15)}
+        .neon-text{color:#4f9eff;text-shadow:0 0 5px #4f9eff,0 0 15px #4f9eff,0 0 25px #007bff;animation:flicker 3s infinite}
+        @keyframes flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,24%,55%{opacity:.6}}
+        .footer-link{color:#adb5bd;text-decoration:none;display:inline-block;margin:4px 0;transition:color .3s,transform .2s}
+        .footer-link:hover{color:#4f9eff;transform:translateX(4px)}
+        .social-icons{display:flex;gap:18px;margin-top:10px}
+        .social-link{color:#ffffffcc;font-size:1.6rem;transition:all .3s;text-shadow:0 0 5px rgba(255,255,255,.3)}
+        .social-link:hover{color:#4f9eff;transform:scale(1.25) rotate(8deg);text-shadow:0 0 15px #4f9eff}
+        .text-glow{color:#4f9eff;text-shadow:0 0 10px #4f9eff}
+        .qr-img{margin-top:15px;width:160px;border-radius:5px}
+
+        .dropdown{position:relative}
+        .dropdown-toggle{cursor:pointer}
+        .dropdown-menu{display:none;position:absolute;top:100%;left:0;background:rgba(27,56,92,.95);padding:20px;border-radius:4px;min-width:700px;box-shadow:0 8px 20px rgba(0,0,0,.5);z-index:1000;grid-template-columns:repeat(4,1fr);gap:20px}
+        .dropdown:hover .dropdown-menu{display:grid}
+        .dropdown-column h4{margin-bottom:10px;color:#66c0f4;font-size:14px;font-weight:bold;border-bottom:1px solid #2a475e;padding-bottom:5px}
+        .dropdown-column a{display:block;color:#c7d5e0;font-size:13px;padding:4px 0;text-decoration:none;transition:color .2s}
+        .dropdown-column a:hover{color:#fff;text-decoration:underline}
+    </style>
+
+    <link rel="stylesheet" th:href="@{/Accest/css/GameDetailCss.css}">
+</head>
+
+<body>
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999"></div>
+
+<!-- ========= Modal Login ========= -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="loginAlertArea">
+                    <div class="alert alert-danger alert-dismissible fade show" th:if="${loginError}">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span th:text="${loginError}">Lỗi đăng nhập</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </div>
+                <form id="loginForm" method="post" autocomplete="off">
+                    <div id="loginError" style="display:none;"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" th:value="${enteredUsername}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button type="submit" class="btn btn-primary me-3">Login</button>
+                        <a href="#" class="text-decoration-none">Forgot password?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========= Modal Register ========= -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Register</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="registerAlert"></div>
+                <form id="registerForm" autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" id="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm password</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                        <div id="passwordMessage" class="form-text text-danger"></div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========= Nav ========= (giữ nguyên markup) -->
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#0f1c2e;">
+    <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
+        <a href="Index.html" class="logo-link text-white fs-4">
+            <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+        </a>
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">TIN TỨC</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">SỰ KIỆN</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">TOP GAME</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">GIẢM GIÁ</a></li>
+        </ul>
+        <div class="d-flex align-items-center">
+            <a th:if="${session.username != null}"
+               th:href="@{/welcome/Cart/{id}(id=${session.id})}"
+               class="btn btn-cart me-2">
+                <i class="bi bi-cart-fill me-1"></i> Cart
+                <span class="badge text-bg-danger ms-1" id="cartCount">0</span>
+            </a>
+            <style>
+                .btn-login {background: linear-gradient(90deg, #198754, #28a745);color: white; border: none;box-shadow: 0 0 6px rgba(25, 135, 84, 0.4);transition: all 0.3s ease;border-radius: 8px; padding: 8px 18px; font-weight: 600;}
+                .btn-login:hover { background: linear-gradient(90deg, #28a745, #34ce57); box-shadow: 0 0 15px rgba(40, 167, 69, 0.8); transform: translateY(-2px); }
+                .btn-register {background: linear-gradient(90deg, #0d6efd, #2a9df4);color: white; border: none;box-shadow: 0 0 6px rgba(13, 110, 253, 0.4);transition: all 0.3s ease;border-radius: 8px; padding: 8px 18px; font-weight: 600;}
+                .btn-register:hover { background: linear-gradient(90deg, #2a9df4, #0dcaf0); box-shadow: 0 0 15px rgba(13, 110, 253, 0.8); transform: translateY(-2px); }
+                .navbar-nav .nav-link { transition: color 0.3s ease, transform 0.2s ease; font-size: 1.05rem; letter-spacing: 0.5px; }
+                .navbar-nav .nav-link:hover { color: #0dcaf0; transform: translateY(-2px); }
+            </style>
+            <div th:if="${session.username == null}">
+                <button class="btn btn-login me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                <button class="btn btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
+            </div>
+            <div th:if="${session.username != null}" class="d-flex flex-column align-items-center">
+                <a th:href="@{/welcome/profile/{id}(id = ${session.id})}" class="d-inline-flex justify-content-center">
+                    <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
+                         alt="Avatar" class="rounded-circle"
+                         style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
+                </a>
+                <span class="mt-1 text-light" style="font-size: 0.9rem; font-weight: 600;" th:text="${session.username}"></span>
+            </div>
+        </div>
+    </div>
+</nav>
+<link rel="stylesheet" href="css/profile-user.css">
+
+<!-- ========= Header banner ========= -->
+<header class="banner">
+    <div class="steam-menu">
+        <div class="steam-menu-inner">
+            <a href="/index">Cửa hàng của bạn</a>
+            <a href="/about">About</a>
+            <a href="/new">Sắp phát hành</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle">Danh mục</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-column">
+                        <h4>Thể loại</h4>
+                        <a href="#">Hành động</a><a href="#">Phiêu lưu</a><a href="#">RPG</a><a href="#">Chiến thuật</a>
+                        <a href="#">Mô phỏng</a><a href="#">Đua xe</a><a href="#">Thể thao</a><a href="#">Kinh dị</a><a href="#">Puzzle</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Chủ đề</h4>
+                        <a href="#">Anime</a><a href="#">Sci-fi</a><a href="#">Cyberpunk</a><a href="#">Thế giới mở</a>
+                        <a href="#">Sinh tồn</a><a href="#">Vũ trụ</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Độ phổ biến</h4>
+                        <a href="#">Mới phát hành</a><a href="#">Sắp ra mắt</a><a href="#">Bán chạy</a><a href="#">Đánh giá cao</a><a href="#">Hot</a>
+                    </div>
+                    <div class="dropdown-column">
+                        <h4>Nền tảng</h4>
+                        <a href="#">PC</a><a href="#">Smart Phone</a><a href="#">PlayStation</a><a href="#">Xbox</a><a href="#">Switch</a><a href="#">Mobile</a><a href="#">VR</a>
+                    </div>
+                </div>
+            </div>
+            <a href="#">Cửa hàng điểm</a>
+            <a href="/support">Hỗ trợ</a>
+            <div class="search-box">
+                <input type="text" id="search" placeholder="Tìm kiếm game..."/>
+                <button type="button">🔍</button>
+                <div id="suggestions"></div>
+            </div>
+            <div id="no-result" style="display:none;color:red;margin-top:3px;">Không tìm thấy game</div>
+        </div>
+    </div>
+    <div class="slides active" style="background-image:url('/img/Aboutbanner.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game1.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game2.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game3.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game4.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game5.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game6.jpg');"></div>
+    <div class="dots">
+        <span class="dot active" data-idx="0"></span>
+        <span class="dot" data-idx="1"></span>
+        <span class="dot" data-idx="2"></span>
+        <span class="dot" data-idx="3"></span>
+        <span class="dot" data-idx="4"></span>
+        <span class="dot" data-idx="5"></span>
+        <span class="dot" data-idx="6"></span>
+    </div>
+</header>
+
+<!-- ========= Main ========= -->
+<div class="container mt-5">
+    <h3 class="name-game mt-3" th:text="${game.gameName}">Tên game</h3>
+    <div class="row align-items-stretch g-3">
+        <!-- Col 1: media -->
+        <div class="col-md-4 d-flex flex-column equal-col">
+            <div class="p-3 w-100 h-100 d-flex flex-column">
+                <img id="mainImg" th:src="@{'/' + ${game.linkImage[4]}}" src="/img/notfound.png" alt="Game" class="img-fluid rounded shadow mb-3"/>
+                <div class="thumbs-row d-flex justify-content-between gap-2">
+                    <video class="thumb-video-100" muted autoplay loop th:attr="onclick=|openVideoModal('/'+'${game.linkImage[0]}')|">
+                        <source th:src="@{'/' + ${game.linkImage[0]}}" type="video/mp4"/>
+                    </video>
+                    <img class="thumb-100" th:src="@{'/' + ${game.linkImage[1]}}" th:attr="onclick=|openImageModal('/'+'${game.linkImage[1]}')|" alt="thumb 1"/>
+                    <img class="thumb-100" th:src="@{'/' + ${game.linkImage[2]}}" th:attr="onclick=|openImageModal('/'+'${game.linkImage[2]}')|" alt="thumb 2"/>
+                    <img class="thumb-100" th:src="@{'/' + ${game.linkImage[3]}}" th:attr="onclick=|openImageModal('/'+'${game.linkImage[3]}')|" alt="thumb 3"/>
+                </div>
+            </div>
+            <!-- Image modal -->
+            <div class="modal fade" id="imageModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-body text-center">
+                            <img id="modalImage" class="img-fluid rounded"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Video modal -->
+            <div class="modal fade" id="videoModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content bg-dark border-0">
+                        <div class="modal-body p-0">
+                            <video id="modalVideo" class="w-100" controls muted autoplay></video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 2: detail + buy/cart OR download -->
+        <div class="col-md-4 d-flex equal-col">
+            <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
+                <h4 class="mb-3">Thông tin chi tiết</h4>
+                <p><strong>💲 Giá:</strong> <span id="price" th:text="${game.price}">-</span></p>
+                <!-- ĐÃ XOÁ DÒNG ĐÁNH GIÁ/AVG STAR -->
+                <p><strong>📂 Dung lượng:</strong> <span id="size" th:text="${game.deceptions[1]}">-</span></p>
+                <p><strong>🔞 Độ tuổi:</strong> <span id="age" th:text="${game.deceptions[4]}">-</span></p>
+                <p><strong>⬇️ Lượt tải:</strong> <span id="downloads" th:text="${game.deceptions[2]}">-</span></p>
+                <p><strong>📝 Mô tả:</strong> <span id="description" th:text="${game.deceptions[0]}">-</span></p>
+
+                <div class="d-flex gap-2 mt-auto" th:if="${session.username!=null && !UserGame}">
+                    <form id="buyForm" class="w-100">
+                        <input type="hidden" name="gameId" id="buyGameId" th:value="${game.gameId}"/>
+                        <button type="submit" class="btn btn-success w-100">🛒 Mua ngay</button>
+                    </form>
+                    <form id="addCartForm" class="w-100">
+                        <input type="hidden" name="gameId" id="cartGameId" th:value="${game.gameId}"/>
+                        <button type="submit" class="btn btn-primary w-100">➕ Thêm giỏ hàng</button>
+                    </form>
+                </div>
+                <div class="d-flex gap-2 mt-auto" th:if="${session.username!=null && UserGame}">
+                    <form id="download">
+                        <input type="hidden" name="gameId" id="DownLoadGameID" th:value="${game.gameId}"/>
+                        <button type="submit" class="btn btn-success w-100">Tải về</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ĐÃ XOÁ: Col 3 (YOUR REVIEW) & Col 4 (REVIEWS LIST) -->
+    </div>
+</div>
+
+<!-- ========= Alerts from server (buy/cart) ========= -->
+<div th:if="${buyError}" id="buyAlert" style="position: fixed; top: 20px; right: 20px;background: #f44336; color: white; padding: 15px;border-radius: 8px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" th:text="${buyError}"></div>
+<div th:if="${cartError}" id="cartAlert" style="position: fixed; top: 70px; right: 20px;background: #fff3cd; color: black; padding: 15px;border-radius: 8px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" th:text="${cartError}"></div>
+
+<footer class="footer custom-footer mt-auto py-5 text-white">
+    <div class="container px-5">
+        <div class="row gy-4 gx-5">
+            <div class="col-md-3">
+                <a href="Index.jsp" class="logo-link">
+                    <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+                </a>
+                <p class="text-white-50">
+                    Trải nghiệm thế giới game đỉnh cao – nơi hội tụ những siêu phẩm nhập vai, hành động và phiêu lưu.
+                    GameStore mang đến không gian giải trí sống động, đậm chất công nghệ và đam mê, giá cả hợp lý và
+                    nhiều khuyến mãi hấp dẫn!.
+                </p>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Thông tin</h5>
+                <ul class="list-unstyled text-white-50">
+                    <li><a href="#" class="footer-link">Hỗ trợ</a></li>
+                    <li><a th:href="@{/welcome/about}" class="footer-link">About us</a></li>
+                    <li><a th:href="@{/welcome/termsofservice}" class="footer-link">Điều khoản dịch vụ</a></li>
+                    <li><a th:href="@{/welcome/privacypolicy}" class="footer-link">Chính sách bảo mật</a></li>
+                    <li><a th:href="@{/welcome/buyguide}" class="footer-link">Hướng dẫn mua hàng</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Liên hệ</h5>
+                <p><a href="tel:+84912345678" class="footer-link">+84 1900 1099 </a></p>
+                <p><a href="mailto:support@gamestore.com" class="footer-link">support@gamestore.com</a></p>
+                <p><a href="https://surl.li/bhtojh" target="_blank" class="footer-link">https://surl.li/bhtojh/</a></p>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary glow-title mb-3">Kết nối với chúng tôi</h5>
+                <div class="social-icons">
+                    <a href="https://surl.li/bhtojh" class="social-link" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                </div>
+                <img src="img/qr.jpg" alt="QR Shop" class="qr-img">
+            </div>
+        </div>
+
+        <hr class="border-secondary my-4">
+
+        <div class="text-center text-white-50 small">
+            © 2025 <span class="fw-bold text-primary">GameStore</span>. All rights reserved.
+            | Designed by <span class="text-glow">Do Trong Tri</span>
+        </div>
+    </div>
+</footer>
+<!-- ========= JS libs ========= -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    (function autoOpenModals(){
+        // 1) Cờ lỗi đăng nhập: Thymeleaf xuất true/false
+        const hasLoginError = /*[[${loginError} != null]]*/ false;
+
+        // 2) Thymeleaf xuất literal (null nếu không có)
+        //    Tránh nhúng Elvis trong chuỗi để khỏi vướng quote.
+        const showForm = /*[[${showForm}]]*/ null;
+        const showFormStr = (showForm ?? ''); // '' nếu null/undefined
+
+        if (hasLoginError || showFormStr === 'login') {
+            const modalEl = document.getElementById('loginModal');
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl, {backdrop:'static', keyboard:false});
+            let lockClose = hasLoginError;
+            modalEl.addEventListener('hide.bs.modal', (e)=>{ if(lockClose){ e.preventDefault(); setTimeout(()=> modal.show(), 50); } });
+            const closeBtn = document.getElementById('loginCloseBtn');
+            closeBtn && closeBtn.addEventListener('click', ()=>{ lockClose=false; modal.hide(); });
+            modal.show();
+        }
+
+        // 3) Cờ yêu cầu mở register từ server
+        const serverWantsRegister = /*[[(${error} != null) or (${registerSuccess} != null)]]*/ false;
+
+        if (serverWantsRegister || showFormStr === 'register') {
+            const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+            registerModal.show();
+        }
+    })();
+    /*]]>*/
+</script>
+
+
+
+
+</body>
+</html>

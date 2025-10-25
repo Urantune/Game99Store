@@ -5,8 +5,8 @@
     <title>Giỏ hàng - Game Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background: rgba(18, 57, 101, 0.8); background-size: cover; font-family: Arial, sans-serif; }
-        .cart-container { max-width: 800px; margin: 50px auto; background: rgba(0, 60, 100, 0.6);
+        body { background: rgba(18,57,101,0.8); background-size: cover; font-family: Arial, sans-serif; }
+        .cart-container { max-width: 900px; margin: 50px auto; background: rgba(0,60,100,0.6);
             padding: 20px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.5); color:#fff; }
         .cart-header { text-align: center; font-size: 28px; font-weight: bold; color:#FFD700; margin-bottom: 20px; }
         table { color:#fff; border-radius: 10px; overflow: hidden; }
@@ -18,6 +18,8 @@
         .btn-success:hover { background: linear-gradient(135deg, #218838, #004d00); transform: scale(1.05); }
         .btn-remove { background: linear-gradient(135deg, #ff4d4d, #800000); border:none; border-radius:8px; color:#fff; transition:.3s; }
         .btn-remove:hover { background: linear-gradient(135deg, #cc0000, #660000); transform: scale(1.05); }
+        .thumb-wrap { width: 140px; height: 80px; overflow: hidden; border-radius: 8px; }
+        .thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .text-center { color:#ccc; }
     </style>
 </head>
@@ -25,64 +27,80 @@
 <div class="cart-container">
     <div class="cart-header">Giỏ hàng của bạn</div>
 
-    <table class="table table-hover">
-        <thead class="table-dark">
-        <tr>
-            <th>Lựa chọn</th>
-            <th>Game</th>
-            <th>Giá</th>
-            <th>Chỉnh sửa</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Nếu cart rỗng -->
-        <tr th:if="${#lists.isEmpty(cart)}">
-            <td colspan="4" class="text-center">Giỏ hàng trống</td>
-        </tr>
+    <!-- CHỈ 1 FORM DUY NHẤT -->
+    <form th:action="@{/welcome/buy}" method="post">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th style="width:60px;">Chọn</th>
+                <th style="width:160px;">Ảnh</th>
+                <th>Game</th>
+                <th style="width:140px;">Giá</th>
+                <th style="width:120px;">Chỉnh sửa</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${listGame == null or #lists.isEmpty(listGame)}">
+                <td colspan="5" class="text-center">Giỏ hàng trống</td>
+            </tr>
 
-        <!-- Nếu cart có item -->
-        <tr th:each="item : ${cart}">
-            <td>
-                <input type="checkbox"
-                       class="game-checkbox"
-                       name="selectedGames"
-                       th:value="${item.gameId}"
-                       th:attr="data-price=${item.price.multiply(T(java.math.BigDecimal).valueOf(item.quantity))}">
-            </td>
-            <td th:text="${item.gameName}">Tên game</td>
-            <td th:text="${#numbers.formatInteger(item.price.multiply(T(java.math.BigDecimal).valueOf(item.quantity)).longValue(),0,'POINT')} + '₫'">0₫</td>
-            <td>
-                <form th:action="@{/cart/remove}" method="post" style="display:inline;">
-                    <input type="hidden" name="gameId" th:value="${item.gameId}">
-                    <!-- CSRF (nếu bật Spring Security) -->
-                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <button type="submit" class="btn btn-danger btn-sm btn-remove">Xóa</button>
-                </form>
-            </td>
-        </tr>
+            <tr th:each="item : ${listGame}">
+                <!-- checkbox chọn game -->
+                <td>
+                    <input type="checkbox"
+                           class="game-checkbox"
+                           name="selectedIds"
+                           th:value="${item.gameId}"
+                           th:attr="data-price=${item.price}">
+                </td>
 
-        <!-- Hàng tổng cộng -->
-        <tr class="total-row" th:if="${!#lists.isEmpty(cart)}">
-            <td colspan="4" class="text-end">
-                Tổng cộng: <strong id="totalPrice">0₫</strong>
-            </td>
-        </tr>
+                <!-- ảnh: imageLinks là CHUỖI CSV -> split thành mảng -->
+                <td>
+                    <div class="thumb-wrap"
+                         th:with="
+                    imgs=${'/'+ @gameCore.imageLinkGame(@gameSevice.findGameById(item.getGameId()).imageLinks)[4]},
+                    path=${'/'+@gameCore.imageLinkGame(@gameSevice.findGameById(item.getGameId()).imageLinks)[4]}">
+                        <img th:src="@{${path}}" alt="thumb">
+                    </div>
+                </td>
 
-        </tbody>
-    </table>
+                <td th:text="${item.gameName}">Tên game</td>
 
-    <div class="text-end mt-3">
-        <a th:href="@{/}" class="btn btn-primary">Tiếp tục mua sắm</a>
+                <!-- hiển thị giá -->
+                <td th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'POINT')} + ' ₫'">0 ₫</td>
 
-        <form th:if="${!#lists.isEmpty(cart)}" th:action="@{/checkout}" method="post" style="display:inline;">
-            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <!-- nút xóa 1 game -->
+                <td>
+                    <form th:action="@{/cart/remove}" method="post" style="display:inline;">
+                        <input type="hidden" name="gameId" th:value="${item.gameId}">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+
+            <!-- tổng cộng -->
+            <tr class="total-row" th:if="${listGame != null and !#lists.isEmpty(listGame)}">
+                <td colspan="5" class="text-end">
+                    Tổng cộng (đã chọn): <strong id="totalPrice">0₫</strong>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- CSRF + 1 CẶP NÚT DUY NHẤT -->
+        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <div class="d-flex justify-content-between mt-3">
+            <a th:href="@{/welcome}" class="btn btn-primary">Tiếp tục mua sắm</a>
             <button type="submit" class="btn btn-success">Thanh toán</button>
-        </form>
-    </div>
+        </div>
+    </form>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Tính tổng dựa trên checkbox đã chọn
     document.addEventListener("DOMContentLoaded", function () {
         const checkboxes = document.querySelectorAll(".game-checkbox");
         const totalPriceEl = document.getElementById("totalPrice");
@@ -91,14 +109,15 @@
             let total = 0;
             checkboxes.forEach(cb => {
                 if (cb.checked) {
-                    total += parseFloat(cb.getAttribute("data-price"));
+                    const v = cb.getAttribute("data-price");
+                    if (v) total += parseFloat(v);
                 }
             });
             totalPriceEl.textContent = total.toLocaleString("vi-VN") + "₫";
         }
 
         checkboxes.forEach(cb => cb.addEventListener("change", updateTotal));
-        updateTotal(); // tính lần đầu nếu có sẵn lựa chọn
+        updateTotal();
     });
 </script>
 </body>
