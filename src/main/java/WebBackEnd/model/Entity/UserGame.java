@@ -31,12 +31,12 @@ public class UserGame {
 
     public UserGame() {}
 
-    public UserGame(User user, Game game, LocalDateTime purchaseDate) {
+    public UserGame(User user, Game game, LocalDateTime purchaseDate, int status) {
         this.id = new UserGameId(user.getId(), game.getGameId());
         this.user = user;
         this.game = game;
         this.purchaseDate = purchaseDate;
-
+        this.status = status;
     }
 
 // Nho them cai me gi quen roi

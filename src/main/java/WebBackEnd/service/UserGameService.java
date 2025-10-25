@@ -27,11 +27,19 @@ public class UserGameService {
     }
 
     public List<Game> showGameInCart(UUID userId){
-        return userGameRepository.findGamesCartByUser(userId);
+        return userGameRepository.findGamesByUserAndStatus(userId,0);
     }
+
 
 
     public boolean findUserGameByUserAndGame(User user, Game game){
         return userGameRepository.existsUserGameByUserAndGame(user,game);
     }
+
+    public void saveUserGame(UserGame userGame){
+        userGameRepository.save(userGame);
+    }
+
+
+    
 }

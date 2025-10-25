@@ -1,246 +1,395 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>New Age - Start Bootstrap Theme</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link th:href="@{Accest/css/styles.css}" rel="stylesheet" >
-    <link th:href="@{/Accest/css/styles1.css}" rel="stylesheet">
-    <link th:href="@{/Accest/css/Navigation.css}" rel="stylesheet"/>
-    <link th:href="@{/Accest/css/Banner.css}" rel="stylesheet"/>
-    <link th:href="@{/Accest/css/SteamMenu.css}" rel="stylesheet"/>
-    <link th:href="@{/Accest/css/Dropdown.css}" rel="stylesheet"/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="GameStore Admin Panel"/>
+    <meta name="author" content=""/>
+    <title>Game-Store | Admin</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link th:href="@{/Accest/css/styles1.css}" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
-<body id="page-top">
+<style>
+    html, body { height: 100%; margin: 0; padding: 0; background-color: #0f1c2e !important; }
+    .container, .content, .main { background: transparent !important; }
+    /* Navbar buttons */
+    .btn-login {
+        background: linear-gradient(90deg, #198754, #28a745); color: white; border: none;
+        box-shadow: 0 0 6px rgba(25,135,84,.4); transition: all .3s ease;
+        border-radius: 8px; padding: 8px 18px; font-weight: 600;
+    }
+    .btn-login:hover {
+        background: linear-gradient(90deg, #28a745, #34ce57);
+        box-shadow: 0 0 15px rgba(40,167,69,.8); transform: translateY(-2px);
+    }
+    .logo-link { text-decoration: none !important; color: inherit; }
+    .logo-link:hover { color: #00e0ff; text-shadow: 0 0 10px #00e0ff; }
+    .neon-text { color: #4f9eff; text-shadow: 0 0 5px #4f9eff, 0 0 15px #4f9eff, 0 0 25px #007bff; }
+    /* Banner */
+    .banner { position: relative; width: 100%; height: 420px; overflow: hidden; }
+    .slides { position: absolute; inset: 0; background-size: cover; background-position: center;
+        opacity: 0; transition: opacity 1s ease-in-out; z-index: 0; }
+    .slides.active { opacity: 1; }
+    .dots { position: absolute; bottom: 20px; width: 100%; text-align: center; }
+    .dot { cursor: pointer; height: 12px; width: 12px; margin: 0 4px; background-color: rgba(255,255,255,.5);
+        border-radius: 50%; display: inline-block; transition: background-color .3s ease; }
+    .dot.active { background-color: #ffd700; }
+    .dot:hover { background-color: #fff; }
+    /* Cards */
+    .card { transition: transform 0.25s ease, box-shadow 0.25s ease; border-radius: 14px; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(0,0,0,0.35); }
+    .card .form-control { background: #2c3e50; color: #fff; border: none; border-radius: 10px; }
+    .card .form-control:focus { border: 1px solid #ff9800; box-shadow: 0 0 6px rgba(255,152,0,0.5); }
+    .card .btn { border-radius: 10px; }
+    .text-muted small, .text-muted { color: #b0bec5 !important; }
+    /* Footer */
+    .custom-footer {
+        background: linear-gradient(135deg, #0b0f29, #1b2347);
+        border-top: 2px solid #1e3a8a;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 -2px 20px rgba(0, 150, 255, 0.15);
+    }
+    .footer-link { color: #adb5bd; text-decoration: none; display: inline-block; margin: 4px 0; transition: color .3s, transform .2s; }
+    .footer-link:hover { color: #4f9eff; transform: translateX(4px); }
+    .social-icons { display: flex; gap: 18px; margin-top: 10px; }
+    .social-link { color: #ffffffcc; font-size: 1.6rem; transition: all .3s ease; text-shadow: 0 0 5px rgba(255,255,255,.3); }
+    .social-link:hover { color: #4f9eff; transform: scale(1.25) rotate(8deg); text-shadow: 0 0 15px #4f9eff; }
+</style>
 
- Modal Login (single source of truth)
-<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Login</h5>
-                <!-- remove data-bs-dismiss so we control close behavior -->
-                <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close"></button>
+<body>
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999"></div>
+
+<!-- ================= NAVBAR (Admin) ================= -->
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#0f1c2e;">
+    <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
+        <a th:href="@{/welcome}" class="logo-link text-white fs-4">
+            <h3 class="fw-bolder neon-text mb-0">🎮 GameStore</h3>
+        </a>
+
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">ADMIN</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">DASHBOARD</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">TOOLS</a></li>
+        </ul>
+
+        <div class="d-flex align-items-center">
+            <!-- Nếu CHƯA login -->
+            <div th:if="${session.username == null}">
+                <button class="btn btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
             </div>
-            <div class="modal-body">
-                <div id="loginAlertArea">
-                    <div class="alert alert-danger alert-dismissible fade show" th:if="${loginError}">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <span th:text="${loginError}">Lỗi đăng nhập</span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
+            <!-- Nếu ĐÃ login -->
+            <div th:if="${session.username != null}" class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <div class="text-white-50 small">Signed in as</div>
+                    <div class="text-white fw-bold" th:text="${session.username}">admin</div>
                 </div>
-
-
-                <form id="loginForm" method="post" autocomplete="off">
-                    <div id="loginError" style="display:none;"></div>
-                    <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control" name="username"
-                               th:value="${enteredUsername}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password" required>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <button type="submit" class="btn btn-primary me-3">Login</button>
-                        <a href="#" class="text-decoration-none">Forgot password?</a>
-                    </div>
-                </form>
-
+                <a th:href="@{/welcome/profile/{id}(id=${session.id})}" class="d-inline-flex justify-content-center">
+                    <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
+                         alt="Avatar" class="rounded-circle"
+                         style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
+                </a>
             </div>
         </div>
     </div>
-</div>
+</nav>
 
-<!-- Navigation -->
-<!--<nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm" id="mainNav">-->
-<!--    <div class="container px-5">-->
-<!--        <a class="navbar-brand fw-bold" th:href="@{/}">ADMIN</a>-->
-<!--        <div th:if="${session.username == null}">-->
-<!--            <button class="btn btn-login me-2" data-bs-toggle="modal" data-bs-target="#loginModal">-->
-<!--                Đăng nhập-->
-<!--            </button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</nav>-->
-
-<!-- Header banner with slides and search -->
+<!-- ========= BANNER ========= -->
 <header class="banner">
-    <div class="steam-menu">
-        <div class="steam-menu-inner">
-            <a th:href="@{/welcome/about}">About</a>
-            <a th:href="@{/welcome/Newgame}">Coming Soon</a>
-
-            <div class="dropdown">
-                <div class="dropdown-toggle text-decoration-none text-white">Categories</div>
-                <div class="dropdown-menu">
-                    <div class="dropdown-column">
-                        <h4>Games</h4>
-                        <a href="#">Action</a>
-                        <a href="#">Adventure</a>
-                        <a href="#">Horror</a>
-                        <a href="#">Puzzle</a>
-                    </div>
-                    <div class="dropdown-column">
-                        <h4>Genres</h4>
-                        <a href="#">Anime</a>
-                        <a href="#">Sci-Fi</a>
-                        <a href="#">Cyberpunk</a>
-                        <a href="#">Open World</a>
-                        <a href="#">Survival</a>
-                        <a href="#">Space</a>
-                    </div>
-                    <div class="dropdown-column">
-                        <h4>By Popularity</h4>
-                        <a href="#">New Releases</a>
-                        <a href="#">Coming Soon</a>
-                        <a href="#">Best Sellers</a>
-                        <a href="#">Top Rated</a>
-                        <a href="#">Hot Games</a>
-                    </div>
-                    <div class="dropdown-column">
-                        <h4>By Platform</h4>
-                        <a href="#">PC</a>
-                        <a href="#">Smartphone</a>
-                        <a href="#">PlayStation</a>
-                        <a href="#">Xbox</a>
-                        <a href="#">Nintendo Switch</a>
-                        <a href="#">Mobile</a>
-                        <a href="#">VR</a>
-                    </div>
-                </div>
-            </div>
-            <a href="#">Point Store</a>
-            <a th:href="@{/welcome/support}">Support</a>
-            <!-- Search Box -->
-            <div class="search-box">
-                <input type="text" id="search" placeholder="Search game...">
-                <button type="button">🔍</button>
-                <div id="suggestions"></div>
-            </div>
-            <div id="no-result" style="display:none; color:red; margin-top:3px;">Không tìm thấy game</div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const searchBar = document.getElementById("search");
-            const suggestions = document.getElementById("suggestions");
-            const noResult = document.getElementById("no-result");
-            const contextPath = "";
-            const placeholder = "data:image/svg+xml;utf8," + encodeURIComponent(
-                '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#2b2b2b"/><text x="50%" y="50%" fill="#999" font-size="12" text-anchor="middle" dominant-baseline="middle">No Image</text></svg>'
-            );
-
-            function createSuggestionItem(game) {
-                const div = document.createElement("div");
-                div.className = "suggestion-item";
-                const img = document.createElement("img");
-                img.alt = game.name;
-                img.src = game.img;
-                img.onerror = function () {
-                    img.src = placeholder;
-                };
-                const span = document.createElement("span");
-                span.textContent = game.name;
-                div.appendChild(img);
-                div.appendChild(span);
-                div.onclick = () => {
-                    window.location.href = contextPath + "/Index.html" + game.anchor;
-                };
-                return div;
-            }
-
-            function searchGames() {
-                const q = searchBar.value.trim().toLowerCase();
-                suggestions.innerHTML = "";
-                noResult.style.display = "none";
-                if (!q) {
-                    suggestions.style.display = "none";
-                    return [];
-                }
-                const filtered = games.filter(g => g.name.toLowerCase().includes(q));
-                if (filtered.length === 0) {
-                    suggestions.style.display = "none";
-                    noResult.style.display = "block";
-                } else {
-                    filtered.forEach(game => {
-                        const item = createSuggestionItem(game);
-                        suggestions.appendChild(item);
-                    });
-                    suggestions.style.display = "block";
-                }
-                return filtered;
-            }
-
-            searchBar.addEventListener("input", searchGames);
-            searchBar.addEventListener("keydown", function (e) {
-                if (e.key === "Enter") {
-                    const results = searchGames();
-                    if (results.length === 0) {
-                        alert("Không tìm thấy game");
-                    }
-                }
-            });
-            document.addEventListener("click", (e) => {
-                if (!e.target.closest(".search-box")) {
-                    suggestions.style.display = "none";
-                    noResult.style.display = "none";
-                }
-            });
-        });
-    </script>
-
-    <!-- Slides -->
-    <div class="slides active" style="background-image: url('/img/Aboutbanner.jpg');"></div>
-    <div class="slides" style="background-image: url('/img/game1.jpg');"></div>
-    <div class="slides" style="background-image: url('/img/game2.jpg');"></div>
-    <div class="slides" style="background-image: url('/img/game3.jpg');"></div>
-    <div class="slides" style="background-image: url('/img/game4.jpg');"></div>
-    <div class="slides" style="background-image: url('/img/game5.jpg');"></div>
-    <div class="slides" style="background-image: url('/img/game6.jpg');"></div>
+    <div class="slides active" style="background-image:url('/img/Aboutbanner.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game3.jpg');"></div>
+    <div class="slides" style="background-image:url('/img/game6.jpg');"></div>
     <div class="dots">
         <span class="dot active" onclick="currentSlide(0)"></span>
         <span class="dot" onclick="currentSlide(1)"></span>
         <span class="dot" onclick="currentSlide(2)"></span>
-        <span class="dot" onclick="currentSlide(3)"></span>
-        <span class="dot" onclick="currentSlide(4)"></span>
-        <span class="dot" onclick="currentSlide(5)"></span>
-        <span class="dot" onclick="currentSlide(6)"></span>
     </div>
 </header>
 
-<!-- Feedback Modal -->
-<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-primary-to-secondary p-4">
-                <h5 class="modal-title font-alt text-white" id="feedbackModalLabel">Send feedback</h5>
-                <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let slideIndex = 0;
+        const slides = document.querySelectorAll(".slides");
+        const dots = document.querySelectorAll(".dot");
+        function showSlide(i){ slides.forEach((s,idx)=>{ s.classList.toggle("active", idx===i); dots[idx].classList.toggle("active", idx===i); }); }
+        function changeSlide(n){ slideIndex = (slideIndex + n + slides.length) % slides.length; showSlide(slideIndex); }
+        window.currentSlide = function(n){ slideIndex = n; showSlide(slideIndex); };
+        showSlide(slideIndex); setInterval(()=>changeSlide(1), 3000);
+    });
+</script>
+
+<!-- ========= ADMIN ACTIONS (4 FORM) ========= -->
+<section class="py-5" style="background-color:#0f1c2e;">
+    <div class="container px-4 px-lg-5 mt-4">
+
+        <!-- Thông báo: yêu cầu login nếu chưa đăng nhập -->
+        <div th:if="${session.username == null}" class="alert alert-warning text-center">
+            Khu vực quản trị — vui lòng <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">đăng nhập</a>.
+        </div>
+
+        <!-- Admin tools -->
+        <div th:if="${session.username != null}">
+            <h2 class="fw-bolder mb-4 text-white text-center">Admin Tools</h2>
+
+            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4 justify-content-center">
+
+                <!-- Edit Users -->
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="text-center mb-3">
+                                <h5 class="fw-bolder">Edit Users</h5>
+                                <p class="text-muted small">Tìm, khóa/mở, cập nhật quyền.</p>
+                            </div>
+                            <form th:action="@{/admin/users}" method="get" class="mt-auto">
+                                <div class="mb-2">
+                                    <input type="text" name="q" class="form-control" placeholder="Username/Email (tùy chọn)"/>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-people-fill me-1"></i> Mở User Manager
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Games -->
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="text-center mb-3">
+                                <h5 class="fw-bolder">Edit Games</h5>
+                                <p class="text-muted small">Tạo/sửa thông tin game, giá, ảnh.</p>
+                            </div>
+                            <form th:action="@{/admin/games}" method="get" class="mt-auto">
+                                <div class="mb-2">
+                                    <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên game (tùy chọn)"/>
+                                </div>
+                                <button type="submit" class="btn btn-info w-100 text-white">
+                                    <i class="bi bi-controller me-1"></i> Mở Game Manager
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Events -->
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="text-center mb-3">
+                                <h5 class="fw-bolder">Edit Events</h5>
+                                <p class="text-muted small">Quản lý sự kiện, banner, thời gian.</p>
+                            </div>
+                            <form th:action="@{/admin/events}" method="get" class="mt-auto">
+                                <div class="mb-2">
+                                    <input type="text" name="q" class="form-control" placeholder="Tên sự kiện (tùy chọn)"/>
+                                </div>
+                                <button type="submit" class="btn btn-warning w-100">
+                                    <i class="bi bi-calendar-event me-1"></i> Mở Event Manager
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Game -->
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="text-center mb-3">
+                                <h5 class="fw-bolder">Upload Game</h5>
+                                <p class="text-muted small">Tải package/ảnh & metadata.</p>
+                            </div>
+                            <form th:action="@{/admin/upload}" method="post" enctype="multipart/form-data" class="mt-auto">
+                                <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
+                                <div class="mb-2">
+                                    <input class="form-control" type="text" name="gameName" placeholder="Tên game" required>
+                                </div>
+                                <div class="mb-2">
+                                    <input class="form-control" type="number" step="0.01" name="price" placeholder="Giá" required>
+                                </div>
+                                <div class="mb-2">
+                                    <input class="form-control" type="text" name="category" placeholder="Thể loại (vd: Action)" required>
+                                </div>
+                                <div class="mb-2">
+                                    <textarea class="form-control" name="description" rows="3" placeholder="Mô tả ngắn" required></textarea>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label text-white-50">Ảnh cover</label>
+                                    <input class="form-control" type="file" name="coverImage" accept="image/*" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label text-white-50">Game package (zip/rar)</label>
+                                    <input class="form-control" type="file" name="packageFile" accept=".zip,.rar,.7z" required>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-cloud-upload-fill me-1"></i> Upload
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             </div>
+
+            <!-- Hints sau khi vào từng trang quản trị -->
+            <div class="alert alert-info mt-3">
+                Gợi ý: các form trên điều hướng tới trang quản trị tương ứng. Bạn có thể render bảng, phân trang, lọc và CRUD ở
+                các route: <code>/admin/users</code>, <code>/admin/games</code>, <code>/admin/events</code>, <code>/admin/upload</code>.
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer custom-footer mt-auto py-5 text-white">
+    <div class="container px-5">
+        <div class="row gy-4 gx-5">
+            <div class="col-md-3">
+                <a th:href="@{/welcome}" class="logo-link">
+                    <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+                </a>
+                <p class="text-white-50">
+                    Trung tâm quản trị GameStore. Quản lý người dùng, game, sự kiện và nội dung nhanh chóng.
+                </p>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary mb-3">Thông tin</h5>
+                <ul class="list-unstyled text-white-50">
+                    <li><a th:href="@{/welcome/support}" class="footer-link">Hỗ trợ</a></li>
+                    <li><a th:href="@{/welcome/about}" class="footer-link">About us</a></li>
+                    <li><a th:href="@{/welcome/termsofservice}" class="footer-link">Điều khoản dịch vụ</a></li>
+                    <li><a th:href="@{/welcome/privacypolicy}" class="footer-link">Chính sách bảo mật</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary mb-3">Liên hệ</h5>
+                <p><a href="tel:+84912345678" class="footer-link">+84 1900 1099</a></p>
+                <p><a href="mailto:support@gamestore.com" class="footer-link">support@gamestore.com</a></p>
+            </div>
+
+            <div class="col-md-3">
+                <h5 class="text-uppercase text-primary mb-3">Kết nối</h5>
+                <div class="social-icons">
+                    <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <hr class="border-secondary my-4">
+        <div class="text-center text-white-50 small">
+            © 2025 <span class="fw-bold text-primary">GameStore</span>. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+<!-- ===================== LOGIN MODAL (Admin only) ===================== -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header" style="background: linear-gradient(135deg, #0d47a1, #1a237e); color: #fff;">
+                <h5 class="modal-title">Admin Login</h5>
+                <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close" style="filter: invert(1);"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="loginError" style="display:none;"></div>
+
+                <form id="loginForm" method="post" autocomplete="off">
+                    <!-- Nếu bật CSRF, bật 2 dòng dưới -->
+                    <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required/>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <button type="submit" class="btn btn-primary me-3">Login</button>
+                        <span class="text-white-50 small">Admin area only</span>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
 </div>
 
-<!-- Scripts -->
-<!-- Bootstrap core JS (CDN) -->
+<!-- ==== JS: LOGIN khớp @PostMapping("/login") -> {"success": true} ==== -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('loginForm');
+        const errorBox = document.getElementById('loginError');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            errorBox.textContent = '';
+            errorBox.style.display = 'none';
+            errorBox.className = '';
+
+            try {
+                const formData = new FormData(form);
+
+                const res = await fetch('/admin/login', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await res.json();
+
+                if (!res.ok || !result.success) {
+                    errorBox.textContent = result.error || 'Đăng nhập thất bại!';
+                    errorBox.style.display = 'block';
+                    errorBox.classList.add('alert', 'alert-danger', 'text-center');
+                    setTimeout(() => {
+                        errorBox.style.transition = 'opacity .3s ease';
+                        errorBox.style.opacity = '0';
+                        setTimeout(() => { errorBox.style.display = 'none'; errorBox.style.opacity = '1'; }, 300);
+                    }, 3000);
+                    return;
+                }
+
+                // Success: đóng modal & reload
+                const loginModalEl = document.getElementById('loginModal');
+                let modal = bootstrap.Modal.getInstance(loginModalEl);
+                if (!modal) modal = new bootstrap.Modal(loginModalEl);
+                modal.hide();
+                window.location.reload();
+
+            } catch (e2) {
+                errorBox.textContent = 'Lỗi kết nối máy chủ!';
+                errorBox.style.display = 'block';
+                errorBox.classList.add('alert', 'alert-danger', 'text-center');
+                setTimeout(() => (errorBox.style.display = 'none'), 3000);
+            }
+        });
+    });
+</script>
+
+<!-- Nếu muốn tự bật modal login khi truy cập trang admin mà chưa có session -->
+<script th:if="${session.username == null}">
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        loginModal.show();
+    });
+</script>
+
+<!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Core theme JS (local) -->
-<script th:src="@{/Accest/JS/scripts.js}"></script>
-
-<!-- SB Forms JS (CDN) -->
-<script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-
 <!-- Core theme JS-->
-<script src="js/scripts.js"></script>
-
+<script src="/js/scripts.js"></script>
 </body>
 </html>

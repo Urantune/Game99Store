@@ -7,6 +7,7 @@ import WebBackEnd.model.Entity.UserGameId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +42,19 @@ public interface UserGameRepository extends JpaRepository<UserGame, UserGameId> 
                """)
         List<Game> findGamesCartByUser(UUID userId);
 
+
+    @Query("""
+        select ug.game
+        from UserGame ug
+        where ug.user.id = :userId
+          and ug.status = :status
+    """)
+    List<Game> findGamesByUserAndStatus(@Param("userId") UUID userId,
+                                        @Param("status") int status);
+
         boolean existsUserGameByUserAndGame(User user, Game game);
+
+
 
 
 

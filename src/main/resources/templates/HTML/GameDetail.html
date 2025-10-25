@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -6,13 +5,19 @@
     <title th:text="${game.gameName} + ' - Chi tiết game'">Chi tiết game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-
+    <!-- CSS libs -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"/>
 
     <style>
-
-
+        /* ======= existing styles (để nguyên phần UI khác) ======= */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #0f1c2e !important;
+        }
+        .container, .content, .main { background: transparent !important; }
 
         #loginModal .modal-header{background:linear-gradient(135deg,#0d47a1,#1a237e);color:#fff;border-bottom:none;padding:1rem 1.2rem;display:flex;justify-content:center;align-items:center;position:relative}
         #loginModal .modal-header .btn-close{filter:invert(1);position:absolute;right:1rem}
@@ -28,7 +33,6 @@
         #loginModal a.text-decoration-none{font-size:.9rem;color:#fff;transition:color .3s}
         #loginModal a.text-decoration-none:hover{color:#ff9800;text-decoration:underline}
 
-
         #registerModal .modal-content{border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,.25);border:none;background:rgba(13,71,161,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden}
         #registerModal .modal-header{background:linear-gradient(135deg,#0d47a1,#1a237e);color:#fff;border-bottom:none;padding:1rem 1.5rem;display:flex;justify-content:center;align-items:center;position:relative}
         #registerModal .modal-title{font-weight:600;font-size:1.2rem}
@@ -41,13 +45,11 @@
         #registerModal .btn-sendcode{border-radius:12px;padding:.6rem 1rem;font-weight:500;background:linear-gradient(135deg,#1565c0,#0d47a1);border:none;color:#fff;transition:.3s;white-space:nowrap}
         #registerModal .btn-sendcode:hover{background:linear-gradient(135deg,#1e88e5,#1565c0);transform:translateY(-2px)}
 
-
         .profile-link{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;transition:all .3s}
         .profile-avatar{width:50px;height:50px;object-fit:cover;border-radius:50%;border:2px solid transparent;transition:all .3s}
         .profile-link:hover .profile-avatar{border-color:#FFD700;box-shadow:0 0 8px rgba(13,71,161,.5)}
         .profile-name{font-size:14px;color:#333;margin-top:5px;transition:color .3s}
         .profile-link:hover .profile-name{color:#FFD700}
-
 
         .banner{position:relative;width:100%;height:550px;overflow:hidden}
         .slides{position:absolute;width:100%;height:100%;background-size:cover;background-position:center;opacity:0;transition:opacity 1s ease-in-out;z-index:0}
@@ -66,18 +68,15 @@
         .suggestion-item img{width:40px;height:40px;object-fit:cover;border-radius:6px}
         .suggestion-item:hover{background:rgba(255,255,255,.03)}
 
-
         .thumbs-row{display:flex;justify-content:center;gap:10px}
         .equal-col{display:flex}
         .name-game{text-align:center;color:orange}
-
 
         .thumb-100{
             width:90px;height:90px;object-fit:cover;border-radius:10px;
             box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer;transition:transform .3s;
         }
         .thumb-100:hover{ transform: scale(1.1); }
-
 
         .thumb-video-100{
             width:90px;height:90px;object-fit:cover;border-radius:10px;
@@ -96,7 +95,6 @@
         .text-glow{color:#4f9eff;text-shadow:0 0 10px #4f9eff}
         .qr-img{margin-top:15px;width:160px;border-radius:5px}
 
-
         .dropdown{position:relative}
         .dropdown-toggle{cursor:pointer}
         .dropdown-menu{display:none;position:absolute;top:100%;left:0;background:rgba(27,56,92,.95);padding:20px;border-radius:4px;min-width:700px;box-shadow:0 8px 20px rgba(0,0,0,.5);z-index:1000;grid-template-columns:repeat(4,1fr);gap:20px}
@@ -104,21 +102,60 @@
         .dropdown-column h4{margin-bottom:10px;color:#66c0f4;font-size:14px;font-weight:bold;border-bottom:1px solid #2a475e;padding-bottom:5px}
         .dropdown-column a{display:block;color:#c7d5e0;font-size:13px;padding:4px 0;text-decoration:none;transition:color .2s}
         .dropdown-column a:hover{color:#fff;text-decoration:underline}
+
+        .logo-link{text-decoration:none!important;color:inherit}
+        .logo-link:hover{color:#00e0ff;text-shadow:0 0 10px #00e0ff}
+
+        /* Nút Cart màu xanh lá */
+        .btn-cart{background:#146c43;color:#fff!important;border:none!important;font-weight:500;transition:all .3s ease}
+        .btn-cart:hover{background:linear-gradient(90deg,#20c997,#28a745);transform:translateY(-2px);box-shadow:0 4px 10px rgba(40,167,69,.4);color:#fff!important}
+
+        /* ===== MENU GIỮA ===== */
+        .navbar-nav .nav-link{
+            text-transform:uppercase;font-size:1.1rem;font-weight:700;letter-spacing:.5px;
+            transition:color .3s ease, transform .2s ease, border-bottom .2s ease;
+            padding-bottom:4px;border-bottom:2px solid transparent;
+        }
+        .navbar-nav .nav-link:hover{color:#0dcaf0;transform:translateY(-2px);border-bottom:2px solid #0dcaf0}
+
+        /* ===== Rating box (NEW) ===== */
+        .rating-card{
+            background:rgba(255,255,255,.03);
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:12px;
+            padding:16px;
+        }
+        .rating-card .star{
+            background:transparent;border:none;padding:0;line-height:1;
+            font-size:1.6rem;cursor:pointer;
+            transition:transform .15s ease, filter .15s ease, color .15s ease;
+            color:#9aa4b2;
+        }
+        .rating-card .star:hover{ transform: translateY(-1px) scale(1.05); filter: drop-shadow(0 0 2px rgba(255,215,0,.35)); }
+        .rating-card .star.active,
+        .rating-card .star.preview{ color:#FFD700; }
+
+        .review-textarea{
+            background:#0f1c2e;color:#e2e8f0;border:1px solid rgba(255,255,255,.12);
+            border-radius:10px;resize:vertical;
+        }
+        .review-textarea:focus{
+            outline:none;border-color:#0d6efd;box-shadow:0 0 0 3px rgba(13,110,253,.25);
+        }
     </style>
+
     <link rel="stylesheet" th:href="@{/Accest/css/GameDetailCss.css}">
 </head>
 
 <body>
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999"></div>
-<!-- JSP code for loginError/enteredUsername removed -->
 
-<!-- Modal Login (single source of truth) -->
+<!-- ========= Modal Login ========= -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Login</h5>
-                <!-- remove data-bs-dismiss so we control close behavior -->
                 <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -130,13 +167,11 @@
                     </div>
                 </div>
 
-
                 <form id="loginForm" method="post" autocomplete="off">
                     <div id="loginError" style="display:none;"></div>
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" class="form-control" name="username"
-                               th:value="${enteredUsername}" required>
+                        <input type="text" class="form-control" name="username" th:value="${enteredUsername}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
@@ -152,156 +187,41 @@
         </div>
     </div>
 </div>
+
 <script>
-
+    // Submit login (giữ nguyên)
     document.getElementById("loginForm").addEventListener("submit", async function(e) {
-
-        e.preventDefault(); // Ngăn reload trang
-
-
-
+        e.preventDefault();
         const form = e.target;
-
         const formData = new FormData(form);
-
         const errorBox = document.getElementById("loginError");
-
-        errorBox.textContent = ""; // Xóa lỗi cũ
-
-        errorBox.style.display = "none"; // Ẩn khung lỗi trước
-
-
+        errorBox.textContent = "";
+        errorBox.style.display = "none";
 
         try {
-
-            const response = await fetch("/welcome/login", {
-
-                method: "POST",
-
-                body: formData
-
-            });
-
-
-
+            const response = await fetch("/welcome/login", { method: "POST", body: formData });
             const result = await response.json();
 
-
-
             if (!response.ok) {
-
-                // Hiển thị lỗi nếu sai tài khoản/mật khẩu
-
-                errorBox.textContent = result.error;
-
+                errorBox.textContent = result.error || "Sai tài khoản hoặc mật khẩu.";
                 errorBox.style.display = "block";
-
                 errorBox.classList.add("alert", "alert-danger", "text-center");
-
-
-
-                // Tự động ẩn sau 3 giây
-
-                setTimeout(() => {
-
-                    errorBox.style.display = "none";
-
-                }, 3000);
-
-
-
+                setTimeout(() => { errorBox.style.display = "none"; }, 3000);
             } else {
-
-                // Đăng nhập thành công
-
                 const modal = bootstrap.Modal.getInstance(document.getElementById("loginModal"));
-
-                modal.hide();
-
-
-
-                // Reload giao diện hoặc chỉ cập nhật phần header
-
+                modal && modal.hide();
                 window.location.reload();
-
             }
-
-
-
         } catch (err) {
-
             errorBox.textContent = "Lỗi kết nối máy chủ!";
-
             errorBox.style.display = "block";
-
             errorBox.classList.add("alert", "alert-danger", "text-center");
-
-            setTimeout(() => {
-
-                errorBox.style.display = "none";
-
-            }, 3000);
-
+            setTimeout(() => { errorBox.style.display = "none"; }, 3000);
         }
-
     });
-
 </script>
 
-
-<!-- CSS form Login -->
-
-
-<!--        &lt;!&ndash; Modal Register &ndash;&gt;-->
-<!--        <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">-->
-<!--            <div class="modal-dialog">-->
-<!--                <div class="modal-content">-->
-<!--                    <div class="modal-header">-->
-<!--                        <h5 class="modal-title">Register</h5>-->
-<!--                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>-->
-<!--                    </div>-->
-
-<!--                    <div class="modal-body">-->
-<!--                        &lt;!&ndash; Form đăng ký &ndash;&gt;-->
-<!--                        <form id="registerForm" method="post" autocomplete="off">-->
-<!--                            <div class="mb-3">-->
-<!--                                <label class="form-label">Username</label>-->
-<!--                                <input type="text" class="form-control" name="username" value="" autocomplete="off" required>-->
-<!--                            </div>-->
-
-<!--                            <label class="form-label">Email</label>-->
-<!--                            <div class="mb-3 d-flex align-items-center gap-2">-->
-<!--                                <input type="email" class="form-control" id="email" name="email" value="" required>-->
-<!--                                &lt;!&ndash; OTP OFF:-->
-<!--                               <button type="button" class="btn btn-sendcode" id="sendOtpBtn">Send code</button>-->
-<!--                               &ndash;&gt;-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash; OTP OFF:-->
-<!--                                                       <div class="mb-3" id="otpSection" style="display:none;">-->
-<!--                                                           <label class="form-label">OTP</label>-->
-<!--                                                           <input type="text" class="form-control" id="otp" name="otp">-->
-<!--                                                           <div class="form-text">Please enter the 6-digit code sent to your email</div>-->
-<!--                                                       </div>-->
-<!--                                                       &ndash;&gt;-->
-<!--                            <div class="mb-3">-->
-<!--                                <label class="form-label">Password</label>-->
-<!--                                <input type="password" class="form-control" id="password" name="password" required>-->
-<!--                            </div>-->
-
-<!--                            <div class="mb-3">-->
-<!--                                <label class="form-label">Confirm password</label>-->
-<!--                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>-->
-<!--                                <div id="passwordMessage" class="form-text text-danger"></div>-->
-<!--                            </div>-->
-
-<!--                            <button type="submit" class="btn btn-success w-100">Register</button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!-- Modal Register -->
+<!-- ========= Modal Register ========= -->
 <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -311,31 +231,25 @@
             </div>
 
             <div class="modal-body">
-                <!-- Hiển thị thông báo động -->
                 <div id="registerAlert"></div>
-
                 <form id="registerForm" autocomplete="off">
                     <div class="mb-3">
                         <label class="form-label">Username</label>
                         <input type="text" class="form-control" name="username" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" class="form-control" name="email" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <input type="password" class="form-control" name="password" id="password" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">Confirm password</label>
                         <input type="password" class="form-control" id="confirmPassword" required>
                         <div id="passwordMessage" class="form-text text-danger"></div>
                     </div>
-
                     <button type="submit" class="btn btn-success w-100">Register</button>
                 </form>
             </div>
@@ -343,55 +257,66 @@
     </div>
 </div>
 
-
-<!-- CSS form Register -->
-
-
-<!-- JS check form -->
+<!-- JS check Register -->
 <script>
-    const passwordInput = document.getElementById("password");
-    const confirmPasswordInput = document.getElementById("confirmPassword");
-    const message = document.getElementById("passwordMessage");
-    const form = document.getElementById("registerForm");
+    (function(){
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirmPassword");
+        const message = document.getElementById("passwordMessage");
+        const form = document.getElementById("registerForm");
 
-    function checkPasswordMatch() {
-        if (confirmPasswordInput.value !== "" && passwordInput.value !== confirmPasswordInput.value) {
-            message.textContent = "❌ Mật khẩu không khớp!";
-        } else {
-            message.textContent = "";
+        function checkPasswordMatch() {
+            if (confirmPasswordInput.value !== "" && passwordInput.value !== confirmPasswordInput.value) {
+                message.textContent = "❌ Mật khẩu không khớp!";
+            } else {
+                message.textContent = "";
+            }
         }
-    }
+        passwordInput.addEventListener("input", checkPasswordMatch);
+        confirmPasswordInput.addEventListener("input", checkPasswordMatch);
 
-    passwordInput.addEventListener("input", checkPasswordMatch);
-    confirmPasswordInput.addEventListener("input", checkPasswordMatch);
-
-    form.addEventListener("submit", function (e) {
-        if (passwordInput.value !== confirmPasswordInput.value) {
-            e.preventDefault();
-            alert("Mật khẩu nhập lại không khớp!");
-            return;
-        }
-        // OTP OFF:
-        // if (otpSection.style.display === "none") { ... }
-        // if (otpInput.value.trim() === "") { ... }
-    });
-
-    // OTP OFF:
-    // const otpInput = document.getElementById("otp");
-    // const otpSection = document.getElementById("otpSection");
-    // const sendOtpBtn = document.getElementById("sendOtpBtn");
-    // sendOtpBtn.addEventListener("click", function () { ... });
+        form.addEventListener("submit", async function (e) {
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                e.preventDefault();
+                alert("Mật khẩu nhập lại không khớp!");
+                return;
+            }
+            try {
+                const data = {
+                    username: form.username.value,
+                    email: form.email.value,
+                    password: form.password.value
+                };
+                const res = await fetch('/welcome/register', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                const alertBox = document.getElementById('registerAlert');
+                alertBox.innerHTML = '';
+                const div = document.createElement('div');
+                div.className = `alert text-center mt-2 ${result.status === 'error' ? 'alert-danger' : 'alert-success'}`;
+                div.textContent = result.message;
+                alertBox.appendChild(div);
+                setTimeout(() => {
+                    div.style.transition = 'opacity 0.5s ease';
+                    div.style.opacity = '0';
+                    setTimeout(() => div.remove(), 500);
+                }, 3000);
+                if (result.status === 'success') form.reset();
+            } catch (err) { console.error('Lỗi gửi form:', err); }
+        });
+    })();
 </script>
-<!-- Navigation-->
-<!-- Navigation-->
+
+<!-- ========= Nav ========= -->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#0f1c2e;">
     <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
-        <!-- Logo -->
         <a href="Index.html" class="logo-link text-white fs-4">
             <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
         </a>
 
-        <!-- Menu phụ giữa -->
         <ul class="navbar-nav mx-auto">
             <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">TIN TỨC</a></li>
             <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">SỰ KIỆN</a></li>
@@ -399,93 +324,42 @@
             <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">GIẢM GIÁ</a></li>
         </ul>
 
-        <!-- Cụm nút bên phải -->
         <div class="d-flex align-items-center">
-
             <a th:if="${session.username != null}"
                th:href="@{/welcome/Cart/{id}(id=${session.id})}"
                class="btn btn-cart me-2">
-                <i class="bi-cart-fill me-1"></i>
-                Cart
+                <i class="bi bi-cart-fill me-1"></i> Cart
+                <span class="badge text-bg-danger ms-1" id="cartCount">0</span>
             </a>
 
-            <!-- Nếu chưa login -->
             <style>
-                /* ==== Nút Đăng nhập (xanh lá) ==== */
-                .btn-login {
-                    background: linear-gradient(90deg, #198754, #28a745);
-                    color: white;
-                    border: none;
-                    box-shadow: 0 0 6px rgba(25, 135, 84, 0.4);
-                    transition: all 0.3s ease;
-                }
-                .btn-login:hover {
-                    background: linear-gradient(90deg, #28a745, #34ce57);
-                    box-shadow: 0 0 15px rgba(40, 167, 69, 0.8);
-                    transform: translateY(-2px);
-                }
-                /* ==== Nút Đăng ký (xanh dương) ==== */
-                .btn-register {
-                    background: linear-gradient(90deg, #0d6efd, #2a9df4);
-                    color: white;
-                    border: none;
-                    box-shadow: 0 0 6px rgba(13, 110, 253, 0.4);
-                    transition: all 0.3s ease;
-                }
-                .btn-register:hover {
-                    background: linear-gradient(90deg, #2a9df4, #0dcaf0);
-                    box-shadow: 0 0 15px rgba(13, 110, 253, 0.8);
-                    transform: translateY(-2px);
-                }
-                /* Bo góc & đệm */
-                .btn-login, .btn-register {
-                    border-radius: 8px;
-                    padding: 8px 18px;
-                    font-weight: 600;
-                }
-
-                /* ===== MENU GIỮA ===== */
-                .navbar-nav .nav-link {
-                    transition: color 0.3s ease, transform 0.2s ease;
-                    font-size: 1.05rem;
-                    letter-spacing: 0.5px;
-                }
-                .navbar-nav .nav-link:hover {
-                    color: #0dcaf0;
-                    transform: translateY(-2px);
-                }
+                .btn-login { background: linear-gradient(90deg, #198754, #28a745); color: white; border: none; box-shadow: 0 0 6px rgba(25, 135, 84, 0.4); transition: all 0.3s ease; border-radius: 8px; padding: 8px 18px; font-weight: 600; }
+                .btn-login:hover { background: linear-gradient(90deg, #28a745, #34ce57); box-shadow: 0 0 15px rgba(40, 167, 69, 0.8); transform: translateY(-2px); }
+                .btn-register { background: linear-gradient(90deg, #0d6efd, #2a9df4); color: white; border: none; box-shadow: 0 0 6px rgba(13, 110, 253, 0.4); transition: all 0.3s ease; border-radius: 8px; padding: 8px 18px; font-weight: 600; }
+                .btn-register:hover { background: linear-gradient(90deg, #2a9df4, #0dcaf0); box-shadow: 0 0 15px rgba(13, 110, 253, 0.8); transform: translateY(-2px); }
+                .navbar-nav .nav-link { transition: color 0.3s ease, transform 0.2s ease; font-size: 1.05rem; letter-spacing: 0.5px; }
+                .navbar-nav .nav-link:hover { color: #0dcaf0; transform: translateY(-2px); }
             </style>
 
             <div th:if="${session.username == null}">
-                <button class="btn btn-login me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
-                    Đăng nhập
-                </button>
-                <button class="btn btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">
-                    Đăng ký
-                </button>
+                <button class="btn btn-login me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                <button class="btn btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
             </div>
 
-            <!-- Nếu đã login -->
-            <div th:if="${session.username != null}"
-                 class="d-flex flex-column align-items-center">
-                <a th:href="@{/welcome/profile/{id}(id = ${session.id})}"
-                   class="d-inline-flex justify-content-center">
+            <div th:if="${session.username != null}" class="d-flex flex-column align-items-center">
+                <a th:href="@{/welcome/profile/{id}(id = ${session.id})}" class="d-inline-flex justify-content-center">
                     <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
-                         alt="Avatar"
-                         class="rounded-circle"
+                         alt="Avatar" class="rounded-circle"
                          style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
                 </a>
-                <span class="mt-1 text-light" style="font-size: 0.9rem; font-weight: 600;"
-                      th:text="${session.username}"></span>
+                <span class="mt-1 text-light" style="font-size: 0.9rem; font-weight: 600;" th:text="${session.username}"></span>
             </div>
         </div>
-
-
     </div>
 </nav>
 <link rel="stylesheet" href="css/profile-user.css">
 
-
+<!-- ========= Header banner ========= -->
 <header class="banner">
     <div class="steam-menu">
         <div class="steam-menu-inner">
@@ -548,27 +422,24 @@
     </div>
 </header>
 
-
+<!-- ========= Main ========= -->
 <div class="container mt-5">
     <h3 class="name-game mt-3" th:text="${game.gameName}">Tên game</h3>
-    <div class="row align-items-stretch">
 
-
-        <div class="col-md-4 d-flex flex-column equal-col">
+    <div class="row align-items-stretch g-3">
+        <!-- Col 1: media -->
+        <div class="col-lg-4 col-md-6 d-flex flex-column equal-col">
             <div class="p-3 w-100 h-100 d-flex flex-column">
-
                 <img id="mainImg"
                      th:src="@{'/' + ${game.linkImage[4]}}"
                      src="/img/notfound.png"
                      alt="Game" class="img-fluid rounded shadow mb-3"/>
 
                 <div class="thumbs-row d-flex justify-content-between gap-2">
-
                     <video class="thumb-video-100" muted autoplay loop
                            th:attr="onclick=|openVideoModal('/'+'${game.linkImage[0]}')|">
                         <source th:src="@{'/' + ${game.linkImage[0]}}" type="video/mp4"/>
                     </video>
-
 
                     <img class="thumb-100"
                          th:src="@{'/' + ${game.linkImage[1]}}"
@@ -587,7 +458,7 @@
                 </div>
             </div>
 
-
+            <!-- Image modal -->
             <div class="modal fade" id="imageModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content bg-dark">
@@ -598,7 +469,7 @@
                 </div>
             </div>
 
-
+            <!-- Video modal -->
             <div class="modal fade" id="videoModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content bg-dark border-0">
@@ -610,70 +481,199 @@
             </div>
         </div>
 
-
-        <div class="col-md-4 d-flex equal-col">
+        <!-- Col 2: detail + buy/cart OR download -->
+        <div class="col-lg-4 col-md-6 d-flex equal-col">
             <div class="card shadow p-3 w-100 h-100 d-flex flex-column">
                 <h4 class="mb-3">Thông tin chi tiết</h4>
-                <p><strong>💲 Giá:</strong>
-                    <span id="price" th:text="${game.price}">-</span>
-                </p>
-                <p><strong>⭐ Đánh giá:</strong>
-                    <span id="rating" th:text="${game.deceptions[3]}">-</span>
-                </p>
-                <p><strong>📂 Dung lượng:</strong>
-                    <span id="size" th:text="${game.deceptions[1]}">-</span>
-                </p>
-                <p><strong>🔞 Độ tuổi:</strong>
-                    <span id="age" th:text="${game.deceptions[4]}">-</span>
-                </p>
-                <p><strong>⬇️ Lượt tải:</strong>
-                    <span id="downloads" th:text="${game.deceptions[2]}">-</span>
-                </p>
-                <p><strong>📝 Mô tả:</strong>
-                    <span id="description" th:text="${game.deceptions[0]}">-</span>
-                </p>
+                <p><strong>💲 Giá:</strong> <span id="price" th:text="${game.price}">-</span></p>
+                <p><strong>📂 Dung lượng:</strong> <span id="size" th:text="${game.deceptions[1]}">-</span></p>
+                <p><strong>🔞 Độ tuổi:</strong> <span id="age" th:text="${game.deceptions[4]}">-</span></p>
+                <p><strong>⬇️ Lượt tải:</strong> <span id="downloads" th:text="${game.deceptions[2]}">-</span></p>
+                <p><strong>📝 Mô tả:</strong> <span id="description" th:text="${game.deceptions[0]}">-</span></p>
 
-                <div class="d-flex gap-2 mt-auto" th:if="${session.username!=null&&!UserGame}" >
-
-
-                    <form id="buyForm" class="w-100" >
+                <div class="d-flex gap-2 mt-auto" th:if="${session.username!=null && !UserGame}">
+                    <form id="buyForm" class="w-100">
                         <input type="hidden" name="gameId" id="buyGameId" th:value="${game.gameId}"/>
                         <button type="submit" class="btn btn-success w-100">🛒 Mua ngay</button>
                     </form>
-                    <form id="addCartForm" class="w-100">
-                        <input type="hidden" name="gameId" id="cartGameId" th:value="${game.gameId}"/>
+                    <form id="addCartForm" class="w-100"
+                          th:action="@{/welcome/addGameToCard/{game_id}(game_id=${game.gameId})}"
+                          method="post">
                         <button type="submit" class="btn btn-primary w-100">➕ Thêm giỏ hàng</button>
                     </form>
 
-
                 </div>
 
-                <div class="d-flex gap-2 mt-auto" th:if="${session.username!=null&&UserGame}">
+                <div class="d-flex gap-2 mt-auto" th:if="${session.username!=null && UserGame}">
                     <form id="download">
                         <input type="hidden" name="gameId" id="DownLoadGameID" th:value="${game.gameId}"/>
-                        <button type="submit" class="btn btn-success w-100">Tai ve</button>
+                        <button type="submit" class="btn btn-success w-100">Tải về</button>
                     </form>
-
                 </div>
             </div>
         </div>
 
+        <!-- Col 3: Rating (NEW) -->
+        <!-- Col 3: Rating (+ View all) -->
+        <div class="col-lg-4 col-md-12 d-flex">
+            <div class="rating-card w-100 d-flex flex-column">
+
+                <!-- Nếu đã đăng nhập: hiện widget để tự đánh giá -->
+
+                <form th:if="${session.username != null}"
+                      th:action="@{/welcome/gamedetail/{game_id}(game_id=${game.gameId})}"
+                      method="post">
+
+
+
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h5 class="mb-0">Đánh giá của bạn</h5>
+                        <span id="ratingValue"
+                              class="small text-muted"
+                              th:text="(${myFeedback!=null}?${myFeedback.star}:0) + '/5'">(0/5)</span>
+                    </div>
+
+                    <div id="ratingStars" class="d-flex align-items-center gap-2 mb-3" aria-label="Chọn số sao">
+                        <button type="button" class="star" data-value="1"><i class="bi bi-star-fill"></i></button>
+                        <button type="button" class="star" data-value="2"><i class="bi bi-star-fill"></i></button>
+                        <button type="button" class="star" data-value="3"><i class="bi bi-star-fill"></i></button>
+                        <button type="button" class="star" data-value="4"><i class="bi bi-star-fill"></i></button>
+                        <button type="button" class="star" data-value="5"><i class="bi bi-star-fill"></i></button>
+                    </div>
+
+                    <!-- hidden để gửi sao -->
+                    <input type="hidden" name="star" id="inputStar"
+                           th:value="${myFeedback!=null?myFeedback.star:0}"/>
+
+                    <textarea name="comment" id="reviewText"
+                              class="form-control review-textarea" rows="5"
+                              placeholder="Chia sẻ cảm nhận của bạn..."
+                              th:text="${myFeedback!=null?myFeedback.comment:''}"></textarea>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <small id="reviewCounter" class="text-muted">0/300</small>
+                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                            Đăng đánh giá
+                        </button>
+                    </div>
+                </form>
+
+
+                <!-- Nếu CHƯA đăng nhập: hiện 2 review mẫu của người khác -->
+                <div th:if="${session.username == null}">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h5 class="mb-0">Đánh giá của người chơi</h5>
+                        <small class="text-muted">Đăng nhập để viết đánh giá</small>
+                    </div>
+
+                    <div class="border-top border-secondary-subtle pt-2"
+                         th:if="${listFeedback != null and #lists.size(listFeedback) > 0}">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="/img/demo1.jpg" class="rounded-circle" style="width:32px;height:32px;object-fit:cover" alt="">
+                            <strong th:text="${@gameCore.getUserName(listFeedback.get(0).userId)}"></strong>
+                            <span class="text-warning small ms-1">
+                             <span th:each="i : ${#numbers.sequence(1, (listFeedback.get(0).star != null ? listFeedback.get(0).star.intValue() : 0))}">★</span>
+                            </span>
+                            <small class="text-muted ms-auto">2 ngày trước</small>
+                        </div>
+                        <div class="text-light small mt-1" th:text="${listFeedback.get(0).comment}"></div>
+                    </div>
+
+                    <div class="border-top border-secondary-subtle pt-2 mt-2"
+                         th:if="${listFeedback != null and #lists.size(listFeedback) > 1}">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="/img/demo2.jpg" class="rounded-circle" style="width:32px;height:32px;object-fit:cover" alt="">
+                            <strong th:text="${@gameCore.getUserName(listFeedback.get(1).userId)}"></strong>
+                            <span class="text-warning small ms-1">
+
+                            <span th:each="i : ${#numbers.sequence(1, (listFeedback.get(1).star != null ? listFeedback.get(1).star.intValue() : 0))}">★</span>
+                            </span>
+                            <small class="text-muted ms-auto">1 tuần trước</small>
+                        </div>
+                        <div class="text-light small mt-1" th:text="${listFeedback.get(1).comment}"></div>
+                    </div>
+
+                    <!-- Trường hợp không có đánh giá nào -->
+                    <div th:if="${listFeedback == null or #lists.isEmpty(listFeedback)}"
+                         class="alert alert-info mt-3 mb-0 py-2 px-3">
+                        Chưa có đánh giá nào.
+                    </div>
+
+                    <div class="alert alert-info mt-3 mb-0 py-2 px-3">
+                        <i class="bi bi-info-circle me-1"></i> Hãy <a href="?showForm=login" class="link-light fw-semibold">đăng nhập</a> để đánh giá và xem đánh giá của bạn bè.
+                    </div>
+                </div>
+
+                <!-- Nút xem tất cả -->
+                <button type="button" class="btn btn-link mt-3 p-0 align-self-start" data-bs-toggle="modal" data-bs-target="#allReviewsModal">
+                    Xem tất cả đánh giá →
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal: Tất cả đánh giá -->
+        <div class="modal fade" id="allReviewsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content" style="background:#0f1c2e;color:#e2e8f0;border:1px solid rgba(255,255,255,.08)">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tất cả đánh giá</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="allReviewsSummary" class="mb-2 small text-muted"></div>
+                        <div id="allReviewsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>
 
+<!-- ========= Alerts from server (buy/cart) ========= -->
+    <div th:if="${buyError}" id="buyAlert"
+     style="position: fixed; top: 20px; right: 20px;
+            background: #f44336; color: white; padding: 15px;
+            border-radius: 8px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"
+     th:text="${buyError}">
+</div>
+<script>
+    setTimeout(function () {
+        let alertBox = document.getElementById("buyAlert");
+        if (alertBox) {
+            alertBox.style.transition = "opacity 0.5s ease";
+            alertBox.style.opacity = "0";
+            setTimeout(() => alertBox.remove(), 500);
+        }
+    }, 3000);
+</script>
 
-<!-- Footer -->
-<!-- ===================== FOOTER ===================== -->
+<div th:if="${cartError}" id="cartAlert"
+     style="position: fixed; top: 70px; right: 20px;
+            background: #fff3cd; color: black; padding: 15px;
+            border-radius: 8px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"
+     th:text="${cartError}">
+</div>
+<script>
+    setTimeout(function () {
+        let alertBox = document.getElementById("cartAlert");
+        if (alertBox) {
+            alertBox.style.transition = "opacity 0.5s ease";
+            alertBox.style.opacity = "0";
+            setTimeout(() => alertBox.remove(), 500);
+        }
+    }, 3000);
+</script>
+
+<!-- ========= Footer ========= -->
 <footer class="footer custom-footer mt-auto py-5 text-white">
     <div class="container px-5">
         <div class="row gy-4 gx-5">
-            <!-- Cột 1: Logo & mô tả -->
-
             <div class="col-md-3">
                 <a href="Index.jsp" class="logo-link">
                     <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
                 </a>
-
                 <p class="text-white-50">
                     Trải nghiệm thế giới game đỉnh cao – nơi hội tụ những siêu phẩm nhập vai, hành động và phiêu lưu.
                     GameStore mang đến không gian giải trí sống động, đậm chất công nghệ và đam mê, giá cả hợp lý và
@@ -681,7 +681,6 @@
                 </p>
             </div>
 
-            <!-- Cột 2: Liên kết nhanh -->
             <div class="col-md-3">
                 <h5 class="text-uppercase text-primary glow-title mb-3">Thông tin</h5>
                 <ul class="list-unstyled text-white-50">
@@ -700,13 +699,10 @@
                 <p><a href="https://surl.li/bhtojh" target="_blank" class="footer-link">https://surl.li/bhtojh/</a></p>
             </div>
 
-            <!-- Cột 3: Liên hệ & MXH -->
             <div class="col-md-3">
                 <h5 class="text-uppercase text-primary glow-title mb-3">Kết nối với chúng tôi</h5>
                 <div class="social-icons">
-                    <a href="https://surl.li/bhtojh" class="social-link" target="_blank">
-                        <i class="bi bi-facebook"></i>
-                    </a>
+                    <a href="https://surl.li/bhtojh" class="social-link" target="_blank"><i class="bi bi-facebook"></i></a>
                     <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
                     <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
                     <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
@@ -724,109 +720,12 @@
     </div>
 </footer>
 
-<!-- ===================== CSS ===================== -->
-
-
-<!-- Bootstrap Icons CDN -->
+<!-- ========= JS libs ========= -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-<!-- FontAwesome icons -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<!-- Bootstrap core JS-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Core theme JS-->
-<script src="js/scripts.js"></script>
-
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Js chạy model DKý -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('registerForm');
-        const alertBox = document.getElementById('registerAlert');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Kiểm tra mật khẩu khớp nhau
-            const password = document.getElementById('password').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            const msg = document.getElementById('passwordMessage');
-            if (password !== confirm) {
-                msg.textContent = "Mật khẩu xác nhận không khớp!";
-                return;
-            } else {
-                msg.textContent = "";
-            }
-
-            // Dữ liệu gửi lên server
-            const data = {
-                username: form.username.value,
-                email: form.email.value,
-                password: form.password.value
-            };
-
-            try {
-                const res = await fetch('/welcome/register', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
-
-                const result = await res.json();
-
-                // Xóa thông báo cũ
-                alertBox.innerHTML = '';
-
-                // Tạo thông báo mới
-                const div = document.createElement('div');
-                div.className = `alert text-center mt-2 ${result.status === 'error' ? 'alert-danger' : 'alert-success'}`;
-                div.textContent = result.message;
-                alertBox.appendChild(div);
-
-                // Ẩn sau 3s
-                setTimeout(() => {
-                    div.style.transition = 'opacity 0.5s ease';
-                    div.style.opacity = '0';
-                    setTimeout(() => div.remove(), 500);
-                }, 3000);
-
-                // Nếu đăng ký thành công → reset form
-                if (result.status === 'success') {
-                    form.reset();
-                }
-
-            } catch (err) {
-                console.error('Lỗi gửi form:', err);
-            }
-        });
-    });
-</script>
-
-
-<!-- Kiểm tra xác nhận mật khẩu -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('registerForm');
-        if (!form) return;
-
-        form.addEventListener('submit', (e) => {
-            const password = document.getElementById('password').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            const msg = document.getElementById('passwordMessage');
-
-            if (password !== confirm) {
-                e.preventDefault();
-                msg.textContent = "Mật khẩu xác nhận không khớp!";
-            } else {
-                msg.textContent = "";
-            }
-        });
-    });
-</script>
-
-<!-- Tự động mở modal khi có lỗi hoặc thông báo -->
+<!-- ========= Auto-open modal if needed ========= -->
 <script th:if="${error} != null or ${registerSuccess} != null" th:inline="javascript">
     document.addEventListener('DOMContentLoaded', () => {
         const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
@@ -834,52 +733,26 @@
     });
 </script>
 
-
-<!-- Js chạy model Dang Nhap -->
 <script th:inline="javascript">
     /*<![CDATA[*/
     (function () {
-        // ===== Flags từ server =====
         var hasLoginError = /*[[${loginError != null}]]*/ false;
-        var showForm = '[[${showForm}]]'; // '' nếu null
+        var showForm = '[[${showForm}]]';
         var shouldOpenLogin = hasLoginError || (showForm === 'login');
-
         if (!shouldOpenLogin) return;
-
-        // ===== Kiểm tra Bootstrap =====
-        if (typeof bootstrap === 'undefined') {
-            console.error("Bootstrap is not loaded yet.");
-            return;
-        }
-
-        // ===== Lấy modal =====
+        if (typeof bootstrap === 'undefined') { console.error("Bootstrap is not loaded yet."); return; }
         var modalEl = document.getElementById('loginModal');
         if (!modalEl) return;
-
-        // ===== Khởi tạo modal =====
-        var modal = bootstrap.Modal.getOrCreateInstance(modalEl, {
-            backdrop: 'static',
-            keyboard: false
-        });
-
-        // Chỉ khóa đóng khi CÓ lỗi đăng nhập
+        var modal = bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: 'static', keyboard: false });
         var lockClose = hasLoginError;
-
-        // Listener hide: nếu khoá, chặn hide và mở lại
         function onHide(e) {
             if (lockClose) {
                 e.preventDefault();
-                setTimeout(function () {
-                    modal.show();
-                }, 50);
+                setTimeout(function () { modal.show(); }, 50);
             }
         }
-
-        // Tránh gắn trùng listener
         modalEl.removeEventListener('hide.bs.modal', onHide);
         modalEl.addEventListener('hide.bs.modal', onHide);
-
-        // Nút X: cho phép đóng (gỡ khoá) rồi ẩn
         var closeBtn = document.getElementById('loginCloseBtn');
         if (closeBtn) {
             closeBtn.addEventListener('click', function () {
@@ -887,16 +760,11 @@
                 modal.hide();
             });
         }
-
-        // Mở modal ngay
         modal.show();
-
-        // ===== Alert lỗi & đếm ngược (nếu có) =====
         var alertBox = modalEl.querySelector('#loginAlertArea .alert');
         if (alertBox) {
             var secondsSpan = alertBox.querySelector('.seconds');
             var remaining = secondsSpan ? parseInt(secondsSpan.textContent, 10) : 0;
-
             if (!isNaN(remaining) && remaining > 0) {
                 var timer = setInterval(function () {
                     remaining--;
@@ -913,43 +781,6 @@
     /*]]>*/
 </script>
 
-<div th:if="${buyError}" id="buyAlert"
-     style="position: fixed; top: 20px; right: 20px;
-                    background: #f44336; color: white; padding: 15px;
-                    border-radius: 8px; z-index: 9999;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);"
-     th:text="${buyError}">
-</div>
-
-<script>
-    setTimeout(function () {
-        let alertBox = document.getElementById("buyAlert");
-        if (alertBox) {
-            alertBox.style.transition = "opacity 0.5s ease";
-            alertBox.style.opacity = "0";
-            setTimeout(() => alertBox.remove(), 500);
-        }
-    }, 3000);
-</script>
-<div th:if="${cartError}" id="cartAlert"
-     style="position: fixed; top: 70px; right: 20px;
-                    background: #fff3cd; color: black; padding: 15px;
-                    border-radius: 8px; z-index: 9999;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);"
-     th:text="${cartError}">
-</div>
-
-<script>
-    setTimeout(function () {
-        let alertBox = document.getElementById("cartAlert");
-        if (alertBox) {
-            alertBox.style.transition = "opacity 0.5s ease";
-            alertBox.style.opacity = "0";
-            setTimeout(() => alertBox.remove(), 500);
-        }
-    }, 3000);
-</script>
-
 <script th:inline="javascript">
     /*<![CDATA[*/
     const showForm = /*[[${showForm}]]*/ '';
@@ -960,9 +791,9 @@
     /*]]>*/
 </script>
 
-
+<!-- ========= Search / Banner sliders / Modals util ========= -->
 <script>
-
+    // Search demo
     const gamesForSearch = [
         {name:"Liên Quân Mobile", img:"/img/game1.jpg", anchor:"#lienquan"},
         {name:"Free Fire", img:"/img/game2.jpg", anchor:"#freefire"},
@@ -982,11 +813,9 @@
         const searchBar = document.getElementById("search");
         const suggestions = document.getElementById("suggestions");
         const noResult = document.getElementById("no-result");
-
         const placeholder = "data:image/svg+xml;utf8," + encodeURIComponent(
             '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#2b2b2b"/><text x="50%" y="50%" fill="#999" font-size="12" text-anchor="middle" dominant-baseline="middle">No Image</text></svg>'
         );
-
         function createSuggestionItem(game){
             const div = document.createElement("div");
             div.className = "suggestion-item";
@@ -1000,7 +829,6 @@
             div.onclick = ()=> location.href = "/index" + game.anchor;
             return div;
         }
-
         function searchGames(){
             const q = searchBar.value.trim().toLowerCase();
             suggestions.innerHTML = "";
@@ -1011,7 +839,6 @@
             else{ filtered.forEach(g=> suggestions.appendChild(createSuggestionItem(g))); suggestions.style.display="block"; }
             return filtered;
         }
-
         searchBar.addEventListener("input", searchGames);
         searchBar.addEventListener("keydown", (e)=>{
             if(e.key==="Enter"){
@@ -1027,12 +854,11 @@
         });
     })();
 
-
+    // Banner slider
     (function(){
         let slideIndex = 0;
         const slides = document.querySelectorAll(".slides");
         const dots = document.querySelectorAll(".dot");
-
         function showSlide(index){
             slides.forEach((s,i)=>{
                 s.classList.toggle("active", i===index);
@@ -1050,7 +876,7 @@
         setInterval(()=> changeSlide(1), 3000);
     })();
 
-
+    // Modals
     function openImageModal(src){
         document.getElementById("modalImage").src = src || '/img/notfound.png';
         new bootstrap.Modal(document.getElementById('imageModal')).show();
@@ -1065,112 +891,32 @@
             videoEl.pause(); videoEl.currentTime = 0; videoEl.removeAttribute("src");
         }, {once:true});
     }
+</script>
 
-
-    (function authDemo(){
-        const userBox = document.getElementById('userBox');
-        const guest = document.getElementById('guestActions');
-        const userNameText = document.getElementById('userNameText');
-        const userAvatar = document.getElementById('userAvatar');
-        const adminLink = document.getElementById('adminLink');
-
-        const raw = localStorage.getItem('gs_user');
-        if(raw){
-            const u = JSON.parse(raw);
-            guest.classList.add('d-none');
-            userBox.classList.remove('d-none');
-            userNameText.textContent = u.username || 'User';
-            userAvatar.src = `https://i.pravatar.cc/50?u=${encodeURIComponent(u.username||'user')}`;
-            if(u.role === 'admin') adminLink.classList.remove('d-none');
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', (e)=>{
-            e.preventDefault();
-            const fd = new FormData(e.target);
-            const username = fd.get('username');
-            localStorage.setItem('gs_user', JSON.stringify({username, role:'user'}));
-            location.reload();
-        });
-
-        const sendOtpBtn = document.getElementById('sendOtpBtn');
-        const otpSection = document.getElementById('otpSection');
-        const otpInput = document.getElementById('otp');
-        let timerId = null;
-        sendOtpBtn.addEventListener('click', ()=>{
-            const emailVal = document.getElementById('email').value;
-            if(!emailVal){ alert("Vui lòng nhập email!"); return; }
-            otpSection.style.display = 'block';
-            otpInput.required = true;
-            let countdown = 60;
-            sendOtpBtn.disabled = true;
-            sendOtpBtn.textContent = `Gửi mã (${countdown}s)`;
-            timerId = setInterval(()=>{
-                countdown--;
-                if(countdown>0) sendOtpBtn.textContent = `Gửi mã (${countdown}s)`;
-                else{
-                    clearInterval(timerId);
-                    sendOtpBtn.disabled = false;
-                    sendOtpBtn.textContent = "Gửi mã";
-                }
-            },1000);
-            alert("Mã OTP demo đã 'gửi' (giả lập).");
-        });
-
-        const pw = document.getElementById('password');
-        const cpw = document.getElementById('confirmPassword');
-        const msg = document.getElementById('passwordMessage');
-        function checkPw(){
-            msg.textContent = (cpw.value && pw.value !== cpw.value) ? "❌ Mật khẩu không khớp!" : "";
-        }
-        pw.addEventListener('input', checkPw);
-        cpw.addEventListener('input', checkPw);
-
-        document.getElementById('registerForm').addEventListener('submit', (e)=>{
-            e.preventDefault();
-            if(pw.value !== cpw.value){ alert("Mật khẩu nhập lại không khớp!"); return; }
-            if(otpSection.style.display === "none"){ alert("Bạn cần gửi OTP trước khi đăng ký!"); return; }
-            if(!otpInput.value.trim()){ alert("Vui lòng điền mã OTP!"); return; }
-            const fd = new FormData(e.target);
-            const username = fd.get('username');
-            localStorage.setItem('gs_user', JSON.stringify({username, role:'user'}));
-            alert("Đăng ký thành công (demo).");
-            location.reload();
-        });
-    })();
-
-
+<!-- ========= Cart + Buy demo ========= -->
+<script>
     (function cartDemo(){
         const cartCountEl = document.getElementById('cartCount');
-        const raw = localStorage.getItem('gs_cart');
-        const cart = raw ? JSON.parse(raw) : [];
-        const count = cart.reduce((sum, it)=> sum + (it.quantity||1), 0);
-        cartCountEl.textContent = count;
+        if (cartCountEl) {
+            const raw = localStorage.getItem('gs_cart');
+            const cart = raw ? JSON.parse(raw) : [];
+            const count = cart.reduce((sum, it)=> sum + (it.quantity||1), 0);
+            cartCountEl.textContent = count;
 
-        document.getElementById('buyForm').addEventListener('submit', (e)=>{
+
+        }
+
+        const buyForm = document.getElementById('buyForm');
+        buyForm && buyForm.addEventListener('submit', (e)=>{
             e.preventDefault();
             const id = document.getElementById('buyGameId').value;
             alert("Mua ngay (demo) game id = "+id);
         });
-
-        document.getElementById('addCartForm').addEventListener('submit', (e)=>{
-            e.preventDefault();
-            const id = document.getElementById('cartGameId').value;
-            const item = cart.find(x=> x.id===id);
-            if(item) item.quantity = (item.quantity||1)+1;
-            else cart.push({id, quantity:1});
-            localStorage.setItem('gs_cart', JSON.stringify(cart));
-            cartCountEl.textContent = cart.reduce((s,it)=> s+(it.quantity||1),0);
-
-            const t = document.createElement('div');
-            t.className="toast align-items-center text-bg-primary border-0 show";
-            t.role="alert";
-            t.innerHTML=`<div class="d-flex"><div class="toast-body">Đã thêm vào giỏ hàng!</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
-            document.querySelector('.toast-container').appendChild(t);
-            setTimeout(()=> t.remove(), 2500);
-        });
     })();
+</script>
 
-
+<!-- ========= URL-driven UI ========= -->
+<script>
     (function urlDrivenUI(){
         const usp = new URLSearchParams(location.search);
         const showForm = usp.get('showForm');
@@ -1192,13 +938,16 @@
             let allowClose = false;
             modalEl.addEventListener('hide.bs.modal', (e)=>{ if(!allowClose){ e.preventDefault(); setTimeout(()=> modal.show(), 50); } });
             modal.show();
-            document.getElementById('loginCloseBtn').addEventListener('click', ()=>{ allowClose = true; modal.hide(); });
+            const closeBtn = document.getElementById('loginCloseBtn');
+            closeBtn && closeBtn.addEventListener('click', ()=>{ allowClose = true; modal.hide(); });
         }
 
         const buyError = usp.get('buyError');
         if(buyError){ showFloating(`${decodeURIComponent(buyError)}`, '#f44336', 'white'); }
         const cartError = usp.get('cartError');
         if(cartError){ showFloating(`${decodeURIComponent(cartError)}`, '#fff3cd', 'black'); }
+        const cartSuccess = usp.get('cartSuccess');
+        if (cartSuccess) { showFloating(decodeURIComponent(cartSuccess),'#4caf50', 'white'); }
 
         function showFloating(text, bg, color){
             const el = document.createElement('div');
@@ -1213,5 +962,109 @@
         }
     })();
 </script>
+
+<!-- ========= Rating JS (NEW) ========= -->
+<script th:inline="javascript">
+    (function ratingWidget(){
+        const starWrap = document.getElementById('ratingStars');
+        if(!starWrap) return;
+
+        const stars = Array.from(starWrap.querySelectorAll('.star'));
+        const ratingValueEl = document.getElementById('ratingValue');
+        const reviewText = document.getElementById('reviewText');
+        const counterEl = document.getElementById('reviewCounter');
+
+        // lấy star cũ từ server
+        let current = /*[[${myFeedback!=null?myFeedback.star:0}]]*/ 0;
+
+        // input hidden để gửi star về server
+        const inputStar = document.getElementById('inputStar');
+        if(inputStar) inputStar.value = current;
+
+        // tô sẵn số sao cũ
+        function paintActive(n){
+            stars.forEach((b,i)=> b.classList.toggle('active', i<n));
+        }
+        paintActive(current);
+        if(ratingValueEl) ratingValueEl.textContent = `(${current}/5)`;
+
+        // events khi rê + click star
+        stars.forEach((btn, idx)=>{
+            btn.addEventListener('mouseenter', ()=> paintActive(idx+1));
+            btn.addEventListener('mouseleave', ()=> paintActive(current));
+            btn.addEventListener('click', ()=>{
+                current = idx+1;
+                paintActive(current);
+                if(inputStar) inputStar.value = current;
+                if(ratingValueEl) ratingValueEl.textContent = `(${current}/5)`;
+            });
+        });
+
+        // đếm ký tự comment
+        function updateCounter(){
+            const len = (reviewText.value||'').length;
+            counterEl.textContent = `${len}/300`;
+            if(len>300){
+                reviewText.value = reviewText.value.slice(0,300);
+                counterEl.textContent = `300/300`;
+            }
+        }
+        reviewText && reviewText.addEventListener('input', updateCounter);
+        updateCounter();
+    })();
+</script>
+
+
+<script th:inline="javascript">
+    (function allReviews(){
+        const listEl = document.getElementById('allReviewsList');
+        const summaryEl = document.getElementById('allReviewsSummary');
+        if(!listEl) return;
+
+        // lấy từ server
+        const raw = /*[[${listFeedback}]]*/ [];
+        const me = /*[[${myFeedback}]]*/ null;
+
+        // gộp lại
+        let all = [];
+        if(me !== null) all.push(me);
+        all = all.concat(raw);
+
+        function stars(n){ return '★'.repeat(n) + '☆'.repeat(5-n); }
+
+        function render(){
+            // summary
+            if(summaryEl){
+                const avg = all.length ? (all.reduce((s,r)=> s+r.star, 0) / all.length) : 0;
+                summaryEl.textContent = `Tổng ${all.length} đánh giá · Điểm trung bình ${avg.toFixed(1)}/5`;
+            }
+            // list
+            listEl.innerHTML = '';
+            all.forEach(r=>{
+                const wrap = document.createElement('div');
+                wrap.className = 'border-top border-secondary-subtle pt-2 mt-2';
+                wrap.innerHTML = `
+                <div class="d-flex align-items-center gap-2">
+                    <img src="/img/demo1.jpg"
+                         class="rounded-circle"
+                         style="width:32px;height:32px;object-fit:cover">
+                    <strong>${r.userName || 'Người dùng'}</strong>
+                    <span class="text-warning small ms-1">${stars(r.star)}</span>
+                    <small class="text-muted ms-auto">${r.dateCreated || ''}</small>
+                </div>
+                <div class="text-light small mt-1">${r.comment || ''}</div>
+            `;
+                listEl.appendChild(wrap);
+            });
+        }
+
+        // render khi mở modal
+        const modalEl = document.getElementById('allReviewsModal');
+        modalEl && modalEl.addEventListener('show.bs.modal', render);
+
+    })();
+</script>
+
+
 </body>
 </html>
