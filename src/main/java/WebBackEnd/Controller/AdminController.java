@@ -1,6 +1,5 @@
 package WebBackEnd.Controller;
 
-
 import WebBackEnd.Entity.Game;
 import WebBackEnd.Entity.User;
 import WebBackEnd.service.AdminSevice;
@@ -14,75 +13,89 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
-@RequestMapping(value="/welcomeAdmin")
+@RequestMapping(value = "/welcomeAdmin") // GIỮ NGUYÊN
 public class AdminController {
 
+    @Autowired private AdminSevice adminSevice;
+    @Autowired private UserService userService;
+    @Autowired private GameSevice gameSevice;
 
-    @Autowired
-    private AdminSevice adminSevice;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private GameSevice  gameSevice;
-
+    @GetMapping({"", "/"})
     public String homeAdmin(Model model) {
-        return "admin";
+        return "ADMIN/IndexAdmin";
     }
+
 
     @GetMapping("/edituser")
     public String editUser(Model model) {
-        model.addAttribute("listUser",userService.findAll());
-        return "login";
+        model.addAttribute("listUser", userService.findAll());
+        return "ADMIN/ListUser";
     }
 
     @PostMapping("/edituser/{id}")
-    public String editUser(@PathVariable(value="user") User user, Model model) {
+    public String editUser(@PathVariable("id") UUID id,
+                           @ModelAttribute User user,
+                           Model model) {
+
+        user.setId(id);
         userService.save(user);
-        return "login";
+        return "redirect:/welcomeAdmin/edituser";
     }
+
 
     @GetMapping("/dunglai")
     public String check(Model model) {
         return "HTML/hehe";
     }
 
+
     @GetMapping("/editgame")
     public String editGame(Model model) {
-        model.addAttribute("listGame",gameSevice.findAllGame());
-        return "editgame";
+        model.addAttribute("listGame", gameSevice.findAllGame());
+        return "ADMIN/ListGame";
     }
 
-    public String editGame(@PathVariable(value="game") Game game,Model model){
+    @PostMapping("/editgame/{id}")
+    public String editGame(@PathVariable("id") UUID id,
+                           @ModelAttribute Game game,
+                           Model model) {
+        game.setGameId(id); // ĐỔI TÊN setter NẾU ENTITY KHÁC (vd setId)
         gameSevice.saveGame(game);
-        return "editgame";
+        return "redirect:/welcomeAdmin/editgame";
     }
 
-    @GetMapping
-    public String welcomeAmin(Model model){
-        return "ADMIN/IndexAdmin";
+
+
+    @GetMapping("/upload")
+    public String upload(Model model) {
+        return "ADMIN/UploadGame";
     }
+
+
+    @GetMapping("/editevent")
+    public String editEvent(Model model) {
+        return "ADMIN/EditEvent";
+    }
+
 
     @PostMapping("/login")
     @ResponseBody
     public ResponseEntity<?> login(@RequestParam String username,
                                    @RequestParam String password,
                                    HttpSession session) {
-        var user = userService.findByUsername(username);
-        if (user == null) return ResponseEntity.badRequest().body(Map.of("error","Tài khoản không tồn tại!"));
-        if (!password.equals(user.getPassword())) return ResponseEntity.badRequest().body(Map.of("error","Sai mật khẩu!"));
-        if ("wait".equals(user.getStatus())) return ResponseEntity.badRequest().body(Map.of("error","Tài khoảng chưa được kích hoạt"));
 
-        session.setAttribute("id", user.getId());
-        session.setAttribute("username", user.getUsername());
-        // Nếu muốn check đúng admin mới vào tool, thêm:
-        // session.setAttribute("role", "ADMIN");
+        var admin = adminSevice.findByUsername(username);
+        if (admin == null)
+            return ResponseEntity.badRequest().body(Map.of("error","Tài khoản không tồn tại!"));
+        if (!password.equals(admin.getPassword()))
+            return ResponseEntity.badRequest().body(Map.of("error","Sai mật khẩu!"));
+
+        session.setAttribute("id", admin.getAdmin_id());
+        session.setAttribute("username", admin.getAdminName());
         return ResponseEntity.ok(Map.of("success", true));
     }
-
-
-
 }

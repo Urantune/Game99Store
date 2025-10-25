@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="Game Upload"/>
+    <title>Game-Store | Upload Game</title>
+
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link th:href="@{/assets/css/styles1.css}" rel="stylesheet"/>
+
+    <style>
+        html, body { height:100%; margin:0; padding:0; background:#0f1c2e !important; }
+        .logo-link { text-decoration:none !important; color:inherit; }
+        .neon-text { color:#4f9eff; text-shadow:0 0 5px #4f9eff, 0 0 15px #4f9eff, 0 0 25px #007bff; }
+        .card { border-radius:16px; box-shadow:0 10px 24px rgba(0,0,0,0.35); }
+        .card .form-control { background:#2c3e50; color:#fff; border:none; border-radius:10px; }
+        .card .form-control:focus { border:1px solid #ff9800; box-shadow:0 0 6px rgba(255,152,0,.5); }
+        .breadcrumb a { text-decoration:none; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#0f1c2e;">
+    <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
+        <a th:href="@{/welcome}" class="logo-link text-white fs-4">
+            <h3 class="fw-bolder neon-text mb-0">🎮 GameStore</h3>
+        </a>
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcomeAdmin}">ADMIN</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcomeAdmin/editgame}">GAMES</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold active" aria-current="page" href="#">UPLOAD</a></li>
+        </ul>
+        <div class="d-flex align-items-center">
+            <div th:if="${session.username != null}" class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <div class="text-white-50 small">Signed in as</div>
+                    <div class="text-white fw-bold" th:text="${session.username}">admin</div>
+                </div>
+                <a th:href="@{/welcome/profile/{id}(id=${session.id})}" class="d-inline-flex justify-content-center">
+                    <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}" alt="Avatar" class="rounded-circle" style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/welcomeAdmin}" class="text-decoration-none">Admin</a></li>
+                <li class="breadcrumb-item active text-white-50" aria-current="page">Upload Game</li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card p-4">
+                    <div class="text-center mb-3">
+                        <h3 class="fw-bolder text-white">Upload Game</h3>
+                        <p class="text-white-50 small m-0">Tải package/ảnh & metadata</p>
+                    </div>
+
+                    <div id="uploadAlert" style="display:none;"></div>
+
+                    <form th:action="@{/admin/upload}" method="post" enctype="multipart/form-data" id="uploadForm" autocomplete="off">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50">Tên game</label>
+                                <input class="form-control" type="text" name="gameName" placeholder="VD: Elden Ring" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50">Giá</label>
+                                <input class="form-control" type="number" step="0.01" name="price" placeholder="VD: 199000" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50">Thể loại</label>
+                                <input class="form-control" type="text" name="category" placeholder="VD: Action" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50">Phiên bản</label>
+                                <input class="form-control" type="text" name="version" placeholder="VD: 1.0.3" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-white-50">Mô tả ngắn</label>
+                                <textarea class="form-control" name="description" rows="3" placeholder="Giới thiệu ngắn về game..." required></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50">Ảnh cover</label>
+                                <input class="form-control" type="file" name="coverImage" accept="image/*" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50">Game package (zip/rar/7z)</label>
+                                <input class="form-control" type="file" name="packageFile" accept=".zip,.rar,.7z" required>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-cloud-upload-fill me-1"></i> Upload
+                            </button>
+                            <a th:href="@{/welcomeAdmin}" class="btn btn-outline-light">
+                                <i class="bi bi-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+
+                    <div class="text-white-50 small mt-3">
+                        Gợi ý: đảm bảo kích thước ảnh &lt; 2MB, package &lt; 2GB (tuỳ cấu hình server).
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer custom-footer mt-auto py-5 text-white">
+    <div class="container px-5">
+        <hr class="border-secondary my-4">
+        <div class="text-center text-white-50 small">© 2025 <span class="fw-bold text-primary">GameStore</span>. All rights reserved.</div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('uploadForm');
+        const alertBox = document.getElementById('uploadAlert');
+
+        form.addEventListener('submit', async (e) => {
+
+            e.preventDefault();
+
+            alertBox.textContent = ''; alertBox.style.display='none'; alertBox.className='';
+
+            try {
+                const formData = new FormData(form);
+                const res = await fetch(form.getAttribute('action'), { method: 'POST', body: formData });
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text || 'Upload thất bại');
+                }
+                alertBox.innerHTML = '<strong>Thành công!</strong> File đã được tải lên.';
+                alertBox.classList.add('alert','alert-success','text-center');
+                alertBox.style.display = 'block';
+                form.reset();
+            } catch (err) {
+                alertBox.textContent = err.message || 'Lỗi máy chủ!';
+                alertBox.classList.add('alert','alert-danger','text-center');
+                alertBox.style.display = 'block';
+            }
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

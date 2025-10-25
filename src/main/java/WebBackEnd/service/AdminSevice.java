@@ -17,5 +17,8 @@ public class AdminSevice {
     public List<Admin> findAllAdmin(){
         return adminRepository.findAll();
     }
+    public Admin findByUsername(String username) {
+        return adminRepository.findByAdminName(username);
+    }
 
 }
