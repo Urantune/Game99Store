@@ -690,7 +690,7 @@
             <a th:href="@{/welcome/support}">Support</a>
             <!-- Search Box -->
             <div class="search-box">
-                <input type="text" id="search" placeholder="Search game...">
+                <input type="text" id="search" placeholder="Search game..." autocomplete="off">
                 <button type="button">🔍</button>
                 <div id="suggestions"></div>
             </div>
@@ -698,32 +698,97 @@
         </div>
     </div>
 
+    <!--Js search Games and tra ve game search-->
+    <style>
+        /* Hiệu ứng sáng game được chọn */
+        .highlight {
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 0 25px 8px rgba(255, 215, 0, 0.8);
+            transition: box-shadow 0.8s ease;
+        }
+
+        /* Lớp phủ làm mờ nền khi spotlight */
+        .spotlight-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            z-index: 5;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const searchBar = document.getElementById("search");
             const suggestions = document.getElementById("suggestions");
             const noResult = document.getElementById("no-result");
-            const contextPath = "";
-            const placeholder = "data:image/svg+xml;utf8," + encodeURIComponent(
-                '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#2b2b2b"/><text x="50%" y="50%" fill="#999" font-size="12" text-anchor="middle" dominant-baseline="middle">No Image</text></svg>'
-            );
+
+            // Lấy danh sách game có sẵn trong HTML
+            const gameElements = document.querySelectorAll(".card.h-100");
+            const games = Array.from(gameElements).map(el => ({
+                name: el.querySelector("h5")?.textContent?.trim() || "",
+                id: el.id,
+                img: el.querySelector("img")?.src || "",
+            }));
+
+            // Hiển thị spotlight
+            function showSpotlight(target) {
+                // Thêm overlay
+                const overlay = document.createElement("div");
+                overlay.className = "spotlight-overlay";
+                document.body.appendChild(overlay);
+
+                // Cuộn và làm nổi bật game
+                target.scrollIntoView({ behavior: "smooth", block: "center" });
+                target.classList.add("highlight");
+
+                // Xóa hiệu ứng sau 2 giây
+                setTimeout(() => {
+                    target.classList.remove("highlight");
+                    overlay.classList.add("fade-out");
+                    overlay.remove();
+                }, 2000);
+            }
 
             function createSuggestionItem(game) {
                 const div = document.createElement("div");
-                div.className = "suggestion-item";
+                div.className = "suggestion-item d-flex align-items-center p-2";
+                div.style.cursor = "pointer";
+
                 const img = document.createElement("img");
-                img.alt = game.name;
                 img.src = game.img;
-                img.onerror = function () {
-                    img.src = placeholder;
-                };
+                img.alt = game.name;
+                img.style.width = "40px";
+                img.style.height = "40px";
+                img.style.borderRadius = "6px";
+                img.style.marginRight = "10px";
+
                 const span = document.createElement("span");
                 span.textContent = game.name;
+
                 div.appendChild(img);
                 div.appendChild(span);
+
                 div.onclick = () => {
-                    window.location.href = contextPath + "/Index.html" + game.anchor;
+                    const target = document.getElementById(game.id);
+                    if (target) showSpotlight(target);
+
+                    suggestions.style.display = "none";
+                    noResult.style.display = "none";
+                    searchBar.value = "";
                 };
+
                 return div;
             }
 
@@ -731,11 +796,14 @@
                 const q = searchBar.value.trim().toLowerCase();
                 suggestions.innerHTML = "";
                 noResult.style.display = "none";
+
                 if (!q) {
                     suggestions.style.display = "none";
                     return [];
                 }
+
                 const filtered = games.filter(g => g.name.toLowerCase().includes(q));
+
                 if (filtered.length === 0) {
                     suggestions.style.display = "none";
                     noResult.style.display = "block";
@@ -750,6 +818,7 @@
             }
 
             searchBar.addEventListener("input", searchGames);
+
             searchBar.addEventListener("keydown", function (e) {
                 if (e.key === "Enter") {
                     const results = searchGames();
@@ -758,6 +827,7 @@
                     }
                 }
             });
+
             document.addEventListener("click", (e) => {
                 if (!e.target.closest(".search-box")) {
                     suggestions.style.display = "none";
@@ -766,6 +836,10 @@
             });
         });
     </script>
+
+
+
+
 
     <!-- Slides -->
     <div class="slides active" style="background-image: url('/img/Aboutbanner.jpg');"></div>
@@ -1511,7 +1585,7 @@
                 <div class="col mb-5">
                     <a th:href="@{'/welcome/gamedetail/' + ${game.getGameId()}}"
                        style="text-decoration:none; color:inherit;">
-                        <div id="freefire" class="card h-100">
+                        <div class="card h-100" th:id="'game-' + ${game.getGameId()}">
                             <img class="card-img-top"
                                  th:if="${#lists.size(game.linkImage) > 4}"
                                  th:src="@{${game.linkImage[4]}}"
@@ -1569,6 +1643,11 @@
 </section>
 
 <style>
+    .highlight {
+        box-shadow: 0 0 15px 5px gold;
+        transition: box-shadow 0.3s ease;
+    }
+
     .card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
