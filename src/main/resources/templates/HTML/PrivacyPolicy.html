@@ -194,7 +194,7 @@
     <div class="slides" style="background-image:url('/img/game6.jpg')"></div>
 
     <!-- Text trên banner -->
-    <a href="/">
+    <a th:href="@{/welcome}">
         <div class="header-text">
             <h1>🎮 Game Store</h1>
             <p>Trò chơi đỉnh cao - Cộng đồng toàn cầu</p>
@@ -272,22 +272,24 @@
 <footer class="game-footer">
     <div class="footer-container">
         <div class="footer-section about">
-            <h2>🎮 Game Store</h2>
+            <a th:href="@{/welcome}" class="logo-link">
+                <h2>🎮 Game Store</h2>
+            </a>
             <p>Chúng tôi mang đến những tựa game hot nhất và trải nghiệm tuyệt vời cho mọi game thủ.</p>
         </div>
 
         <div class="footer-section links">
             <h3>Liên kết nhanh</h3>
-            <a href="/">Trang chủ</a>
-            <a href="/products.html">Sản phẩm</a>
+            <a th:href="@{/welcome}">Trang chủ</a>
+            <a th:href="@{/welcome}">Sản phẩm</a>
             <a href="/news.html">Tin tức</a>
         </div>
 
         <div class="footer-section support">
             <h3>Hỗ trợ</h3>
             <a href="/faq.html">FAQ</a>
-            <a href="/how-to-buy.html">Hướng dẫn mua hàng</a>
-            <a href="/terms-of-service.html">Điều khoản dịch vụ</a>
+            <a th:href="@{/welcome/BuyGuide}">Hướng dẫn mua hàng</a>
+            <a th:href="@{/welcome/termsofservice}">Điều khoản dịch vụ</a>
         </div>
 
         <div class="footer-section social">
