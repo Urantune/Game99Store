@@ -1,4 +1,4 @@
-package WebBackEnd.Entity;
+    package WebBackEnd.Entity;
 
 import jakarta.persistence.*;
 

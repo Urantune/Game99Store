@@ -325,15 +325,17 @@
     <div class="footer-container">
         <!-- Logo & Giới thiệu -->
         <div class="footer-section about">
-            <h2>🎮 Game Store</h2>
+            <a th:href="@{/welcome}" class="logo-link">
+                <h2>🎮 Game Store</h2>
+            </a>
             <p>Chúng tôi mang đến những tựa game hot nhất và trải nghiệm tuyệt vời cho mọi game thủ.</p>
         </div>
 
         <!-- Liên kết nhanh -->
         <div class="footer-section links">
             <h3>Liên kết nhanh</h3>
-            <a th:href="@{/}">Trang chủ</a>
-            <a th:href="@{/products}">Sản phẩm</a>
+            <a th:href="@{/welcome}">Trang chủ</a>
+            <a th:href="@{/welcome}">Sản phẩm</a>
             <a th:href="@{/news}">Tin tức</a>
         </div>
 
@@ -341,8 +343,8 @@
         <div class="footer-section support">
             <h3>Hỗ trợ</h3>
             <a th:href="@{/faq}">FAQ</a>
-            <a th:href="@{/how-to-buy}">Hướng dẫn mua hàng</a>
-            <a th:href="@{/privacy-policy}">Chính sách bảo mật</a>
+            <a th:href="@{/welcome/BuyGuide}">Hướng dẫn mua hàng</a>
+            <a th:href="@{/welcome/termsofservice}">Chính sách bảo mật</a>
         </div>
 
         <!-- Social -->
