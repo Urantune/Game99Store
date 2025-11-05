@@ -41,7 +41,7 @@ public class HomeController {
     @Autowired
     private GameCore gameCore;
 
-
+/// csxa
     @GetMapping
     public String homepage(Model model) {
         if (!model.containsAttribute("showForm")) {
