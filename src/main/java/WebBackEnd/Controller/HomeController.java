@@ -41,7 +41,7 @@ public class HomeController {
     @Autowired
     private GameCore gameCore;
 
-
+/// csxa
     @GetMapping
     public String homepage(Model model) {
         if (!model.containsAttribute("showForm")) {
@@ -63,6 +63,11 @@ public class HomeController {
 
 
         return "HTML/Index";
+    }
+
+    @GetMapping("/news")
+    public String news(Model model) {
+        return "HTML/news";
     }
 
     @GetMapping("/test")
