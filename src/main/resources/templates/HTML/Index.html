@@ -55,7 +55,6 @@
                     <div class="d-flex align-items-center">
                         <button type="submit" class="btn btn-primary me-3">Login</button>
                         <a href="#" class="text-decoration-none">Forgot password?</a>
-                        <button class="btn btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
                     </div>
                 </form>
             </div>
@@ -428,6 +427,7 @@
 
             <div th:if="${session.username == null}">
                 <button class="btn btn-register me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                <button class="btn btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
             </div>
 
             <div th:if="${session.username != null}" class="d-flex flex-column align-items-center">
