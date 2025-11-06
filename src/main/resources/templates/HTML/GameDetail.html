@@ -150,12 +150,13 @@
 <body>
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999"></div>
 
-<!-- ========= Modal Login ========= -->
+<!-- Modal Login -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Login</h5>
+                <!-- custom close (không dùng data-bs-dismiss để tự xử lý) -->
                 <button type="button" class="btn-close" id="loginCloseBtn" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -166,12 +167,13 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 </div>
-<!--h-->
+
                 <form id="loginForm" method="post" autocomplete="off">
                     <div id="loginError" style="display:none;"></div>
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" class="form-control" name="username" th:value="${enteredUsername}" required>
+                        <input type="text" class="form-control" name="username"
+                               th:value="${enteredUsername}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
@@ -182,14 +184,57 @@
                         <a href="#" class="text-decoration-none">Forgot password?</a>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
 </div>
 
+<!-- CSS Login -->
+<style>
+    #loginModal .modal-header {
+        background: linear-gradient(135deg, #0d47a1, #1a237e);
+        color: #fff;
+        border-bottom: none;
+        padding: 1rem 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+    #loginModal .modal-header .btn-close {
+        filter: invert(1);
+        position: absolute; right: 1rem;
+    }
+    #loginModal .modal-dialog { max-width: 380px; margin: 1.75rem auto; }
+    #loginModal .modal-content {
+        border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,.25);
+        border: none; background: rgba(13,71,161,.2);
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+    #loginModal .modal-body { padding: 1.5rem; text-align: center; }
+    #loginModal .form-control {
+        background: #2c3e50; border: none; border-radius: 8px; color: #fff;
+        font-size: 14px; padding: 10px; margin-bottom: 1rem; text-align: left;
+    }
+    #loginModal .form-control:focus {
+        border: 1px solid #ff9800; box-shadow: 0 0 6px rgba(255,152,0,.5);
+    }
+    #loginModal .form-label { font-weight: 500; color: white; display: block; text-align: left; }
+    #loginModal .btn-primary {
+        border-radius: 10px; padding: .5rem 1.2rem; font-weight: 600;
+        background: linear-gradient(135deg,#0d47a1,#1a237e); border: none; transition: .3s;
+    }
+    #loginModal .btn-primary:hover {
+        background: linear-gradient(135deg,#1565c0,#0d47a1); transform: translateY(-2px);
+    }
+    #loginModal .d-flex { justify-content: center; gap: 1rem; }
+    #loginModal a.text-decoration-none { font-size: .9rem; color: white; transition: color .3s; }
+    #loginModal a.text-decoration-none:hover { color: #ff9800; text-decoration: underline; }
+</style>
+
+<!-- JS Login -->
 <script>
-    // Submit login (giữ nguyên)
     document.getElementById("loginForm").addEventListener("submit", async function(e) {
         e.preventDefault();
         const form = e.target;
@@ -203,25 +248,32 @@
             const result = await response.json();
 
             if (!response.ok) {
-                errorBox.textContent = result.error || "Sai tài khoản hoặc mật khẩu.";
+                errorBox.textContent = result.error || "Sai tài khoản/mật khẩu";
                 errorBox.style.display = "block";
-                errorBox.classList.add("alert", "alert-danger", "text-center");
+                errorBox.classList.add("alert","alert-danger","text-center");
                 setTimeout(() => { errorBox.style.display = "none"; }, 3000);
             } else {
-                const modal = bootstrap.Modal.getInstance(document.getElementById("loginModal"));
-                modal && modal.hide();
+                const modalEl = document.getElementById("loginModal");
+                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                modal.hide();
                 window.location.reload();
             }
         } catch (err) {
             errorBox.textContent = "Lỗi kết nối máy chủ!";
             errorBox.style.display = "block";
-            errorBox.classList.add("alert", "alert-danger", "text-center");
+            errorBox.classList.add("alert","alert-danger","text-center");
             setTimeout(() => { errorBox.style.display = "none"; }, 3000);
         }
     });
+    // Nút đóng modal login tuỳ chỉnh
+    document.getElementById("loginCloseBtn")?.addEventListener("click", () => {
+        const modalEl = document.getElementById("loginModal");
+        const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        modal.hide();
+    });
 </script>
 
-<!-- ========= Modal Register ========= -->
+<!-- Modal Register -->
 <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -229,7 +281,6 @@
                 <h5 class="modal-title">Register</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
             <div class="modal-body">
                 <div id="registerAlert"></div>
                 <form id="registerForm" autocomplete="off">
@@ -257,13 +308,45 @@
     </div>
 </div>
 
-<!-- JS check Register -->
+<!-- CSS Register -->
+<style>
+    #registerModal .modal-content {
+        border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,.25);
+        border: none; background: rgba(13,71,161,.2);
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+    #registerModal .modal-header {
+        background: linear-gradient(135deg,#0d47a1,#1a237e); color: white; border-bottom: none;
+        padding: 1rem 1.5rem; display: flex; justify-content: center; align-items: center; position: relative;
+    }
+    #registerModal .modal-title { font-weight: 600; font-size: 1.2rem; }
+    #registerModal .modal-header .btn-close { position: absolute; right: 1rem; filter: brightness(0) invert(1); }
+    #registerModal .modal-body { padding: 2rem; background: rgba(255,255,255,.15); border-radius: 0 0 20px 20px; }
+    #registerModal .form-control {
+        background: #2c3e50; border: 1px solid #cfd8dc; border-radius: 12px; color: #fff;
+        font-size: 14px; padding: .7rem 1rem; transition: all .3s ease;
+    }
+    #registerModal .form-control:focus { border-color: #0d47a1; box-shadow: 0 0 8px rgba(13,71,161,.3); }
+    #registerModal .form-label { font-weight: 500; }
+    #registerModal .btn-success {
+        border-radius: 12px; padding: .6rem 1.5rem; font-weight: 600;
+        background: linear-gradient(135deg,#0d47a1,#1a237e); border: none; transition: .3s;
+    }
+    #registerModal .btn-success:hover {
+        background: linear-gradient(135deg,#1565c0,#0d47a1); transform: translateY(-2px);
+    }
+    #registerAlert .alert { border-radius: 12px; font-size: .95rem; padding: .8rem 1rem; }
+</style>
+
+<!-- JS Register (gộp kiểm tra mật khẩu & submit) -->
 <script>
-    (function(){
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('registerForm');
+        const alertBox = document.getElementById('registerAlert');
         const passwordInput = document.getElementById("password");
         const confirmPasswordInput = document.getElementById("confirmPassword");
         const message = document.getElementById("passwordMessage");
-        const form = document.getElementById("registerForm");
 
         function checkPasswordMatch() {
             if (confirmPasswordInput.value !== "" && passwordInput.value !== confirmPasswordInput.value) {
@@ -275,45 +358,57 @@
         passwordInput.addEventListener("input", checkPasswordMatch);
         confirmPasswordInput.addEventListener("input", checkPasswordMatch);
 
-        form.addEventListener("submit", async function (e) {
-            if (passwordInput.value !== confirmPasswordInput.value) {
-                e.preventDefault();
-                alert("Mật khẩu nhập lại không khớp!");
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = passwordInput.value;
+            const confirm = confirmPasswordInput.value;
+            if (password !== confirm) {
+                message.textContent = "Mật khẩu xác nhận không khớp!";
                 return;
+            } else {
+                message.textContent = "";
             }
+
+            const data = {
+                username: form.username.value,
+                email: form.email.value,
+                password: form.password.value
+            };
+
             try {
-                const data = {
-                    username: form.username.value,
-                    email: form.email.value,
-                    password: form.password.value
-                };
                 const res = await fetch('/welcome/register', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)
                 });
                 const result = await res.json();
-                const alertBox = document.getElementById('registerAlert');
+
                 alertBox.innerHTML = '';
                 const div = document.createElement('div');
                 div.className = `alert text-center mt-2 ${result.status === 'error' ? 'alert-danger' : 'alert-success'}`;
-                div.textContent = result.message;
+                div.textContent = result.message || (result.status === 'success' ? 'Đăng ký thành công!' : 'Có lỗi xảy ra');
                 alertBox.appendChild(div);
+
                 setTimeout(() => {
-                    div.style.transition = 'opacity 0.5s ease';
+                    div.style.transition = 'opacity .5s ease';
                     div.style.opacity = '0';
                     setTimeout(() => div.remove(), 500);
                 }, 3000);
-                if (result.status === 'success') form.reset();
-            } catch (err) { console.error('Lỗi gửi form:', err); }
+
+                if (result.status === 'success') {
+                    form.reset();
+                }
+            } catch (err) {
+                alertBox.innerHTML = '<div class="alert alert-danger text-center mt-2">Lỗi gửi form.</div>';
+            }
         });
-    })();
+    });
 </script>
 
-<!-- ========= Nav ========= -->
+<!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#0f1c2e;">
     <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
-        <a href="Index.html" class="logo-link text-white fs-4">
+        <a th:href="@{/welcome}" class="logo-link text-white fs-4">
             <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
         </a>
 
@@ -328,16 +423,35 @@
             <a th:if="${session.username != null}"
                th:href="@{/welcome/Cart/{id}(id=${session.id})}"
                class="btn btn-cart me-2">
-                <i class="bi bi-cart-fill me-1"></i> Cart
-                <span class="badge text-bg-danger ms-1" id="cartCount">0</span>
+                <i class="bi-cart-fill me-1"></i>
+                Cart
             </a>
 
             <style>
-                .btn-login { background: linear-gradient(90deg, #198754, #28a745); color: white; border: none; box-shadow: 0 0 6px rgba(25, 135, 84, 0.4); transition: all 0.3s ease; border-radius: 8px; padding: 8px 18px; font-weight: 600; }
-                .btn-login:hover { background: linear-gradient(90deg, #28a745, #34ce57); box-shadow: 0 0 15px rgba(40, 167, 69, 0.8); transform: translateY(-2px); }
-                .btn-register { background: linear-gradient(90deg, #0d6efd, #2a9df4); color: white; border: none; box-shadow: 0 0 6px rgba(13, 110, 253, 0.4); transition: all 0.3s ease; border-radius: 8px; padding: 8px 18px; font-weight: 600; }
-                .btn-register:hover { background: linear-gradient(90deg, #2a9df4, #0dcaf0); box-shadow: 0 0 15px rgba(13, 110, 253, 0.8); transform: translateY(-2px); }
-                .navbar-nav .nav-link { transition: color 0.3s ease, transform 0.2s ease; font-size: 1.05rem; letter-spacing: 0.5px; }
+                .btn-login {
+                    background: linear-gradient(90deg,#198754,#28a745); color: #fff; border: none;
+                    box-shadow: 0 0 6px rgba(25,135,84,.4); transition: .3s;
+                    border-radius: 8px; padding: 8px 18px; font-weight: 600;
+                }
+                .btn-login:hover {
+                    background: linear-gradient(90deg,#28a745,#34ce57);
+                    box-shadow: 0 0 15px rgba(40,167,69,.8);
+                    transform: translateY(-2px);
+                }
+                .btn-register {
+                    background: linear-gradient(90deg,#0d6efd,#2a9df4); color: white; border: none;
+                    box-shadow: 0 0 6px rgba(13,110,253,.4); transition: .3s;
+                    border-radius: 8px; padding: 8px 18px; font-weight: 600;
+                }
+                .btn-register:hover {
+                    background: linear-gradient(90deg,#2a9df4,#0dcaf0);
+                    box-shadow: 0 0 15px rgba(13,110,253,.8);
+                    transform: translateY(-2px);
+                }
+                .navbar-nav .nav-link {
+                    transition: color .3s ease, transform .2s ease;
+                    font-size: 1.05rem; letter-spacing: .5px;
+                }
                 .navbar-nav .nav-link:hover { color: #0dcaf0; transform: translateY(-2px); }
             </style>
 
@@ -347,80 +461,287 @@
             </div>
 
             <div th:if="${session.username != null}" class="d-flex flex-column align-items-center">
-                <a th:href="@{/welcome/profile/{id}(id = ${session.id})}" class="d-inline-flex justify-content-center">
+                <a th:href="@{/welcome/profile/{id}(id = ${session.id})}"
+                   class="d-inline-flex justify-content-center">
                     <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
                          alt="Avatar" class="rounded-circle"
                          style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
                 </a>
-                <span class="mt-1 text-light" style="font-size: 0.9rem; font-weight: 600;" th:text="${session.username}"></span>
+                <span class="mt-1 text-light" style="font-size:.9rem;font-weight:600;"
+                      th:text="${session.username}"></span>
             </div>
         </div>
+
+        <style>
+            .btn-cart {
+                background: #146c43; color:#fff !important; border: none !important; font-weight: 500; transition: .3s;
+            }
+            .btn-cart:hover {
+                background: linear-gradient(90deg,#20c997,#28a745);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(40,167,69,.4);
+                color:#fff !important;
+            }
+            .navbar-nav .nav-link {
+                text-transform: uppercase; font-size: 1.1rem; font-weight: 700; letter-spacing: .5px;
+                transition: color .3s ease, transform .2s ease, border-bottom .2s ease;
+                padding-bottom: 4px; border-bottom: 2px solid transparent;
+            }
+            .navbar-nav .nav-link:hover { color:#0dcaf0; transform: translateY(-2px); border-bottom: 2px solid #0dcaf0; }
+        </style>
     </div>
 </nav>
+
 <link rel="stylesheet" href="css/profile-user.css">
 
-<!-- ========= Header banner ========= -->
+<!-- Header banner with slides and search -->
 <header class="banner">
     <div class="steam-menu">
         <div class="steam-menu-inner">
-            <a href="/index">Cửa hàng của bạn</a>
-            <a href="/about">About</a>
-            <a href="/new">Sắp phát hành</a>
+            <a th:href="@{/welcome/about}">About</a>
+            <a th:href="@{/welcome/Newgame}">Coming Soon</a>
 
             <div class="dropdown">
-                <a href="#" class="dropdown-toggle">Danh mục</a>
+                <div class="dropdown-toggle text-decoration-none text-white">Categories</div>
                 <div class="dropdown-menu">
                     <div class="dropdown-column">
-                        <h4>Thể loại</h4>
-                        <a href="#">Hành động</a><a href="#">Phiêu lưu</a><a href="#">RPG</a><a href="#">Chiến thuật</a>
-                        <a href="#">Mô phỏng</a><a href="#">Đua xe</a><a href="#">Thể thao</a><a href="#">Kinh dị</a><a href="#">Puzzle</a>
+                        <h4>Games</h4>
+                        <a th:href="@{/welcome/category/{product}(product='Action')}">Action</a>
+                        <a th:href="@{/welcome/category/{product}(product='Adventure')}">Adventure</a>
+                        <a th:href="@{/welcome/category/{product}(product='Horror')}">Horror</a>
+                        <a th:href="@{/welcome/category/{product}(product='Puzzle')}">Puzzle</a>
                     </div>
+
                     <div class="dropdown-column">
-                        <h4>Chủ đề</h4>
-                        <a href="#">Anime</a><a href="#">Sci-fi</a><a href="#">Cyberpunk</a><a href="#">Thế giới mở</a>
-                        <a href="#">Sinh tồn</a><a href="#">Vũ trụ</a>
+                        <h4>Genres</h4>
+                        <a th:href="@{/welcome/category/{product}(product='Anime')}">Anime</a>
+                        <a th:href="@{/welcome/category/{product}(product='Sci-Fi')}">Sci-Fi</a>
+                        <a th:href="@{/welcome/category/{product}(product='Cyberpunk')}">Cyberpunk</a>
+                        <a th:href="@{/welcome/category/{product}(product='Open World')}">Open World</a>
+                        <a th:href="@{/welcome/category/{product}(product='Survival')}">Survival</a>
+                        <a th:href="@{/welcome/category/{product}(product='Space')}">Space</a>
                     </div>
+
                     <div class="dropdown-column">
-                        <h4>Độ phổ biến</h4>
-                        <a href="#">Mới phát hành</a><a href="#">Sắp ra mắt</a><a href="#">Bán chạy</a><a href="#">Đánh giá cao</a><a href="#">Hot</a>
+                        <h4>By Popularity</h4>
+                        <a th:href="@{/welcome/category/{product}(product='New Releases')}">New Releases</a>
+                        <a th:href="@{/welcome/category/{product}(product='Coming Soon')}">Coming Soon</a>
+                        <a th:href="@{/welcome/category/{product}(product='Best Sellers')}">Best Sellers</a>
+                        <a th:href="@{/welcome/category/{product}(product='Top Rated')}">Top Rated</a>
+                        <a th:href="@{/welcome/category/{product}(product='Hot Games')}">Hot Games</a>
                     </div>
+
                     <div class="dropdown-column">
-                        <h4>Nền tảng</h4>
-                        <a href="#">PC</a><a href="#">Smart Phone</a><a href="#">PlayStation</a><a href="#">Xbox</a><a href="#">Switch</a><a href="#">Mobile</a><a href="#">VR</a>
+                        <h4>By Platform</h4>
+                        <a th:href="@{/welcome/category/{product}(product='PC')}">PC</a>
+                        <a th:href="@{/welcome/category/{product}(product='Smartphone')}">Smartphone</a>
+                        <a th:href="@{/welcome/category/{product}(product='PlayStation')}">PlayStation</a>
+                        <a th:href="@{/welcome/category/{product}(product='Xbox')}">Xbox</a>
+                        <a th:href="@{/welcome/category/{product}(product='Nintendo Switch')}">Nintendo Switch</a>
+                        <a th:href="@{/welcome/category/{product}(product='Mobile')}">Mobile</a>
+                        <a th:href="@{/welcome/category/{product}(product='VR')}">VR</a>
                     </div>
                 </div>
             </div>
 
-            <a href="#">Cửa hàng điểm</a>
-            <a href="/support">Hỗ trợ</a>
+            <a href="#">Point Store</a>
+            <a th:href="@{/welcome/support}">Support</a>
 
+            <!-- Search Box -->
             <div class="search-box">
-                <input type="text" id="search" placeholder="Tìm kiếm game..."/>
+                <input type="text" id="search" placeholder="Search games..." autocomplete="off">
                 <button type="button">🔍</button>
                 <div id="suggestions"></div>
             </div>
-            <div id="no-result" style="display:none;color:red;margin-top:3px;">Không tìm thấy game</div>
+            <div id="no-result" style="display:none; color:red; margin-top:3px;">Không tìm thấy game</div>
         </div>
     </div>
 
-    <div class="slides active" style="background-image:url('/img/Aboutbanner.jpg');"></div>
-    <div class="slides" style="background-image:url('/img/game1.jpg');"></div>
-    <div class="slides" style="background-image:url('/img/game2.jpg');"></div>
-    <div class="slides" style="background-image:url('/img/game3.jpg');"></div>
-    <div class="slides" style="background-image:url('/img/game4.jpg');"></div>
-    <div class="slides" style="background-image:url('/img/game5.jpg');"></div>
-    <div class="slides" style="background-image:url('/img/game6.jpg');"></div>
+    <style>
+        .highlight { position: relative; z-index: 10; box-shadow: 0 0 25px 8px rgba(255,215,0,.8); transition: box-shadow .8s ease; }
+        .spotlight-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); backdrop-filter: blur(5px); z-index: 5; animation: fadeIn .3s ease; }
+        @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+    </style>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchBar = document.getElementById("search");
+            const suggestions = document.getElementById("suggestions");
+            const noResult = document.getElementById("no-result");
+
+            const gameElements = document.querySelectorAll(".card.h-100");
+            const games = Array.from(gameElements).map(el => ({
+                name: el.querySelector("h5")?.textContent?.trim() || "",
+                id: el.id,
+                img: el.querySelector("img")?.src || "",
+            }));
+
+            function showSpotlight(target) {
+                const overlay = document.createElement("div");
+                overlay.className = "spotlight-overlay";
+                document.body.appendChild(overlay);
+
+                target.scrollIntoView({ behavior: "smooth", block: "center" });
+                target.classList.add("highlight");
+
+                setTimeout(() => {
+                    target.classList.remove("highlight");
+                    overlay.remove();
+                }, 2000);
+            }
+
+            function createSuggestionItem(game) {
+                const div = document.createElement("div");
+                div.className = "suggestion-item d-flex align-items-center p-2";
+                div.style.cursor = "pointer";
+
+                const img = document.createElement("img");
+                img.src = game.img; img.alt = game.name;
+                img.style.width = "40px"; img.style.height = "40px";
+                img.style.borderRadius = "6px"; img.style.marginRight = "10px";
+
+                const span = document.createElement("span");
+                span.textContent = game.name;
+
+                div.appendChild(img); div.appendChild(span);
+
+                div.onclick = () => {
+                    const target = document.getElementById(game.id);
+                    if (target) showSpotlight(target);
+                    suggestions.style.display = "none";
+                    noResult.style.display = "none";
+                    searchBar.value = "";
+                };
+                return div;
+            }
+
+            function searchGames() {
+                const q = searchBar.value.trim().toLowerCase();
+                suggestions.innerHTML = "";
+                noResult.style.display = "none";
+
+                if (!q) { suggestions.style.display = "none"; return []; }
+
+                const filtered = games.filter(g => g.name.toLowerCase().includes(q));
+                if (filtered.length === 0) {
+                    suggestions.style.display = "none";
+                    noResult.style.display = "block";
+                } else {
+                    filtered.forEach(game => suggestions.appendChild(createSuggestionItem(game)));
+                    suggestions.style.display = "block";
+                }
+                return filtered;
+            }
+
+            searchBar.addEventListener("input", searchGames);
+            searchBar.addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    const results = searchGames();
+                    if (results.length === 0) alert("Không tìm thấy game");
+                }
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!e.target.closest(".search-box")) {
+                    suggestions.style.display = "none";
+                    noResult.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <!-- Slides -->
+    <div class="slides active" style="background-image: url('/img/Aboutbanner.jpg');"></div>
+    <div class="slides" style="background-image: url('/img/game1.jpg');"></div>
+    <div class="slides" style="background-image: url('/img/game2.jpg');"></div>
+    <div class="slides" style="background-image: url('/img/game3.jpg');"></div>
+    <div class="slides" style="background-image: url('/img/game4.jpg');"></div>
+    <div class="slides" style="background-image: url('/img/game5.jpg');"></div>
+    <div class="slides" style="background-image: url('/img/game6.jpg');"></div>
     <div class="dots">
-        <span class="dot active" data-idx="0"></span>
-        <span class="dot" data-idx="1"></span>
-        <span class="dot" data-idx="2"></span>
-        <span class="dot" data-idx="3"></span>
-        <span class="dot" data-idx="4"></span>
-        <span class="dot" data-idx="5"></span>
-        <span class="dot" data-idx="6"></span>
+        <span class="dot active" onclick="currentSlide(0)"></span>
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+        <span class="dot" onclick="currentSlide(4)"></span>
+        <span class="dot" onclick="currentSlide(5)"></span>
+        <span class="dot" onclick="currentSlide(6)"></span>
     </div>
 </header>
+
+<style>
+    .dropdown { position: relative; }
+    .dropdown-toggle { cursor: pointer; }
+    .dropdown-menu {
+        display: none; position: absolute; top: 100%; left: 0;
+        background: rgba(27,56,92,.95); padding: 20px; border-radius: 4px; min-width: 700px;
+        box-shadow: 0 8px 20px rgba(0,0,0,.5); z-index: 1000; grid-template-columns: repeat(4,1fr); gap: 20px;
+    }
+    .dropdown:hover .dropdown-menu { display: grid; }
+    .dropdown-column h4 {
+        margin-bottom: 10px; color: #66c0f4; font-size: 14px; font-weight: bold;
+        border-bottom: 1px solid #2a475e; padding-bottom: 5px;
+    }
+    .dropdown-column a {
+        display: block; color: #c7d5e0; font-size: 13px; padding: 4px 0;
+        text-decoration: none; transition: color .2s;
+    }
+    .dropdown-column a:hover { color: #fff; text-decoration: underline; }
+
+    .banner { position: relative; width: 100%; height: 550px; overflow: hidden; }
+    .slides {
+        position: absolute; width: 100%; height: 100%;
+        background-size: cover; background-position: center; opacity: 0; transition: opacity 1s ease-in-out; z-index: 0;
+    }
+    .slides.active { opacity: 1; }
+    .dots { position: absolute; bottom: 20px; width: 100%; text-align: center; }
+    .dot { cursor: pointer; height: 12px; width: 12px; margin: 0 4px; background-color: rgba(255,255,255,.5); border-radius: 50%; display: inline-block; transition: background-color .3s ease; }
+    .dot.active { background-color: #ffd700; }
+    .dot:hover { background-color: #fff; }
+
+    .steam-menu { position: absolute; top: 0; left: 0; width: 100%; z-index: 10; display: flex; justify-content: center; padding: 10px 0; }
+    .steam-menu-inner {
+        max-width: 1500px; width: 100%; background: rgba(18,57,101,.8); padding: 8px 12px; border-radius: 4px;
+        display: flex; align-items: center; justify-content: center; gap: 20px;
+    }
+    .steam-menu a { color: white; text-decoration: none; margin-right: 20px; font-size: 14px; font-weight: 500; padding: 6px 10px; border-radius: 3px; }
+    .steam-menu a:hover { background: rgba(255,255,255,.1); }
+
+    .search-box { position: relative; width: 300px; margin-left: auto; display: flex; align-items: center; gap: 6px; }
+    #search { flex: 1; padding: 6px 8px; background: #305680; color: #fff; border: none; border-radius: 4px; }
+    #suggestions {
+        position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: rgba(10,18,30,.95);
+        border: 1px solid rgba(255,255,255,.06); display: none; max-height: 300px; overflow-y: auto; z-index: 99999; color: #fff; border-radius: 6px;
+    }
+    .suggestion-item { display: flex; align-items: center; gap: 10px; padding: 8px; cursor: pointer; }
+    .suggestion-item img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; }
+    .suggestion-item:hover { background: rgba(255,255,255,.03); }
+    .search-box input::placeholder { color: #cfd8dc; }
+    .search-box button { border: none; background: #1b3b63; color: white; padding: 5px 10px; cursor: pointer; }
+    .search-box button:hover { background: #0f274a; }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let slideIndex = 0;
+        const slides = document.querySelectorAll(".slides");
+        const dots = document.querySelectorAll(".dot");
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle("active", i === index);
+                dots[i].classList.toggle("active", i === index);
+            });
+        }
+        function changeSlide(n) {
+            slideIndex = (slideIndex + n + slides.length) % slides.length;
+            showSlide(slideIndex);
+        }
+        window.currentSlide = function (n) { slideIndex = n; showSlide(slideIndex); };
+        showSlide(slideIndex);
+        setInterval(() => changeSlide(1), 3000);
+    });
+</script>
 
 <!-- ========= Main ========= -->
 <div class="container mt-5">
