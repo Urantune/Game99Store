@@ -6,10 +6,12 @@ import WebBackEnd.Entity.Feedback;
 import WebBackEnd.Entity.Game;
 import WebBackEnd.Entity.User;
 import WebBackEnd.Entity.UserGame;
+import WebBackEnd.repository.UserGameRepository;
 import WebBackEnd.repository.UserRepository;
 import WebBackEnd.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.security.MessageDigest;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -40,7 +43,10 @@ public class HomeController {
     private FeedbackService feedbackService;
     @Autowired
     private GameCore gameCore;
-
+    @Autowired
+    private UserGameRepository userGameRepository;
+    @Autowired
+    private WebBackEnd.Service.UserTransactionService transactionService;
     /// csxa
     @GetMapping
     public String homepage(Model model) {
@@ -437,6 +443,29 @@ public class HomeController {
             return "redirect:/welcome";
         }
     }
+
+    @GetMapping("/transactions")
+    public String viewTransactions(HttpSession session, Model model) {
+        Object userIdObj = session.getAttribute("id");
+        if (userIdObj == null) {
+            return "redirect:/welcome";
+        }
+        User currentUser = userService.findById((java.util.UUID) userIdObj);
+        model.addAttribute("user", currentUser);
+        model.addAttribute("topups", transactionService.getTopups(currentUser));
+        model.addAttribute("purchases", userGameService.getGamesByUser(currentUser));
+        model.addAttribute("refunds", transactionService.getRefunds(currentUser));
+
+        return "HTML/TransactionHistory";
+    }
+
+    @GetMapping("/gamePay")
+    public String gamePay(Model model){
+        return "HTML/GamePay";
+    }
+
+
+
 
 
     //    @PostMapping("/home")
