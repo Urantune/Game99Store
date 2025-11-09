@@ -19,6 +19,92 @@
 
 <!-- Toast container -->
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999"></div>
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#0f1c2e;">
+    <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
+        <a th:href="@{/welcome}" class="logo-link text-white fs-4">
+            <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
+        </a>
+
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcome/news}">TIN TỨC</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">SỰ KIỆN</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">TOP GAME</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">GIẢM GIÁ</a></li>
+        </ul>
+
+        <div class="d-flex align-items-center">
+            <a th:if="${session.username != null}"
+               th:href="@{/welcome/Cart/{id}(id=${session.id})}"
+               class="btn btn-cart me-2">
+                <i class="bi-cart-fill me-1"></i>
+                Cart
+            </a>
+
+            <style>
+                .btn-login {
+                    background: linear-gradient(90deg,#198754,#28a745); color: #fff; border: none;
+                    box-shadow: 0 0 6px rgba(25,135,84,.4); transition: .3s;
+                    border-radius: 8px; padding: 8px 18px; font-weight: 600;
+                }
+                .btn-login:hover {
+                    background: linear-gradient(90deg,#28a745,#34ce57);
+                    box-shadow: 0 0 15px rgba(40,167,69,.8);
+                    transform: translateY(-2px);
+                }
+                .btn-register {
+                    background: linear-gradient(90deg,#0d6efd,#2a9df4); color: white; border: none;
+                    box-shadow: 0 0 6px rgba(13,110,253,.4); transition: .3s;
+                    border-radius: 8px; padding: 8px 18px; font-weight: 600;
+                }
+                .btn-register:hover {
+                    background: linear-gradient(90deg,#2a9df4,#0dcaf0);
+                    box-shadow: 0 0 15px rgba(13,110,253,.8);
+                    transform: translateY(-2px);
+                }
+                .navbar-nav .nav-link {
+                    transition: color .3s ease, transform .2s ease;
+                    font-size: 1.05rem; letter-spacing: .5px;
+                }
+                .navbar-nav .nav-link:hover { color: #0dcaf0; transform: translateY(-2px); }
+            </style>
+
+            <div th:if="${session.username == null}">
+                <button class="btn btn-register me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                <button class="btn btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
+            </div>
+
+            <div th:if="${session.username != null}" class="d-flex flex-column align-items-center">
+                <a th:href="@{/welcome/profile/{id}(id = ${session.id})}"
+                   class="d-inline-flex justify-content-center">
+                    <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
+                         alt="Avatar" class="rounded-circle"
+                         style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
+                </a>
+                <span class="mt-1 text-light" style="font-size:.9rem;font-weight:600;"
+                      th:text="${session.username}"></span>
+            </div>
+        </div>
+
+        <style>
+            .btn-cart {
+                background: #146c43; color:#fff !important; border: none !important; font-weight: 500; transition: .3s;
+            }
+            .btn-cart:hover {
+                background: linear-gradient(90deg,#20c997,#28a745);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(40,167,69,.4);
+                color:#fff !important;
+            }
+            .navbar-nav .nav-link {
+                text-transform: uppercase; font-size: 1.1rem; font-weight: 700; letter-spacing: .5px;
+                transition: color .3s ease, transform .2s ease, border-bottom .2s ease;
+                padding-bottom: 4px; border-bottom: 2px solid transparent;
+            }
+            .navbar-nav .nav-link:hover { color:#0dcaf0; transform: translateY(-2px); border-bottom: 2px solid #0dcaf0; }
+        </style>
+    </div>
+</nav>
 
 <!-- ===== Modal Login ===== -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
@@ -138,49 +224,6 @@
 </style>
 
 <!-- ===== NAVBAR ===== -->
-<nav class="navbar navbar-expand-lg navbar-light custom-bg">
-    <div class="container-fluid px-4 px-lg-5 d-flex justify-content-between align-items-center">
-        <!-- Logo -->
-        <a th:href="@{/}" class="logo-link text-white fs-4" style="text-decoration:none">
-            <h3 class="fw-bolder neon-text mb-3">🎮 GameStore</h3>
-        </a>
-
-        <!-- Trái: link quản trị (nếu admin) -->
-        <ul class="navbar-nav d-flex flex-row mb-0">
-            <li class="nav-item" th:if="${user != null and #strings.equalsIgnoreCase(user.role,'admin')}">
-                <a class="nav-link" th:href="@{/manage-products}">Quản lý sản phẩm</a>
-            </li>
-        </ul>
-
-        <!-- Phải: Cart + User -->
-        <div class="d-flex align-items-center">
-            <form class="d-flex me-2" th:action="@{/cart}" method="get">
-                <button class="btn btn-outline-light" type="submit">
-                    <i class="bi-cart-fill me-1"></i>
-                    <span style="text-decoration:none;color:inherit">Cart</span>
-                    <span class="badge bg-dark text-white ms-1 rounded-pill" th:text="${cartCount}">0</span>
-                </button>
-            </form>
-
-            <!-- Nếu chưa login -->
-            <div th:if="${user == null}">
-                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
-                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
-            </div>
-
-            <!-- Nếu đã login -->
-            <div th:if="${user != null}" class="d-flex align-items-center">
-                <div class="text-center me-3">
-                    <a th:href="@{/profile}" class="profile-link">
-                        <img th:src="'https://i.pravatar.cc/50?u=' + ${user.username}" alt="avatar" class="rounded-circle profile-avatar"/>
-                        <div class="profile-name"><b th:text="${user.username}">username</b></div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
-
 <style>
     .profile-link{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;transition:.3s}
     .profile-avatar{width:50px;height:50px;object-fit:cover;border-radius:50%;border:2px solid transparent;transition:.3s}
@@ -337,18 +380,17 @@
                 <div class="row g-4">
                     <!-- Game 1 -->
                     <div class="col-md-4">
-                        <div class="card h-100 shadow-sm">
+                        <div class="card game-card h-100">
                             <img src="/img/newgame1.jpg" class="card-img-top" alt="IRONBLOOD SAGA">
                             <div class="card-body d-flex flex-column">
-                                <span class="badge bg-purple mb-2" style="background-color:#7C4DFF;">Sắp phát hành</span>
+                                <span class="badge bg-purple mb-2">Sắp phát hành</span>
                                 <h5 class="card-title">IRONBLOOD SAGA</h5>
                                 <p class="card-text flex-grow-1">
                                     Ironblood Saga là game nhập vai kết hợp hành động và chiến thuật, đưa người chơi vào những
                                     trận chiến khốc liệt giữa quân đoàn sắt máu và thế lực hắc ám. Với bối cảnh sử thi
                                     và lối chơi đa dạng, game hứa hẹn mang đến trải nghiệm chinh phục đỉnh cao chiến trường.
                                 </p>
-                                <button class="btn btn-lg px-4 text-white register-btn-transparent"
-                                        style="position: relative; z-index: 5; background: linear-gradient(90deg, #8E2DE2, #4A00E0);">
+                                <button class="btn btn-lg px-4 text-white register-btn-transparent">
                                     Đăng ký
                                 </button>
                                 <p class="text-muted mt-2">Dự kiến phát hành 01-04-2026</p>
@@ -358,21 +400,19 @@
 
                     <!-- Game 2 -->
                     <div class="col-md-4">
-                        <div class="card h-100 shadow-sm">
+                        <div class="card game-card h-100">
                             <img src="/img/newgame2.jpg" class="card-img-top" alt="LUMINA CITY">
                             <div class="card-body d-flex flex-column">
-                                <span class="badge bg-purple mb-2" style="background-color:#7C4DFF;">Sắp phát hành</span>
+                                <span class="badge bg-purple mb-2">Sắp phát hành</span>
                                 <h5 class="card-title">LUMINA CITY</h5>
                                 <p class="card-text flex-grow-1">
                                     Lumina City là tựa game xây dựng và mô phỏng, nơi bạn kiến tạo thành phố tương lai theo phong cách utopia
                                     rực rỡ. Người chơi sẽ quản lý tài nguyên, phát triển công nghệ và định hình một đô thị hiện đại,
                                     đầy sáng tạo.
                                 </p>
-                                <button class="btn btn-lg px-4 text-white register-btn-transparent"
-                                        style="position: relative; z-index: 5; background: linear-gradient(90deg, #8E2DE2, #4A00E0);">
+                                <button class="btn btn-lg px-4 text-white register-btn-transparent">
                                     Đăng ký
                                 </button>
-
                                 <p class="text-muted mt-2">Dự kiến phát hành 11-03-2026</p>
                             </div>
                         </div>
@@ -380,27 +420,104 @@
 
                     <!-- Game 3 -->
                     <div class="col-md-4">
-                        <div class="card h-100 shadow-sm">
+                        <div class="card game-card h-100">
                             <img src="/img/newgame3.jpg" class="card-img-top" alt="ATHENA’S CRYPT">
                             <div class="card-body d-flex flex-column">
-                                <span class="badge bg-purple mb-2" style="background-color:#7C4DFF;">Sắp phát hành</span>
+                                <span class="badge bg-purple mb-2">Sắp phát hành</span>
                                 <h5 class="card-title">ATHENA’S CRYPT</h5>
                                 <p class="card-text flex-grow-1">
                                     Athena’s Crypt đưa người chơi bước vào hành trình khám phá huyền bí trong hầm mộ cổ của nữ thần trí tuệ. Với
                                     những câu đố thông minh, không khí thần thoại và trải nghiệm phiêu lưu kịch tính, game mở ra thế giới
                                     kỳ bí chờ đợi bạn chinh phục.
                                 </p>
-                                <button class="btn btn-lg px-4 text-white register-btn-transparent"
-                                        style="position: relative; z-index: 5; background: linear-gradient(90deg, #8E2DE2, #4A00E0);">
+                                <button class="btn btn-lg px-4 text-white register-btn-transparent">
                                     Đăng ký
                                 </button>
-
                                 <p class="text-muted mt-2">Dự kiến phát hành 12-12-2026</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+<style>
+    body {
+        background-color: #0a1b2e;
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .game-card {
+        background-color: #0f223a;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .game-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 0 30px rgba(142, 45, 226, 0.5);
+    }
+
+    .card-img-top {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        height: 220px;
+        object-fit: cover;
+    }
+
+    .card-title {
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+
+    .card-text {
+        color: #d3d3d3;
+        font-size: 0.95rem;
+    }
+
+    .bg-purple {
+        background-color: #7C4DFF !important;
+        font-size: 0.85rem;
+        padding: 0.4em 0.8em;
+        border-radius: 8px;
+        text-transform: uppercase;
+    }
+
+    .register-btn-transparent {
+        background: linear-gradient(90deg, #8E2DE2, #4A00E0) !important; /* luôn hiện nền */
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 8px 20px;
+        width: fit-content;
+        align-self: center;
+        color: #fff !important;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 10px rgba(142, 45, 226, 0.4);
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .register-btn-transparent:hover {
+        background: linear-gradient(90deg, #9b38f1, #5c1ce5) !important;
+        box-shadow: 0 0 20px rgba(142, 45, 226, 0.8);
+        transform: scale(1.06);
+    }
+
+
+
+
+    .text-muted {
+        color: #a0a0a0 !important;
+        font-size: 0.85rem;
+        text-align: center;
+    }
+
+</style>
 
 
             <div class="row gx-5">

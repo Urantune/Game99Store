@@ -41,7 +41,7 @@ public class HomeController {
     @Autowired
     private GameCore gameCore;
 
-/// csxa
+    /// csxa
     @GetMapping
     public String homepage(Model model) {
         if (!model.containsAttribute("showForm")) {
@@ -186,60 +186,44 @@ public class HomeController {
         Map<String, Object> response = new HashMap<>();
         String username = user.getUsername();
         String email = user.getEmail();
-
-
         if (username == null || username.trim().isEmpty()) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản không được để trống");
             return response;
         }
-
-
         if (!username.matches("^[a-zA-Z0-9._]+$")) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản chỉ được chứa chữ, số, dấu chấm hoặc gạch dưới");
             return response;
         }
-
-
         if (username.startsWith(".") || username.startsWith("_") ||
                 username.endsWith(".") || username.endsWith("_")) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản không được bắt đầu hoặc kết thúc bằng dấu chấm hoặc gạch dưới");
             return response;
         }
-
-
         if (username.contains("..") || username.contains("__") ||
                 username.contains("._") || username.contains("_.")) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản không được chứa ký tự đặc biệt liên tiếp");
             return response;
         }
-
-
         if (username.length() < 3 || username.length() > 20) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản phải có độ dài từ 3 đến 20 ký tự");
             return response;
         }
-
-
         if (userRepository.existsByUsername(username)) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản đã tồn tại");
             return response;
         }
-
-
         user.setUsername(username);
         user.setEmail(email);
         user.setScore(0);
         user.setStatus("wait");
         user.setDateCreateAccount(LocalDateTime.now());
         userRepository.save(user);
-
-
         String input = "wait" + user.getId();
         String fi;
         try {
@@ -254,58 +238,47 @@ public class HomeController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
         String title = "Xác nhận tài khoản của bạn";
-
         String link = "https://a7c804c1ed63.ngrok-free.app/veryAccount/done/"
                 + user.getId() + "/" + fi;
-
         String content =
                 "<p>Hãy nhấp vào liên kết dưới đây để kích hoạt tài khoản của bạn:</p>"
                         + "<p><a href=\"" + link + "\">Nhấn vào đây để kích hoạt</a></p>"
                         + "<p>Nếu không bấm được, copy link sau dán vào trình duyệt:<br>"
                         + link + "</p>";
-
-
         sendMailTest.testSend(user.getEmail(), title, content);
-
-
         response.put("status", "success");
         response.put("message", "Đăng ký thành công! Một đường link xác thực tài khoảng đã được gửi vào email của bạn .");
         return response;
     }
-
-
     @PostMapping("/login")
     @ResponseBody
     public ResponseEntity<?> login(@RequestParam String username,
                                    @RequestParam String password,
                                    HttpSession session) {
-
         var user = userService.findByUsername(username);
-
         if (user == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản không tồn tại!"));
         }
-
         if (!password.equals(user.getPassword())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Sai mật khẩu!"));
         }
         if (user.getStatus().equals("wait")) {
             return ResponseEntity.badRequest().body(Map.of("error", "Tài khoảng chưa được kích hoạt"));
         }
-
         session.setAttribute("id", user.getId());
         session.setAttribute("username", user.getUsername());
-
         return ResponseEntity.ok(Map.of("success", true));
     }
-
 
     @GetMapping("/about")
     public String controllAbout(Model model) {
         return "HTML/About";
+    }
+
+    @GetMapping("/refundGame")
+    public String refundGame() {
+        return "HTML/RefundGame";
     }
 
     @GetMapping("/buyguide")
