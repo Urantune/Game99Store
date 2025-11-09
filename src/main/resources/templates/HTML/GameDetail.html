@@ -546,86 +546,50 @@
             const suggestions = document.getElementById("suggestions");
             const noResult = document.getElementById("no-result");
 
-            const gameElements = document.querySelectorAll(".card.h-100");
-            const games = Array.from(gameElements).map(el => ({
-                name: el.querySelector("h5")?.textContent?.trim() || "",
-                id: el.id,
-                img: el.querySelector("img")?.src || "",
-            }));
-
-            function showSpotlight(target) {
-                const overlay = document.createElement("div");
-                overlay.className = "spotlight-overlay";
-                document.body.appendChild(overlay);
-
-                target.scrollIntoView({ behavior: "smooth", block: "center" });
-                target.classList.add("highlight");
-
-                setTimeout(() => {
-                    target.classList.remove("highlight");
-                    overlay.remove();
-                }, 2000);
-            }
-
-            function createSuggestionItem(game) {
-                const div = document.createElement("div");
-                div.className = "suggestion-item d-flex align-items-center p-2";
-                div.style.cursor = "pointer";
-
-                const img = document.createElement("img");
-                img.src = game.img; img.alt = game.name;
-                img.style.width = "40px"; img.style.height = "40px";
-                img.style.borderRadius = "6px"; img.style.marginRight = "10px";
-
-                const span = document.createElement("span");
-                span.textContent = game.name;
-
-                div.appendChild(img); div.appendChild(span);
-
-                div.onclick = () => {
-                    const target = document.getElementById(game.id);
-                    if (target) showSpotlight(target);
-                    suggestions.style.display = "none";
-                    noResult.style.display = "none";
-                    searchBar.value = "";
-                };
-                return div;
-            }
-
-            function searchGames() {
-                const q = searchBar.value.trim().toLowerCase();
-                suggestions.innerHTML = "";
-                noResult.style.display = "none";
-
-                if (!q) { suggestions.style.display = "none"; return []; }
-
-                const filtered = games.filter(g => g.name.toLowerCase().includes(q));
-                if (filtered.length === 0) {
-                    suggestions.style.display = "none";
-                    noResult.style.display = "block";
-                } else {
-                    filtered.forEach(game => suggestions.appendChild(createSuggestionItem(game)));
-                    suggestions.style.display = "block";
-                }
-                return filtered;
-            }
-
-            searchBar.addEventListener("input", searchGames);
-            searchBar.addEventListener("keydown", function (e) {
-                if (e.key === "Enter") {
-                    const results = searchGames();
-                    if (results.length === 0) alert("Không tìm thấy game");
-                }
-            });
-
-            document.addEventListener("click", (e) => {
-                if (!e.target.closest(".search-box")) {
-                    suggestions.style.display = "none";
-                    noResult.style.display = "none";
-                }
-            });
+            fetch("/welcome/games/all")
+                .then(res => res.json())
+                .then(games => {
+                    function showSuggestions() {
+                        const q = searchBar.value.trim().toLowerCase();
+                        suggestions.innerHTML = "";
+                        noResult.style.display = "none";
+                        if (!q) {
+                            suggestions.style.display = "none";
+                            return;
+                        }
+                        const filtered = games.filter(g => g.name.toLowerCase().includes(q));
+                        if (filtered.length === 0) {
+                            noResult.style.display = "block";
+                            suggestions.style.display = "none";
+                        } else {
+                            filtered.forEach(g => {
+                                const div = document.createElement("div");
+                                div.className = "suggestion-item d-flex align-items-center p-2";
+                                div.style.cursor = "pointer";
+                                const img = document.createElement("img");
+                                img.src = g.image;
+                                img.alt = g.name;
+                                img.style.width = "40px";
+                                img.style.height = "40px";
+                                img.style.borderRadius = "6px";
+                                img.style.marginRight = "10px";
+                                const span = document.createElement("span");
+                                span.textContent = g.name;
+                                div.appendChild(img);
+                                div.appendChild(span);
+                                div.onclick = () => {
+                                    window.location.href = `/welcome/game/detail/${g.id}`;
+                                };
+                                suggestions.appendChild(div);
+                            });
+                            suggestions.style.display = "block";
+                        }
+                    }
+                    searchBar.addEventListener("input", showSuggestions);
+                });
         });
     </script>
+
 
     <!-- Slides -->
     <div class="slides active" style="background-image: url('/img/Aboutbanner.jpg');"></div>
@@ -1051,7 +1015,6 @@
                 <div th:if="${session.username == null}" class="flex-grow-1 text-light">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h5 class="mb-0 text-glow">Đánh giá của người chơi</h5>
-                        <small class="text-light">Đăng nhập để viết đánh giá</small>
                     </div>
 
                     <!-- Đánh giá 1 -->

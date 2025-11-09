@@ -464,10 +464,44 @@ public class HomeController {
         return "HTML/GamePay";
     }
 
+    @GetMapping("/game/detail/{id}")
+    public String gameDetail(@PathVariable UUID id, Model model) {
+        Game game = gameSevice.findGameById(id);
+        model.addAttribute("game", game);
+        return "HTML/GameDetail";
+    }
 
 
-
-
+    @GetMapping("/games/all")
+    @ResponseBody
+    public List<Map<String, Object>> getAllGames() {
+        return gameSevice.findAllGame().stream().map(game -> {
+            Map<String, Object> g = new HashMap<>();
+            g.put("id", game.getGameId());
+            g.put("name", game.getGameName());
+            String[] imgs = game.getLinkImage();
+            String mainImage = "/img/notfound.png";
+            if (imgs != null && imgs.length > 0) {
+                for (String link : imgs) {
+                    String lower = link.toLowerCase();
+                    if (lower.contains("img/game") && lower.endsWith(".jpg")) {
+                        mainImage = "/" + link;
+                        break;
+                    }
+                }
+                if (mainImage.equals("/img/notfound.png")) {
+                    for (String link : imgs) {
+                        if (!link.endsWith(".mp4")) {
+                            mainImage = "/" + link;
+                            break;
+                        }
+                    }
+                }
+            }
+            g.put("image", mainImage);
+            return g;
+        }).toList();
+    }
     //    @PostMapping("/home")
     //    public String doLogin(@RequestParam("username") String username,
     //                          @RequestParam("password") String password,
