@@ -61,6 +61,18 @@ public class GameSevice {
 
     public List<Game> findGamesByCetagory(String cetagory){
         return gameRepository.findByGameCategoryIgnoreCase(cetagory);
+
+
+    }
+
+
+    public Game findById(UUID id) {
+        return gameRepository.findGameByGameId(id);
+
+    }
+
+    public void save(Game game) {
+        gameRepository.save(game);
     }
 
 

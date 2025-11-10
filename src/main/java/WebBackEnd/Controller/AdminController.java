@@ -56,16 +56,12 @@
         @GetMapping("/edituser/{id}")
         public String editUser(@PathVariable UUID id, Model model) {
             User user = userService.findById(id);
-            System.out.println(id);
-
-
             model.addAttribute("user", user);
             model.addAttribute("id", id);
-
             return "ADMIN/EditUser";
         }
 
-        @PostMapping("/welcomeAdmin/edituser/{id}")
+        @PostMapping("/edituser/{id}")
         public String updateUser(@PathVariable UUID id,
                                  @ModelAttribute("user") User form,
                                  RedirectAttributes ra) {
@@ -74,6 +70,7 @@
             u.setEmail(form.getEmail());
             userService.save(u);
             ra.addFlashAttribute("ok", "Đã lưu thay đổi");
+            // PRG: quay về GET đúng URL
             return "redirect:/welcomeAdmin/edituser/" + id;
         }
 
@@ -87,20 +84,35 @@
         }
 
 
-        @GetMapping("/editgame")
+        @GetMapping("/listgame")
         public String editGame(Model model) {
             model.addAttribute("listGame", gameSevice.findAllGame());
             return "ADMIN/ListGame";
         }
 
-        @PostMapping("/editgame/{id}")
-        public String editGame(@PathVariable("id") UUID id,
-                               @ModelAttribute Game game,
-                               Model model) {
-            game.setGameId(id);
-            gameSevice.saveGame(game);
-            return "ADMIN/EditUser";
+        @GetMapping("/editgame/{id}")
+        public String editGame(@PathVariable UUID id, Model model) {
+            Game game = gameSevice.findById(id);
+            model.addAttribute("game", game);
+            return "ADMIN/EditGame";
         }
+
+        @PostMapping("/editgame/{id}")
+        public String updateGame(@PathVariable UUID id, @ModelAttribute Game form, RedirectAttributes ra) {
+            Game g = gameSevice.findById(id);
+            g.setGameName(form.getGameName());
+            g.setPrice(form.getPrice());
+            g.setGame_version(form.getGame_version());
+            g.setStatus(form.getStatus());
+            g.setGameCategory(form.getGameCategory());
+            g.setLocate_game(form.getLocate_game());
+            g.setImageLinks(form.getImageLinks());
+            g.setDeception(form.getDeception());
+            gameSevice.save(g);
+            ra.addFlashAttribute("ok", "Saved");
+            return "redirect:/welcomeAdmin/editgame/" + id;
+        }
+
 
 
 
