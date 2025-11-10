@@ -70,7 +70,7 @@
             u.setEmail(form.getEmail());
             userService.save(u);
             ra.addFlashAttribute("ok", "Đã lưu thay đổi");
-            // PRG: quay về GET đúng URL
+
             return "redirect:/welcomeAdmin/edituser/" + id;
         }
 
