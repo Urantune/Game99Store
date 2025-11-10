@@ -153,7 +153,7 @@
                     </div>
                 </div>
                 <div class="row-actions d-flex gap-2">
-                    <a class="btn btn-edit btn-sm" href="#" target="_self">
+                    <a class="btn btn-edit btn-sm" th:href="@{/welcomeAdmin/edituser/{id}(id = ${id})} "target="_self">
                         <i class="bi bi-pencil-square me-1"></i> Edit
                     </a>
                     <button class="btn btn-infox btn-sm btn-toggle" type="button" data-bs-toggle="collapse" aria-expanded="false">

@@ -30,11 +30,12 @@ public class AdminController {
     }
 
 
-    @GetMapping("/edituser")
+    @GetMapping("/listuser")
     public String editUser(Model model) {
         model.addAttribute("listUser", userService.findAll());
         return "ADMIN/ListUser";
     }
+
 
     @PostMapping("/edituser/{id}")
     public String editUser(@PathVariable("id") UUID id,
@@ -43,7 +44,7 @@ public class AdminController {
 
         user.setId(id);
         userService.save(user);
-        return "redirect:/welcomeAdmin/edituser";
+        return "ADMIN/EditUser";
     }
 
 
@@ -65,7 +66,7 @@ public class AdminController {
                            Model model) {
         game.setGameId(id); // ĐỔI TÊN setter NẾU ENTITY KHÁC (vd setId)
         gameSevice.saveGame(game);
-        return "redirect:/welcomeAdmin/editgame";
+        return "ADMIN/EditUser";
     }
 
 
