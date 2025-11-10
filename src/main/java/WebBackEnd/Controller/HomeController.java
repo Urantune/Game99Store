@@ -437,7 +437,7 @@ public class HomeController {
 
 
     @GetMapping("/editprofile/{id}" )
-    public String editProfile(Model model, @PathVariable(value = "id")UUID id, HttpSession session){
+    public String editProfile(Model model, @PathVariable(value = "id")UUID id){
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
         return "HTML/EditProfile";
