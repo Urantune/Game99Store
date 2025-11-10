@@ -30,9 +30,6 @@ public class VerryController {
         this.userService = userService;
     }
 
-
-
-
     @GetMapping("/done/{id}/{code}")
     public String veryAccount(@PathVariable UUID id, @PathVariable String code, Model model)
     {
@@ -54,8 +51,6 @@ public class VerryController {
 
         System.out.println(fi);
 
-
-
         User user = userService.findById(id);
         if(user.getStatus().equalsIgnoreCase("wait"))
         {
@@ -67,16 +62,9 @@ public class VerryController {
                     model.addAttribute("codeUser",fi);
                     return "HTML/VeryFileSend";
                 }
-
             }
-
-
-
         }
-
-
             return "HTML/About";
-
     }
     @PostMapping("/done/{id}/{code}")
     public String doneAccount(@PathVariable(value = "id")UUID id, @PathVariable(value = "code")String code,Model model)

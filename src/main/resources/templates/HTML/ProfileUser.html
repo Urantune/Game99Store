@@ -15,7 +15,7 @@
         </div>
 
         <div class="d-flex align-items-center justify-content-center mt-2">
-            <h2 id="displayName" class="m-0" style="font-size:1.5rem;" th:text="${user.username}">User Name</h2>
+            <h2 id="displayName" class="m-0" style="font-size:1.5rem;" th:text="${user.getUsername()}">User Name</h2>
         </div>
 
         <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
@@ -85,7 +85,7 @@
                     <p>Liên kết để tận hưởng nhiều ưu đãi hơn!</p>
                     <p class="text-white">
                         Bằng việc chọn "Kích hoạt", bạn đồng ý liên kết tài khoản GameStore với tài khoản GamePay của bạn theo
-                        <a th:href="@{/terms}" href="/TermsOfService">Điều khoản dịch vụ</a> và
+                        <a th:href="@{/terms}" href="/TermsOfService">Điều khoản dịch vụ</a>
                         <a th:href="@{/privacy}" href="/PrivacyPolicy">Chính sách bảo mật</a>.
                     </p>
                     <form id="activateWalletForm">
@@ -117,7 +117,9 @@
 
         <div class="card transactions mt-3">
             <h2>🧾 Thông tin</h2>
-            <h5 class="mt-2 text-white">1. Lịch sử giao dịch</h5>
+            <a th:href="@{/welcome/transactions}">
+                <h5 class="mt-2 text-white">1. Lịch sử giao dịch</h5>
+            </a>
             <h5 class="mt-3 text-white">2. Game đã mua</h5>
             <h5 class="mt-3 text-white">3. Yêu cầu hoàn tiền</h5>
             <h5 class="mt-3 text-white">4. Giao dịch đang xử lý</h5>
@@ -190,9 +192,8 @@
         </div>
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
     const STORAGE_KEYS = {
         name: 'gs_profile_name',
@@ -205,11 +206,11 @@
     };
 
     const DEFAULTS = {
-        name: 'Do Trong Tri',
+        name: 'Duong Phuc Khang',
         email: 'user@example.com',
         phone: '',
         country: '',
-        avatars: ['/img/demo1.jpg','/img/demo3.jpg','/img/demo4.jpg','/img/a.png']
+        avatars: ['/img/demo1.jpg','/img/demo3.jpg','/img/demo4.jpg','/img/khangbo.jpg']
     };
 
     const $ = (sel)=>document.querySelector(sel);
@@ -364,7 +365,7 @@
         const pin = document.getElementById('walletPin').value.trim();
         const saved = localStorage.getItem(STORAGE_KEYS.walletPin);
         if(pin === saved){
-            window.location.href = '/wallet';
+            window.location.href = '/welcome/gamePay';
         }else{
             document.getElementById('pinError').textContent = 'PIN không đúng. Vui lòng thử lại.';
         }

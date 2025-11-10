@@ -1,9 +1,7 @@
 package WebBackEnd.Entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-
 
 @Entity
 @Table(name = "UserGame")
@@ -25,7 +23,6 @@ public class UserGame {
     @Column(name = "purchase_date")
     private LocalDateTime purchaseDate;
 
-
     @Column(name = "status")
     private int status;
 
@@ -39,5 +36,38 @@ public class UserGame {
         this.status = status;
     }
 
-// Nho them cai me gi quen roi
+    // 🧩 Getter & Setter
+    public UserGameId getId() { return id; }
+    public void setId(UserGameId id) { this.id = id; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public Game getGame() { return game; }
+    public void setGame(Game game) { this.game = game; }
+
+    public LocalDateTime getPurchaseDate() { return purchaseDate; }
+    public void setPurchaseDate(LocalDateTime purchaseDate) { this.purchaseDate = purchaseDate; }
+
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
+
+    public String getStatusText() {
+        return switch (status) {
+            case 0 -> "Đang xử lý";
+            case 1 -> "Hoàn tất";
+            case 2 -> "Hoàn tiền";
+            default -> "Không xác định";
+        };
+    }
+
+    @Override
+    public String toString() {
+        return "UserGame{" +
+                "user=" + (user != null ? user.getId() : "null") +
+                ", game=" + (game != null ? game.getGameId() : "null") +
+                ", purchaseDate=" + purchaseDate +
+                ", status=" + status +
+                '}';
+    }
 }

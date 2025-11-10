@@ -15,7 +15,8 @@ import java.util.UUID;
 @Repository
 public interface UserGameRepository extends JpaRepository<UserGame, UserGameId> {
 
-
+    List<UserGame> findByUser(User user);
+    List<UserGame> findByUserAndStatus(User user, int status);
     @Query("""
         SELECT ug.game
         FROM UserGame ug
@@ -54,11 +55,5 @@ public interface UserGameRepository extends JpaRepository<UserGame, UserGameId> 
                                         @Param("status") int status);
 
         boolean existsUserGameByUserAndGame(User user, Game game);
-
-
-
-
-
-
 
 }

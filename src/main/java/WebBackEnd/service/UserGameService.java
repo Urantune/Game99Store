@@ -16,7 +16,9 @@ public class UserGameService {
 
     @Autowired
     UserGameRepository userGameRepository;
-
+    public UserGameService(UserGameRepository userGameRepository) {
+        this.userGameRepository = userGameRepository;
+    }
 
     public void save(UserGame userGame){
         userGameRepository.save(userGame);
@@ -40,6 +42,19 @@ public class UserGameService {
         userGameRepository.save(userGame);
     }
 
+    public List<UserGame> getGamesByUser(User user) {
+        return userGameRepository.findByUser(user);
+    }
+
+    // Lấy danh sách game thành công
+    public List<UserGame> getCompletedGames(User user) {
+        return userGameRepository.findByUserAndStatus(user, 1);
+    }
+
+    // Lấy danh sách game đang xử lý
+    public List<UserGame> getPendingGames(User user) {
+        return userGameRepository.findByUserAndStatus(user, 0);
+    }
 
     
 }

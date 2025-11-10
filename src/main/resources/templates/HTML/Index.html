@@ -64,46 +64,133 @@
 
 <!-- CSS Login -->
 <style>
-    #loginModal .modal-header {
-        background: linear-gradient(135deg, #0d47a1, #1a237e);
-        color: #fff;
-        border-bottom: none;
-        padding: 1rem 1.2rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
+    #loginModal .modal-dialog {
+        max-width: 400px;
+        margin: 1.75rem auto;
     }
-    #loginModal .modal-header .btn-close {
-        filter: invert(1);
-        position: absolute; right: 1rem;
-    }
-    #loginModal .modal-dialog { max-width: 380px; margin: 1.75rem auto; }
+
     #loginModal .modal-content {
-        border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,.25);
-        border: none; background: rgba(13,71,161,.2);
-        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        background: rgba(17, 34, 64, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
         overflow: hidden;
+        color: #fff;
     }
-    #loginModal .modal-body { padding: 1.5rem; text-align: center; }
+
+    /* Header */
+    #loginModal .modal-header {
+        background: linear-gradient(135deg, #1565c0, #0d47a1);
+        color: #fff;
+        justify-content: center;
+        position: relative;
+        border-bottom: none;
+    }
+
+    #loginModal .modal-header .modal-title {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    #loginModal .btn-close {
+        position: absolute;
+        right: 1rem;
+        filter: invert(1);
+        opacity: 0.8;
+        transition: 0.3s;
+    }
+    #loginModal .btn-close:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    /* Body */
+    #loginModal .modal-body {
+        padding: 1.8rem;
+    }
+
+    /* Input fields */
+    #loginModal .form-label {
+        color: #dce3ff;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+        text-align: left;
+        display: block;
+    }
+
     #loginModal .form-control {
-        background: #2c3e50; border: none; border-radius: 8px; color: #fff;
-        font-size: 14px; padding: 10px; margin-bottom: 1rem; text-align: left;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 14px;
+        padding: 10px 12px;
+        transition: 0.3s;
     }
     #loginModal .form-control:focus {
-        border: 1px solid #ff9800; box-shadow: 0 0 6px rgba(255,152,0,.5);
+        border-color: #00bcd4;
+        box-shadow: 0 0 8px rgba(0, 188, 212, 0.4);
+        background: rgba(255, 255, 255, 0.1);
     }
-    #loginModal .form-label { font-weight: 500; color: white; display: block; text-align: left; }
+    /* Buttons */
     #loginModal .btn-primary {
-        border-radius: 10px; padding: .5rem 1.2rem; font-weight: 600;
-        background: linear-gradient(135deg,#0d47a1,#1a237e); border: none; transition: .3s;
+        background: linear-gradient(135deg, #2196f3, #1565c0);
+        border: none;
+        border-radius: 10px;
+        padding: 0.5rem 1.3rem;
+        font-weight: 600;
+        transition: 0.3s;
     }
     #loginModal .btn-primary:hover {
-        background: linear-gradient(135deg,#1565c0,#0d47a1); transform: translateY(-2px);
+        background: linear-gradient(135deg, #42a5f5, #0d47a1);
+        transform: translateY(-2px);
     }
-    #loginModal .d-flex { justify-content: center; gap: 1rem; }
-    #loginModal a.text-decoration-none { font-size: .9rem; color: white; transition: color .3s; }
-    #loginModal a.text-decoration-none:hover { color: #ff9800; text-decoration: underline; }
+    /* Register Button */
+    #loginModal .btn-register {
+        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        border: none;
+        border-radius: 10px;
+        padding: 0.5rem 1.3rem;
+        font-weight: 600;
+        color: #fff;
+        transition: 0.3s;
+    }
+    #loginModal .btn-register:hover {
+            background: linear-gradient(135deg, #42a5f5, #0d47a1);
+            transform: translateY(-2px);
+    }
+    /* Forgot password link */
+    #loginModal a.text-decoration-none {
+        font-size: 0.9rem;
+        color: #dce3ff;
+        transition: 0.3s;
+    }
+    #loginModal a.text-decoration-none:hover {
+        color: #00bcd4;
+        text-decoration: underline;
+    }
+    /* Layout for buttons row */
+    #loginModal .d-flex {
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+    }
+    /* Glow effect on hover */
+    #loginModal .btn:hover {
+        box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+    }
+
+    .modal.fade .modal-dialog {
+        transform: translateY(-20px);
+        opacity: 0;
+        transition: all 0.4s ease-out;
+    }
+    .modal.show .modal-dialog {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
 </style>
 
 <!-- JS Login -->
@@ -149,7 +236,7 @@
 <!-- Modal Register -->
 <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content text-light">
             <div class="modal-header">
                 <h5 class="modal-title">Register</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -163,7 +250,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-control" name="email" required>
+                        <input type="email" class="form-control" name="email"  autocomplete="off" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
@@ -184,10 +271,13 @@
 <!-- CSS Register -->
 <style>
     #registerModal .modal-content {
-        border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,.25);
-        border: none; background: rgba(13,71,161,.2);
-        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        background: rgba(17, 34, 64, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
         overflow: hidden;
+        color: #fff;
     }
     #registerModal .modal-header {
         background: linear-gradient(135deg,#0d47a1,#1a237e); color: white; border-bottom: none;
@@ -195,12 +285,19 @@
     }
     #registerModal .modal-title { font-weight: 600; font-size: 1.2rem; }
     #registerModal .modal-header .btn-close { position: absolute; right: 1rem; filter: brightness(0) invert(1); }
-    #registerModal .modal-body { padding: 2rem; background: rgba(255,255,255,.15); border-radius: 0 0 20px 20px; }
+    #registerModal .modal-body { padding: 2rem; background: rgba(17, 34, 64, 0.002); border-radius: 0 0 20px 20px; }
     #registerModal .form-control {
-        background: #2c3e50; border: 1px solid #cfd8dc; border-radius: 12px; color: #fff;
+        color: white;
+        background: rgba(17, 34, 64, 0.85);border-radius: 12px;
         font-size: 14px; padding: .7rem 1rem; transition: all .3s ease;
     }
-    #registerModal .form-control:focus { border-color: #0d47a1; box-shadow: 0 0 8px rgba(13,71,161,.3); }
+    #registerModal .form-control:hover,
+    #registerModal .form-control:focus {
+        border-color: #00bcd4 !important;
+        box-shadow: 0 0 8px rgba(0, 188, 212, 0.3);
+        transition: all 0.3s ease;
+    }
+
     #registerModal .form-label { font-weight: 500; }
     #registerModal .btn-success {
         border-radius: 12px; padding: .6rem 1.5rem; font-weight: 600;
@@ -329,7 +426,7 @@
             </style>
 
             <div th:if="${session.username == null}">
-                <button class="btn btn-login me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                <button class="btn btn-register me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
                 <button class="btn btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
             </div>
 
@@ -617,8 +714,8 @@
 </script>
 
 <!-- Product section-->
-<section class="py-5">
-    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+<section class="py-5" style="background-color: #0f1c2e">
+    <div class="card-footer p-4 pt-0 border-top-0 text-center">
         <div th:if="${session.role == null}"></div>
 
         <form th:if="${session.role == 'USER'}" th:action="@{/buy}" method="post">
@@ -712,7 +809,7 @@
                     </div>
                     <div class="stat-item text-center">
                         <strong>50 Tr+</strong>
-                        <div class="small text-muted">Lượt tải xuống</div>
+                        <div class="small text-muted">Lượt tải</div>
                     </div>
                     <div class="stat-item text-center">
                         <span class="age-box">12+</span>
@@ -830,7 +927,7 @@
 
 <section class="py-5" style="background-color:#0f1c2e;">
     <div class="container px-4 px-lg-5 mt-5">
-        <h2 class="fw-bolder mb-4 text-white">Related products</h2>
+        <h2 class="fw-bolder mb-4 text-white">Related games</h2>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <th:block th:each="game : ${listGame}">
                 <div class="col mb-5">
@@ -846,33 +943,51 @@
                                  th:alt="${game.gameName}" />
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <h5 class="fw-bolder" th:text="${game.getGameName()}"></h5>
+                                    <h5 class="fw-bolder text-light" th:text="${game.getGameName()}"></h5>
                                     <div class="d-flex justify-content-center small text-warning mb-2">
                                         <div class="bi-star-fill"></div>
                                     </div>
-                                    <p th:text="'$' + ${game.price}"></p>
+                                    <p class="text-light" th:text="'$' + ${game.price}"></p>
                                 </div>
-                                <div class="game-stats d-flex align-items-center mb-3">
+                                <div class="game-stats d-flex align-items-center mb-3 text-light">
                                     <div class="stat-item text-center">
                                         <strong>4,5 ★</strong>
-                                        <div class="small text-muted">7,5 Tr đánh giá</div>
+                                        <div class="small text-light">7,5 Tr đánh giá</div>
                                     </div>
                                     <div class="stat-item text-center">
                                         <strong th:text="|${game.getDeceptions()[1]}|"></strong>
-                                        <div class="small text-muted">Dung lượng</div>
+                                        <div class="small text-light">Dung lượng</div>
                                     </div>
                                     <div class="stat-item text-center">
                                         <strong th:text="${game.getDeceptions()[2]}"></strong>
-                                        <div class="small text-muted">Lượt tải xuống</div>
+                                        <div class="small text-light">Lượt tải</div>
                                     </div>
                                     <div class="stat-item text-center">
-                                        <span class="age-box" th:text="${game.getDeceptions()[4]}"></span>
-                                        <div class="small text-muted" th:text="${game.getDeceptions()[4]} + ' tuổi trở lên'"></div>
+                                        <span class="age-box text-light" th:text="${game.getDeceptions()[4]}"></span>
+                                        <div class="small text-light" th:text="${game.getDeceptions()[4]} + ' tuổi trở lên'"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-between"></div>
                         </div>
+                        <style>
+                            .card.h-100 {
+                                background-color: #112240; /* Màu xanh đen hơi sáng hơn nền chính */
+                                border-radius: 16px; /* Bo góc mềm mại */
+                                box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Đổ bóng nhẹ cho nổi lên */
+                                border: 1px solid rgba(255, 255, 255, 0.05); /* Viền mờ tinh tế */
+                                transition: all 0.3s ease; /* Hiệu ứng mượt khi hover */
+                            }
+
+                            /* Hiệu ứng khi di chuột qua khối */
+                            .card.h-100:hover {
+                                transform: translateY(-6px); /* Nổi nhẹ lên */
+                                box-shadow: 0 0 25px rgba(0, 200, 255, 0.25); /* Ánh xanh lam nhẹ */
+                                background-color: #162e4d; /* Tăng sáng nhẹ khi hover */
+                                border-color: rgba(0, 200, 255, 0.2); /* Viền xanh lam ánh sáng */
+                            }
+
+                        </style>
                     </a>
                 </div>
             </th:block>
@@ -976,22 +1091,6 @@
         const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
         registerModal.show();
     });
-</script>
-
-<!-- Buy/Cart alerts -->
-<div th:if="${buyError}" id="buyAlert"
-     style="position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px;
-            border-radius: 8px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,.2);" th:text="${buyError}">
-</div>
-<script>
-    setTimeout(function () {
-        let alertBox = document.getElementById("buyAlert");
-        if (alertBox) {
-            alertBox.style.transition = "opacity .5s ease";
-            alertBox.style.opacity = "0";
-            setTimeout(() => alertBox.remove(), 500);
-        }
-    }, 3000);
 </script>
 
 <div th:if="${cartError}" id="cartAlert"
