@@ -435,6 +435,13 @@ public class HomeController {
     }
 
 
+    @GetMapping("/editprofile")
+    public String editProfile(Model model){
+
+        return "HTML/EditProfile";
+    }
+
+
     @Controller
     public class AuthController {
         @GetMapping("/logout")
