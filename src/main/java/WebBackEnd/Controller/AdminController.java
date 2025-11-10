@@ -57,15 +57,12 @@
         public String editUser(@PathVariable UUID id, Model model) {
             User user = userService.findById(id);
             System.out.println(id);
-
-
             model.addAttribute("user", user);
             model.addAttribute("id", id);
-
             return "ADMIN/EditUser";
         }
 
-        @PostMapping("/welcomeAdmin/edituser/{id}")
+        @PostMapping("/edituser/{id}")
         public String updateUser(@PathVariable UUID id,
                                  @ModelAttribute("user") User form,
                                  RedirectAttributes ra) {
