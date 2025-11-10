@@ -19,6 +19,7 @@
     import org.springframework.web.multipart.MultipartFile;
     import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+    import java.util.List;
     import java.util.Map;
     import java.util.UUID;
 
@@ -97,21 +98,84 @@
             return "ADMIN/EditGame";
         }
 
+        @PostMapping("/game/{id}/set-main")
+        public String setMainGame(@PathVariable UUID id) {
+
+            List<Game> all = gameSevice.findAllGame();
+
+            for (Game g : all) {
+                if (g.getGameId().equals(id)) {
+                    g.setStatus("main");
+                } else {
+                    if (!g.getStatus().equals("DELISTED")) {
+                        g.setStatus("activate");
+                    }
+                }
+                gameSevice.save(g);
+            }
+
+            return "redirect:/welcomeAdmin/listgame";
+        }
+
         @PostMapping("/editgame/{id}")
-        public String updateGame(@PathVariable UUID id, @ModelAttribute Game form, RedirectAttributes ra) {
+        public String updateGame(@PathVariable UUID id,
+                                 @RequestParam String gameName,
+                                 @RequestParam String price,
+                                 @RequestParam String version,
+                                 @RequestParam String category,
+                                 @RequestParam String status,
+                                 @RequestParam(required=false, name="img_video") String imgVideo,
+                                 @RequestParam(required=false, name="img_1") String img1,
+                                 @RequestParam(required=false, name="img_2") String img2,
+                                 @RequestParam(required=false, name="img_3") String img3,
+                                 @RequestParam(required=false, name="img_cover") String imgCover,
+                                 @RequestParam(required=false, name="dec_1") String dec1,
+                                 @RequestParam(required=false, name="dec_2") String dec2,
+                                 @RequestParam(required=false, name="dec_3") String dec3,
+                                 @RequestParam(required=false, name="dec_4") String dec4,
+                                 @RequestParam(required=false, name="dec_5") String dec5,
+                                 RedirectAttributes ra) {
+
             Game g = gameSevice.findById(id);
-            g.setGameName(form.getGameName());
-            g.setPrice(form.getPrice());
-            g.setGame_version(form.getGame_version());
-            g.setStatus(form.getStatus());
-            g.setGameCategory(form.getGameCategory());
-            g.setLocate_game(form.getLocate_game());
-            g.setImageLinks(form.getImageLinks());
-            g.setDeception(form.getDeception());
+
+            g.setGameName(gameName);
+
+            String p = price == null ? "" : price.replace(",", "").trim();
+            if (!p.isEmpty()) g.setPrice(Double.parseDouble(p));
+
+            g.setGame_version(version);
+            g.setStatus(status);
+            g.setGameCategory(category);
+
+            java.util.function.Function<String,String> norm = s -> {
+                if (s == null) return "";
+                String t = s.trim();
+                if (t.startsWith("/")) t = t.substring(1);
+                return t;
+            };
+
+            java.util.List<String> medias = java.util.Arrays.asList(
+                    norm.apply(imgVideo),
+                    norm.apply(img1),
+                    norm.apply(img2),
+                    norm.apply(img3),
+                    norm.apply(imgCover)
+            );
+
+            g.setImageLinks(String.join("||", medias));
+
+            java.util.List<String> parts = new java.util.ArrayList<>();
+            for (String s : new String[]{dec1, dec2, dec3, dec4, dec5})
+                if (s != null && !s.trim().isEmpty()) parts.add(s.trim());
+
+            g.setDeception(String.join("||", parts));
+
             gameSevice.save(g);
             ra.addFlashAttribute("ok", "Saved");
             return "redirect:/welcomeAdmin/editgame/" + id;
         }
+
+
 
 
 

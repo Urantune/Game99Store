@@ -732,7 +732,7 @@
         <div id="lienquan" class="row gx-4 gx-lg-5 align-items-center game-detail">
             <div class="col-md-6">
                 <a href="GameDetail.jsp?id=1" style="text-decoration: none; color: inherit;">
-                    <img class="card-img-top mb-4 game-img" src="img/game1.jpg" alt="Sản phẩm mới"/>
+                    <img class="card-img-top mb-4 game-img" th:src="'/'+${gameMain.getLinkImage()[4]}" alt="Sản phẩm mới"/>
                 </a>
 
                 <div class="media-section d-flex align-items-center mb-3">
@@ -740,7 +740,7 @@
                     <div class="demo-video" data-bs-toggle="modal" data-bs-target="#gameTrailerModal">
                         <div class="video-wrapper">
                             <video class="w-100 rounded shadow" muted>
-                                <source src="videos/lienquan.mp4" type="video/mp4">
+                                <source th:src="'/'+${gameMain.getLinkImage()[0]}" type="video/mp4">
                             </video>
                             <div class="play-button"></div>
                         </div>
@@ -791,9 +791,9 @@
 
             <div class="col-md-6">
                 <div class="small mb-1 text-white">@Tencent Games</div>
-                <h1 class="display-5 fw-bolder game-title text-white" data-bs-toggle="modal" data-bs-target="#gameTrailerModal">Liên Quân Mobile</h1>
+                <h1 class="display-5 fw-bolder game-title text-white" data-bs-toggle="modal" data-bs-target="#gameTrailerModal" th:text="${gameMain.gameName}"></h1>
                 <div class="fs-5 mb-5 text-white">
-                    <span class="text-decoration-line-through">$999.00</span>
+                    <span class="text-decoration-line-through" th:text="${gameMain.price}"></span>
                     <span>$999.00</span>
                 </div>
                 <p class="lead text-white" th:text="${gameMain.getDeceptions()[0]}"></p>
@@ -804,16 +804,16 @@
                         <div class="small text-muted">6,5 Tr đánh giá</div>
                     </div>
                     <div class="stat-item text-center">
-                        <strong>2.5 GB</strong>
+                        <strong th:text="${gameMain.getDeceptions()[1]}"></strong>
                         <div class="small text-muted">Dung lượng</div>
                     </div>
                     <div class="stat-item text-center">
-                        <strong>50 Tr+</strong>
+                        <strong th:text="${gameMain.getDeceptions()[2]}"></strong>
                         <div class="small text-muted">Lượt tải</div>
                     </div>
                     <div class="stat-item text-center">
-                        <span class="age-box">12+</span>
-                        <div class="small text-muted">12 tuổi trở lên</div>
+                        <span class="age-box" th:text="${gameMain.getDeceptions()[4]}"></span>
+                        <div class="small text-muted" th:text="${#strings.replace(gameMain.getDeceptions()[4], '+', '')+' tuổi trở lên'}"></div>
                     </div>
                 </div>
 

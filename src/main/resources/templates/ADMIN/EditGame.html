@@ -72,8 +72,9 @@
         </div>
     </div>
 
-    <form th:action="@{/welcomeAdmin/savegame}" method="post" class="cardx mb-4">
+    <form th:action="@{/welcomeAdmin/editgame/{id}(id=${game.gameId})}" method="post" class="cardx mb-4">
         <input type="hidden" name="id" th:value="${game != null ? game.gameId : null}"/>
+        <input type="hidden" name="locate_game" th:value="${game!=null?game.locate_game:''}"/>
 
         <div class="row g-3">
             <div class="col-md-6">
