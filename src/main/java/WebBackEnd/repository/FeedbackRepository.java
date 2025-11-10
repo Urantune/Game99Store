@@ -8,6 +8,5 @@ import java.util.*;
 
 @Repository
 public interface FeedbackRepository extends CrudRepository<Feedback, UUID> {
-
         List<Feedback> findByGameId(UUID gameId);
 }
