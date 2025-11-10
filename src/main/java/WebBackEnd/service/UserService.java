@@ -56,4 +56,8 @@ public class UserService {
     public User findUserByStatus(String status) {
         return userRepository.findByStatus(status);
     }
+
+    public User getUserById(UUID id){
+        return userRepository.findUserById(id);
+    }
 }
