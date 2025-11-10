@@ -1,11 +1,8 @@
 package WebBackEnd.Controller;
 
+import WebBackEnd.Entity.*;
 import WebBackEnd.SucDat.GameCore;
 import WebBackEnd.SucDat.SendMailTest;
-import WebBackEnd.Entity.Feedback;
-import WebBackEnd.Entity.Game;
-import WebBackEnd.Entity.User;
-import WebBackEnd.Entity.UserGame;
 import WebBackEnd.repository.UserGameRepository;
 import WebBackEnd.repository.UserRepository;
 import WebBackEnd.service.*;
@@ -45,6 +42,8 @@ public class HomeController {
     private GameCore gameCore;
     @Autowired
     private UserGameRepository userGameRepository;
+    @Autowired
+    private EventService eventService;
     @Autowired
     private WebBackEnd.Service.UserTransactionService transactionService;
     /// csxa
@@ -370,6 +369,11 @@ public class HomeController {
 
     @GetMapping("/Newgame")
     public String newgame(Model model) {
+        model.addAttribute("gameCore", gameCore);
+        model.addAttribute("eventMain", eventService.findEventByType("event_main"));
+        model.addAttribute("eventNext", eventService.findEventByType("event_next"));
+        model.addAttribute("events", eventService.findEventsByType("event_small"));
+
         return "HTML/NewGame";
     }
 

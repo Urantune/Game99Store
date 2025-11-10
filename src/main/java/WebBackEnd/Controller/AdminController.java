@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Controller
-@RequestMapping(value = "/welcomeAdmin") // GIỮ NGUYÊN
+@RequestMapping(value = "/welcomeAdmin")
 public class AdminController {
 
     @Autowired private AdminSevice adminSevice;
@@ -63,7 +63,7 @@ public class AdminController {
     public String editGame(@PathVariable("id") UUID id,
                            @ModelAttribute Game game,
                            Model model) {
-        game.setGameId(id); // ĐỔI TÊN setter NẾU ENTITY KHÁC (vd setId)
+        game.setGameId(id);
         gameSevice.saveGame(game);
         return "redirect:/welcomeAdmin/editgame";
     }

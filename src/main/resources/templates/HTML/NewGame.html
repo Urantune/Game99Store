@@ -235,7 +235,7 @@
 <main class="flex-shrink-0">
     <!-- ===== HERO (video) ===== -->
     <header class="hero-section" style="position:relative;height:70vh;display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden">
-        <video autoplay loop muted playsinline id="bg-video" th:src="@{/videos/Nghichthuyhan.mp4}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-1"></video>
+        <video autoplay loop muted playsinline id="bg-video" th:src="'/'+${eventMain.getImageLinks()}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-1"></video>
         <button id="mute-btn" style="position:absolute;bottom:20px;right:20px;z-index:10;background:rgba(0,0,0,.5);color:#fff;border:none;padding:10px 15px;border-radius:50%;cursor:pointer;font-size:18px">🔇</button>
         <div class="overlay" style="position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:-1"></div>
 
@@ -243,12 +243,8 @@
             <div class="row gx-5 align-items-center justify-content-center">
                 <div class="col-lg-8 col-xl-7 col-xxl-6">
                     <div class="my-5 text-center text-xl-start text-white">
-                        <h1 class="display-5 fw-bolder mb-2">Nghịch Thuỷ Hàn</h1>
-                        <p class="lead fw-normal text-white-50 mb-4">
-                            Nghịch Thủy Hàn là một tựa game nhập vai kiếm hiệp hấp dẫn, lấy bối cảnh giang hồ rộng
-                            lớn với đồ họa 3D tinh xảo và lối chơi chân thực. Người chơi hóa thân thành các hiệp khách,
-                            tu luyện võ công, phiêu bạt giang hồ và tham gia những trận chiến kịch tính.
-                            Game mang đến cảm giác tự do, lãng mạn và đầy thử thách trong thế giới võ lâm huyền ảo.
+                        <h1 class="display-5 fw-bolder mb-2" th:text="${gameCore.deceptionGame(eventMain.getInfo())[0]}">Nghịch Thuỷ Hàn</h1>
+                        <p class="lead fw-normal text-white-50 mb-4" th:text="${gameCore.deceptionGame(eventMain.getInfo())[1]}">
                         </p>
                         <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start"></div>
                     </div>
@@ -270,9 +266,9 @@
             <div class="row gx-5 align-items-center">
                 <!-- Trái -->
                 <div class="col-lg-6 mb-5 mb-lg-0 text-center">
-                    <h2 class="fw-bolder mb-4 text-white">Nghịch Thủy Hàn – Siêu phẩm kiếm hiệp 3D sắp ra mắt!</h2>
+                    <h2 class="fw-bolder mb-4 text-white" th:text="${gameCore.deceptionGame(eventNext.getInfo())[0]}"></h2>
 
-                    <img class="img-fluid rounded-4 shadow-lg mb-4" th:src="@{/img/newgame.jpg}" alt="Nghịch Thủy Hàn"
+                    <img class="img-fluid rounded-4 shadow-lg mb-4" th:src="'/'+${eventNext.getImageLinks()}" alt="#"
                          style="max-height:380px;object-fit:cover;opacity:.9"/>
 
                     <div class="d-flex justify-content-center gap-3">
@@ -294,23 +290,23 @@
                     <div class="row gx-4 gy-4 row-cols-1 row-cols-md-2">
                         <div class="col h-100">
                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-controller"></i></div>
-                            <h2 class="h5 text-white">Đồ họa 3D tuyệt đẹp</h2>
-                            <p class="mb-0 text-white-50">Thế giới giang hồ được tái hiện sống động...</p>
+                            <h2 class="h5 text-white" th:text="${gameCore.deceptionGame(eventNext.getInfo())[0]}"></h2>
+                            <p class="mb-0 text-white-50" th:text="${gameCore.deceptionGame(eventNext.getInfo())[1]}"></p>
                         </div>
                         <div class="col h-100">
                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-swords"></i></div>
-                            <h2 class="h5 text-white">Chiến đấu kịch tính</h2>
-                            <p class="mb-0 text-white-50">Hệ thống kỹ năng đa dạng...</p>
+                            <h2 class="h5 text-white" th:text="${gameCore.deceptionGame(eventNext.getInfo())[2]}"></h2>
+                            <p class="mb-0 text-white-50" th:text="${gameCore.deceptionGame(eventNext.getInfo())[3]}"></p>
                         </div>
                         <div class="col h-100">
                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-people"></i></div>
-                            <h2 class="h5 text-white">Tương tác cộng đồng</h2>
-                            <p class="mb-0 text-white-50">Kết giao bằng hữu, lập bang hội...</p>
+                            <h2 class="h5 text-white" th:text="${gameCore.deceptionGame(eventNext.getInfo())[4]}"></h2>
+                            <p class="mb-0 text-white-50" th:text="${gameCore.deceptionGame(eventNext.getInfo())[5]}"></p>
                         </div>
                         <div class="col h-100">
                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-calendar-event"></i></div>
-                            <h2 class="h5 text-white">Sắp ra mắt!</h2>
-                            <p class="mb-0 text-white-50">Dự kiến phát hành vào đầu năm 2026...</p>
+                            <h2 class="h5 text-white" th:text="${gameCore.deceptionGame(eventNext.getInfo())[6]}"></h2>
+                            <p class="mb-0 text-white-50" th:text="${gameCore.deceptionGame(eventNext.getInfo())[7]}"></p>
                         </div>
                     </div>
                 </div>
@@ -381,19 +377,16 @@
                     <!-- Game 1 -->
                     <div class="col-md-4">
                         <div class="card game-card h-100">
-                            <img src="/img/newgame1.jpg" class="card-img-top" alt="IRONBLOOD SAGA">
+                            <img th:src="'/' + ${events.get(0).getImageLinks()}" class="card-img-top" alt="IRONBLOOD SAGA">
                             <div class="card-body d-flex flex-column">
                                 <span class="badge bg-purple mb-2">Sắp phát hành</span>
-                                <h5 class="card-title">IRONBLOOD SAGA</h5>
-                                <p class="card-text flex-grow-1">
-                                    Ironblood Saga là game nhập vai kết hợp hành động và chiến thuật, đưa người chơi vào những
-                                    trận chiến khốc liệt giữa quân đoàn sắt máu và thế lực hắc ám. Với bối cảnh sử thi
-                                    và lối chơi đa dạng, game hứa hẹn mang đến trải nghiệm chinh phục đỉnh cao chiến trường.
+                                <h5 class="card-title" th:text="${gameCore.deceptionGame(events.get(0).getInfo())[0]}"></h5>
+                                <p class="card-text flex-grow-1" th:text="${gameCore.deceptionGame(events.get(0).getInfo())[1]}">
                                 </p>
                                 <button class="btn btn-lg px-4 text-white register-btn-transparent">
                                     Đăng ký
                                 </button>
-                                <p class="text-muted mt-2">Dự kiến phát hành 01-04-2026</p>
+                                <p class="text-muted mt-2" th:text="${gameCore.deceptionGame(events.get(0).getInfo())[2]}"></p>
                             </div>
                         </div>
                     </div>
@@ -401,19 +394,16 @@
                     <!-- Game 2 -->
                     <div class="col-md-4">
                         <div class="card game-card h-100">
-                            <img src="/img/newgame2.jpg" class="card-img-top" alt="LUMINA CITY">
+                            <img th:src="'/'+${events.get(1).getImageLinks()}" class="card-img-top" alt="LUMINA CITY">
                             <div class="card-body d-flex flex-column">
                                 <span class="badge bg-purple mb-2">Sắp phát hành</span>
-                                <h5 class="card-title">LUMINA CITY</h5>
-                                <p class="card-text flex-grow-1">
-                                    Lumina City là tựa game xây dựng và mô phỏng, nơi bạn kiến tạo thành phố tương lai theo phong cách utopia
-                                    rực rỡ. Người chơi sẽ quản lý tài nguyên, phát triển công nghệ và định hình một đô thị hiện đại,
-                                    đầy sáng tạo.
+                                <h5 class="card-title" th:text="${gameCore.deceptionGame(events.get(1).getInfo())[0]}"></h5>
+                                <p class="card-text flex-grow-1" th:text="${gameCore.deceptionGame(events.get(1).getInfo())[1]}">
                                 </p>
                                 <button class="btn btn-lg px-4 text-white register-btn-transparent">
                                     Đăng ký
                                 </button>
-                                <p class="text-muted mt-2">Dự kiến phát hành 11-03-2026</p>
+                                <p class="text-muted mt-2"th:text="${gameCore.deceptionGame(events.get(1).getInfo())[2]}"></p>
                             </div>
                         </div>
                     </div>
@@ -421,19 +411,16 @@
                     <!-- Game 3 -->
                     <div class="col-md-4">
                         <div class="card game-card h-100">
-                            <img src="/img/newgame3.jpg" class="card-img-top" alt="ATHENA’S CRYPT">
+                            <img th:src="'/'+${events.get(2).getImageLinks()}" class="card-img-top" alt="ATHENA’S CRYPT">
                             <div class="card-body d-flex flex-column">
                                 <span class="badge bg-purple mb-2">Sắp phát hành</span>
-                                <h5 class="card-title">ATHENA’S CRYPT</h5>
-                                <p class="card-text flex-grow-1">
-                                    Athena’s Crypt đưa người chơi bước vào hành trình khám phá huyền bí trong hầm mộ cổ của nữ thần trí tuệ. Với
-                                    những câu đố thông minh, không khí thần thoại và trải nghiệm phiêu lưu kịch tính, game mở ra thế giới
-                                    kỳ bí chờ đợi bạn chinh phục.
+                                <h5 class="card-title"th:text="${gameCore.deceptionGame(events.get(2).getInfo())[0]}"></h5>
+                                <p class="card-text flex-grow-1" th:text="${gameCore.deceptionGame(events.get(2).getInfo())[1]}">
                                 </p>
                                 <button class="btn btn-lg px-4 text-white register-btn-transparent">
                                     Đăng ký
                                 </button>
-                                <p class="text-muted mt-2">Dự kiến phát hành 12-12-2026</p>
+                                <p class="text-muted mt-2" th:text="${gameCore.deceptionGame(events.get(2).getInfo())[2]}"></p>
                             </div>
                         </div>
                     </div>
