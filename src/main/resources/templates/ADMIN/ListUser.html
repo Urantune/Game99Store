@@ -5,73 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Game-Store | Admin - List User</title>
 
-
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
-
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
-
-
     <link th:href="@{/assets/css/styles1.css}" rel="stylesheet"/>
 
     <style>
-        :root {
-            --bg-dark: #0f1c2e;
-            --card-bg: #16273f;
-            --text-soft: #b0bec5;
-            --accent: #4f9eff;
-        }
-        html, body { height: 100%; background-color: var(--bg-dark); }
-        .page-title { color: #fff; text-shadow: 0 0 10px rgba(79,158,255,.35); }
-        .search-wrap {
-            background: linear-gradient(135deg, #0b1b2f, #122544); border: 1px solid #1e3a8a;
-            border-radius: 14px; padding: 14px;
-        }
-        .search-wrap .form-control {
-            background: #1b2c45; border: 1px solid rgba(255,255,255,.08); color: #fff;
-        }
-        .search-wrap .form-control::placeholder { color: #98a6ad; }
-        .result-count { color: var(--text-soft); }
-
-
-        .user-row {
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,.08);
-            border-radius: 14px;
-            color: #e7eef6;
-            transition: transform .15s ease, box-shadow .15s ease, border-color .2s ease;
-        }
-        .user-row:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 24px rgba(0,0,0,.35);
-            border-color: rgba(79,158,255,.35);
-        }
-        .user-avatar {
-            width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,.15);
-        }
-        .user-name { font-weight: 700; color: #fff; }
-        .user-meta { color: var(--text-soft); font-size: .925rem; }
-        .badge-soft {
-            background: rgba(79,158,255,.12); color: var(--accent); border: 1px solid rgba(79,158,255,.35);
-        }
-        .row-actions .btn {
-            border-radius: 10px;
-        }
-        .collapse-inner {
-            background: #102037; border-top: 1px dashed rgba(255,255,255,.14);
-            border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;
-        }
-        .label-soft { color: var(--text-soft); }
-
-        .btn-edit {
-            background: linear-gradient(90deg, #0ea5e9, #3b82f6); color: #fff; border: none;
-        }
-        .btn-infox {
-            background: linear-gradient(90deg, #f59e0b, #f97316); color: #fff; border: none;
-        }
+        :root { --bg-dark:#0f1c2e; --card-bg:#16273f; --text-soft:#b0bec5; --accent:#4f9eff; }
+        html,body{height:100%;background-color:var(--bg-dark)}
+        .page-title{color:#fff;text-shadow:0 0 10px rgba(79,158,255,.35)}
+        .search-wrap{background:linear-gradient(135deg,#0b1b2f,#122544);border:1px solid #1e3a8a;border-radius:14px;padding:14px}
+        .search-wrap .form-control{background:#1b2c45;border:1px solid rgba(255,255,255,.08);color:#fff}
+        .search-wrap .form-control::placeholder{color:#98a6ad}
+        .result-count{color:var(--text-soft)}
+        .user-row{background:var(--card-bg);border:1px solid rgba(255,255,255,.08);border-radius:14px;color:#e7eef6;transition:transform .15s ease,box-shadow .15s ease,border-color .2s ease}
+        .user-row:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.35);border-color:rgba(79,158,255,.35)}
+        .user-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.15)}
+        .user-name{font-weight:700;color:#fff}
+        .user-meta{color:var(--text-soft);font-size:.925rem}
+        .badge-soft{background:rgba(79,158,255,.12);color:var(--accent);border:1px solid rgba(79,158,255,.35)}
+        .row-actions .btn{border-radius:10px}
+        .collapse-inner{background:#102037;border-top:1px dashed rgba(255,255,255,.14);border-bottom-left-radius:14px;border-bottom-right-radius:14px}
+        .label-soft{color:var(--text-soft)}
+        .btn-edit{background:linear-gradient(90deg,#0ea5e9,#3b82f6);color:#fff;border:none}
+        .btn-infox{background:linear-gradient(90deg,#f59e0b,#f97316);color:#fff;border:none}
     </style>
 </head>
 <body>
@@ -84,22 +41,15 @@
         </a>
     </div>
 
-
     <div class="search-wrap mb-3">
         <div class="row g-2 align-items-center">
             <div class="col-12 col-md-6">
                 <div class="input-group">
-                    <span class="input-group-text bg-transparent border-secondary text-white-50"><i class="bi bi-search"></i></span>
-                    <input id="searchInput" type="text" class="form-control" placeholder="Tìm theo tên, email, số điện thoại...">
+                    <span class="input-group-text bg-transparent border-secondary text-white-50">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input id="searchInput" type="text" class="form-control" placeholder="Tìm theo username, email...">
                 </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <select id="roleFilter" class="form-select">
-                    <option value="">— Tất cả vai trò —</option>
-                    <option value="ADMIN">ADMIN</option>
-                    <option value="USER">USER</option>
-                    <option value="MOD">MOD</option>
-                </select>
             </div>
             <div class="col-6 col-md-3">
                 <select id="statusFilter" class="form-select">
@@ -107,21 +57,136 @@
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="LOCKED">LOCKED</option>
                     <option value="PENDING">PENDING</option>
+                    <option value="WAIT">WAIT</option>
+                    <option value="wait">wait</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <select id="roleFilter" class="form-select" disabled>
+                    <option value="">— Vai trò —</option>
                 </select>
             </div>
         </div>
         <div class="mt-2 d-flex justify-content-between align-items-center">
-            <small class="result-count" id="resultCount">Đang tải...</small>
+            <small class="result-count" id="resultCount"
+                   th:text="'Tổng: ' + ${#lists.size(listUser)} + ' người dùng'">Đang tải...</small>
             <div class="d-flex gap-2">
                 <button id="btnClear" class="btn btn-sm btn-outline-light"><i class="bi bi-x-circle"></i> Xóa lọc</button>
-                <button id="btnReload" class="btn btn-sm btn-outline-info"><i class="bi bi-arrow-clockwise"></i> Tải lại</button>
+                <button id="btnReload" class="btn btn-sm btn-outline-info" onclick="location.reload()">
+                    <i class="bi bi-arrow-clockwise"></i> Tải lại
+                </button>
             </div>
         </div>
     </div>
 
+    <div id="userList" class="vstack gap-3">
+        <!-- ROW: render từng user -->
+        <div class="user-row"
+             th:each="u, iStat : ${listUser}"
+             th:with="created=${u.dateCreateAccount}"
+             th:attr="data-username=${u.username},
+                      data-email=${u.email},
+                      data-status=${u.status}">
+            <div class="p-3">
+                <div class="d-flex align-items-center gap-3">
+                    <img class="user-avatar"
+                         th:src="${u.imageLinks != null && !#strings.isEmpty(u.imageLinks)} ? ${u.imageLinks} : '/img/a.png'"
+                         src="/img/a.png" alt="avatar">
 
-    <div id="userList" class="vstack gap-3"></div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="user-name" th:text="${u.username}">username</span>
 
+                            <span class="badge badge-soft rounded-pill small"
+                                  th:text="${u.status != null ? u.status : 'UNKNOWN'}">STATUS</span>
+
+                            <span class="badge rounded-pill small"
+                                  th:classappend="${u.status} == 'ACTIVE' ? ' bg-success' :
+                                                  (${u.status} == 'LOCKED' ? ' bg-danger' :
+                                                  (${u.status} == 'PENDING' ? ' bg-warning text-dark' : ' bg-secondary'))"
+                                  th:text="${u.status != null ? u.status : 'UNKNOWN'}">STATUS</span>
+                        </div>
+
+                        <div class="user-meta mt-1">
+                            <span class="me-3">
+                                <i class="bi bi-envelope me-1"></i>
+                                <span th:text="${u.email}">email@example.com</span>
+                            </span>
+                            <span class="me-3">
+                                <i class="bi bi-coin me-1"></i>
+                                Score: <span th:text="${u.score}">0</span>
+                            </span>
+                            <span class="me-3">
+                                <i class="bi bi-cash-coin me-1"></i>
+                                Price: <span th:text="${#numbers.formatDecimal(u.price,1,0)}">0</span>
+                            </span>
+                            <span>
+                                <i class="bi bi-clock me-1"></i>
+                                ĐK:
+                                <span th:text="${created != null ? #temporals.format(created, 'yyyy-MM-dd HH:mm') : '—'}">—</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row-actions d-flex gap-2">
+                        <a class="btn btn-edit btn-sm"
+                           th:href="@{/welcomeAdmin/edituser/{id}(id=${u.id})}" href="#"
+                           target="_self">
+                            <i class="bi bi-pencil-square me-1"></i> Edit
+                        </a>
+                        <button class="btn btn-infox btn-sm btn-toggle" type="button"
+                                data-bs-toggle="collapse" th:attr="data-bs-target='#c_'+${iStat.index}"
+                                th:attrappend=" aria-controls='c_'+${iStat.index}">
+                            <i class="bi bi-info-circle me-1"></i> Xem info
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse collapse-inner" th:id="'c_'+${iStat.index}">
+                <div class="p-3">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="label-soft">User ID</div>
+                            <div class="fw-semibold text-white small" th:text="${u.id}">uuid</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">Username</div>
+                            <div class="fw-semibold text-white small" th:text="${u.username}">username</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">Email</div>
+                            <div class="fw-semibold text-white small" th:text="${u.email}">email</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">Trạng thái</div>
+                            <div class="fw-semibold text-white small" th:text="${u.status}">status</div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="label-soft">Score</div>
+                            <div class="fw-semibold text-white small" th:text="${u.score}">0</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">Price</div>
+                            <div class="fw-semibold text-white small" th:text="${#numbers.formatDecimal(u.price,1,0)}">0</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="label-soft">Avatar Link</div>
+                            <div class="text-white-50 small text-truncate" th:text="${u.imageLinks}">/img/default-avatar.png</div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="label-soft">Ngày tạo</div>
+                            <div class="text-white-50 small"
+                                 th:text="${u.dateCreateAccount != null ? #temporals.format(u.dateCreateAccount, 'yyyy-MM-dd HH:mm:ss') : '—'}">—</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /user-row -->
+    </div><!-- /#userList -->
 
     <nav class="mt-4 d-none" id="pagerNav">
         <ul class="pagination justify-content-center">
@@ -134,231 +199,41 @@
     </nav>
 </div>
 
-
-<template id="userRowTpl">
-    <div class="user-row">
-        <div class="p-3">
-            <div class="d-flex align-items-center gap-3">
-                <img class="user-avatar" src="" alt="avatar">
-                <div class="flex-grow-1">
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                        <span class="user-name"></span>
-                        <span class="badge badge-soft rounded-pill small role-badge"></span>
-                        <span class="badge rounded-pill small status-badge"></span>
-                    </div>
-                    <div class="user-meta mt-1">
-                        <span class="me-3"><i class="bi bi-envelope me-1"></i><span class="meta-email"></span></span>
-                        <span class="me-3"><i class="bi bi-telephone me-1"></i><span class="meta-phone"></span></span>
-                        <span class=""><i class="bi bi-clock me-1"></i>ĐK: <span class="meta-created"></span></span>
-                    </div>
-                </div>
-                <div class="row-actions d-flex gap-2">
-                    <a class="btn btn-edit btn-sm" th:href="@{/welcomeAdmin/edituser/{id}(id = ${id})} "target="_self">
-                        <i class="bi bi-pencil-square me-1"></i> Edit
-                    </a>
-                    <button class="btn btn-infox btn-sm btn-toggle" type="button" data-bs-toggle="collapse" aria-expanded="false">
-                        <i class="bi bi-info-circle me-1"></i> Xem info
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="collapse collapse-inner">
-            <div class="p-3">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <div class="label-soft">User ID</div>
-                        <div class="fw-semibold text-white small meta-id"></div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="label-soft">Username</div>
-                        <div class="fw-semibold text-white small meta-username"></div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="label-soft">Ngày sinh</div>
-                        <div class="fw-semibold text-white small meta-dob"></div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="label-soft">Địa chỉ</div>
-                        <div class="fw-semibold text-white small meta-address"></div>
-                    </div>
-                    <div class="col-12">
-                        <div class="label-soft">Ghi chú</div>
-                        <div class="text-white-50 small meta-notes"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-
-    const MOCK_USERS = [
-        {
-            id: "4f8b3e2a-1c7a-4426-ae4b-1e0f9d123001",
-            username: "alice",
-            fullName: "Alice Nguyen",
-            email: "alice@example.com",
-            phone: "0901 234 567",
-            role: "ADMIN",
-            status: "ACTIVE",
-            createdAt: "2025-02-16",
-            dob: "2000-05-12",
-            address: "Q.1, TP.HCM",
-            notes: "Quản trị hệ thống. Quyền full.",
-            avatar: "/img/demo1.jpg"
-        },
-        {
-            id: "4f8b3e2a-1c7a-4426-ae4b-1e0f9d123002",
-            username: "bob",
-            fullName: "Bob Tran",
-            email: "bob.tran@example.com",
-            phone: "0902 888 999",
-            role: "USER",
-            status: "LOCKED",
-            createdAt: "2024-12-03",
-            dob: "1999-11-02",
-            address: "Đà Nẵng",
-            notes: "Bị khóa do vi phạm chính sách.",
-            avatar: "/img/demo1.jpg"
-        },
-        {
-            id: "4f8b3e2a-1c7a-4426-ae4b-1e0f9d123003",
-            username: "carol",
-            fullName: "Carol Pham",
-            email: "carol.pham@example.com",
-            phone: "0912 333 222",
-            role: "MOD",
-            status: "ACTIVE",
-            createdAt: "2025-05-27",
-            dob: "2001-03-24",
-            address: "Bình Thạnh, HCM",
-            notes: "Moderator nội dung & sự kiện.",
-            avatar: "/img/demo1.jpg"
-        },
-        {
-            id: "4f8b3e2a-1c7a-4426-ae4b-1e0f9d123004",
-            username: "david",
-            fullName: "David Le",
-            email: "david.le@example.com",
-            phone: "0987 654 321",
-            role: "USER",
-            status: "PENDING",
-            createdAt: "2025-09-13",
-            dob: "1997-08-09",
-            address: "Hà Nội",
-            notes: "Chờ xác minh email.",
-            avatar: "/img/demo1.jpg"
-        }
-    ];
-
-
-    const EDIT_LINK_TEMPLATE = '/welcomeAdmin/edituser?id={{id}}';
-
-    const listEl = document.getElementById('userList');
-    const rowTpl = document.getElementById('userRowTpl');
-
-    function statusBadgeClass(status) {
-        switch ((status || '').toUpperCase()) {
-            case 'ACTIVE': return 'bg-success';
-            case 'LOCKED': return 'bg-danger';
-            case 'PENDING': return 'bg-warning text-dark';
-            default: return 'bg-secondary';
-        }
-    }
-
-    function renderUsers(users) {
-        listEl.innerHTML = '';
-        users.forEach((u, idx) => {
-            const node = rowTpl.content.cloneNode(true);
-            const root = node.firstElementChild;
-
-
-            root.querySelector('.user-avatar').src = u.avatar || '/img/demo1.jpg';
-            root.querySelector('.user-name').textContent = u.fullName || u.username || 'N/A';
-            root.querySelector('.meta-email').textContent = u.email || '';
-            root.querySelector('.meta-phone').textContent = u.phone || '';
-            root.querySelector('.meta-created').textContent = u.createdAt || '';
-
-            const roleBadge = root.querySelector('.role-badge');
-            roleBadge.textContent = (u.role || 'USER');
-            const statusB = root.querySelector('.status-badge');
-            statusB.textContent = (u.status || 'UNKNOWN');
-            statusB.classList.add(statusBadgeClass(u.status));
-
-            const editLink = EDIT_LINK_TEMPLATE.replace('{{id}}', u.id);
-            const editBtn = root.querySelector('.btn-edit');
-            editBtn.href = editLink;
-
-
-            const collapseEl = root.querySelector('.collapse-inner');
-            const collapseId = `collapse_user_${idx}`;
-            collapseEl.id = collapseId;
-            const toggleBtn = root.querySelector('.btn-toggle');
-            toggleBtn.setAttribute('data-bs-target', `#${collapseId}`);
-            toggleBtn.setAttribute('aria-controls', collapseId);
-
-
-            root.querySelector('.meta-id').textContent = u.id || '';
-            root.querySelector('.meta-username').textContent = u.username || '';
-            root.querySelector('.meta-dob').textContent = u.dob || '';
-            root.querySelector('.meta-address').textContent = u.address || '';
-            root.querySelector('.meta-notes').textContent = u.notes || '';
-
-            listEl.appendChild(node);
-        });
-
-        document.getElementById('resultCount').textContent =
-            `Tổng: ${users.length} người dùng`;
-    }
-
-
     const searchInput = document.getElementById('searchInput');
-    const roleFilter = document.getElementById('roleFilter');
     const statusFilter = document.getElementById('statusFilter');
     const btnClear = document.getElementById('btnClear');
-    const btnReload = document.getElementById('btnReload');
 
-    function normalize(v) { return (v || '').toString().toLowerCase().trim(); }
+    function normalize(v){ return (v||'').toString().toLowerCase().trim(); }
 
-    function applyFilter() {
+    function applyFilter(){
         const q = normalize(searchInput.value);
-        const role = roleFilter.value;
-        const stt = statusFilter.value;
+        const st = normalize(statusFilter.value);
 
-        const filtered = MOCK_USERS.filter(u => {
-            const matchesQ =
-                !q ||
-                normalize(u.fullName).includes(q) ||
-                normalize(u.username).includes(q) ||
-                normalize(u.email).includes(q) ||
-                normalize(u.phone).includes(q);
-            const matchesRole = !role || (u.role || '').toUpperCase() === role.toUpperCase();
-            const matchesStt = !stt || (u.status || '').toUpperCase() === stt.toUpperCase();
-            return matchesQ && matchesRole && matchesStt;
+        const rows = document.querySelectorAll('.user-row');
+        let visible = 0;
+
+        rows.forEach(row => {
+            const username = normalize(row.getAttribute('data-username'));
+            const email = normalize(row.getAttribute('data-email'));
+            const status = normalize(row.getAttribute('data-status'));
+            const matchesQ = !q || username.includes(q) || email.includes(q);
+            const matchesStatus = !st || status === st;
+            const show = matchesQ && matchesStatus;
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
         });
 
-        renderUsers(filtered);
+        const rc = document.getElementById('resultCount');
+        if (rc) rc.textContent = 'Tổng: ' + visible + ' người dùng';
     }
 
     searchInput.addEventListener('input', applyFilter);
-    roleFilter.addEventListener('change', applyFilter);
     statusFilter.addEventListener('change', applyFilter);
-    btnClear.addEventListener('click', () => {
-        searchInput.value = ''; roleFilter.value = ''; statusFilter.value = '';
-        applyFilter();
-    });
-    btnReload.addEventListener('click', () => {
+    btnClear.addEventListener('click', () => { searchInput.value=''; statusFilter.value=''; applyFilter(); });
 
-        applyFilter();
-    });
-
-
-    renderUsers(MOCK_USERS);
-
+    applyFilter();
 </script>
 
 </body>

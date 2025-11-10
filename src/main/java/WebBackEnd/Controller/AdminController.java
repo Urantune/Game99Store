@@ -11,11 +11,13 @@
     import jakarta.servlet.http.HttpSession;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.http.ResponseEntity;
+    import org.springframework.security.crypto.password.PasswordEncoder;
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.Model;
     import org.springframework.util.StringUtils;
     import org.springframework.web.bind.annotation.*;
     import org.springframework.web.multipart.MultipartFile;
+    import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
     import java.util.Map;
     import java.util.UUID;
@@ -34,6 +36,8 @@
         private GameCore gameCore;
         @Autowired
         private EventService eventService;
+        @Autowired
+        private PasswordEncoder passwordEncoder;
 
 
         @GetMapping({"", "/"})
@@ -49,15 +53,32 @@
         }
 
 
-        @PostMapping("/edituser/{id}")
-        public String editUser(@PathVariable("id") UUID id,
-                               @ModelAttribute User user,
-                               Model model) {
+        @GetMapping("/edituser/{id}")
+        public String editUser(@PathVariable UUID id, Model model) {
+            User user = userService.findById(id);
+            System.out.println(id);
 
-            user.setId(id);
-            userService.save(user);
+
+            model.addAttribute("user", user);
+            model.addAttribute("id", id);
+
             return "ADMIN/EditUser";
         }
+
+        @PostMapping("/welcomeAdmin/edituser/{id}")
+        public String updateUser(@PathVariable UUID id,
+                                 @ModelAttribute("user") User form,
+                                 RedirectAttributes ra) {
+            User u = userService.findById(id);
+            u.setUsername(form.getUsername());
+            u.setEmail(form.getEmail());
+            userService.save(u);
+            ra.addFlashAttribute("ok", "Đã lưu thay đổi");
+            return "redirect:/welcomeAdmin/edituser/" + id;
+        }
+
+
+
 
 
         @GetMapping("/dunglai")
@@ -108,15 +129,19 @@
                                        HttpSession session) {
 
             var admin = adminSevice.findByUsername(username);
-            if (admin == null)
-                return ResponseEntity.badRequest().body(Map.of("error","Tài khoản không tồn tại!"));
-            if (!password.equals(admin.getPassword()))
-                return ResponseEntity.badRequest().body(Map.of("error","Sai mật khẩu!"));
+            if (admin == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản không tồn tại!"));
+            }
+            if (!passwordEncoder.matches(password, admin.getPassword())) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Sai mật khẩu!"));
+            }
 
             session.setAttribute("id", admin.getAdmin_id());
             session.setAttribute("username", admin.getAdminName());
             return ResponseEntity.ok(Map.of("success", true));
         }
+
+
 
 
         @PostMapping("/events/save")
