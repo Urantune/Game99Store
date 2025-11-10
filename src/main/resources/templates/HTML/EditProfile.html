@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile User</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #08121f;
+            color: #fff;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+        }
+
+        .form-control {
+            background: #152337;
+            border: none;
+            color: #fff;
+        }
+
+        .form-control:focus {
+            background: #1b324d;
+            border: 1px solid #4da3ff;
+            color: #fff;
+        }
+
+        .modal-content {
+            background: rgba(25, 42, 70, 0.8);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .btn-outline-secondary {
+            border-color: #5c738e;
+            color: #dfe7ef;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #6fa3ff;
+            color: #000;
+        }
+
+        .avatar-box {
+            width: 90px;
+            height: 90px;
+            overflow: hidden;
+            border-radius: 50%;
+            border: 2px solid #4da3ff;
+        }
+
+        .avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container py-5">
+
+    <div class="profile-card">
+
+        <!-- User info -->
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar-box">
+                <img src="https://i.pravatar.cc/300" alt="">
+            </div>
+
+            <div>
+                <h3 id="usernameDisplay" class="mb-0">User Name</h3>
+                <span class="text-info" id="emailMasked">user***@gmail.com</span>
+            </div>
+        </div>
+
+        <hr class="border-secondary my-4">
+
+        <!-- Buttons -->
+        <div class="row g-3">
+            <div class="col-md-6">
+                <button id="btnManageContact" class="btn btn-warning w-100">Quản lý Email</button>
+            </div>
+            <div class="col-md-6">
+                <button id="btnChangePassword" class="btn btn-danger w-100">Đổi mật khẩu</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================== MODAL CHANGE EMAIL ========================== -->
+<div class="modal fade" id="manageContactModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Đổi Email</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="changeEmailForm" novalidate>
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email hiện tại</label>
+                            <input type="email" class="form-control" id="curEmail" required>
+                            <div class="invalid-feedback">Vui lòng nhập email hiện tại.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email mới</label>
+                            <input type="email" class="form-control" id="newEmail" required>
+                            <div class="invalid-feedback">Email mới không hợp lệ.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Xác nhận email mới</label>
+                            <input type="email" class="form-control" id="confirmEmail" required>
+                            <div class="invalid-feedback">Email xác nhận không khớp.</div>
+                        </div>
+
+                    </div>
+
+                    <button class="btn btn-primary mt-3 w-100">Cập nhật Email</button>
+                    <div id="changeEmailMsg" class="form-text mt-2"></div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- ========================== MODAL CHANGE PASSWORD ========================== -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Đổi mật khẩu</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="changePasswordForm" novalidate>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu hiện tại</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="oldPassword" required>
+                            <button class="btn btn-outline-secondary" type="button" data-toggle-eye="#oldPassword">👁</button>
+                            <div class="invalid-feedback">Nhập mật khẩu hiện tại.</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Mật khẩu mới</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="newPassword" minlength="6" required>
+                                <button class="btn btn-outline-secondary" type="button" data-toggle-eye="#newPassword">👁</button>
+                                <div class="invalid-feedback">Tối thiểu 6 ký tự.</div>
+                            </div>
+                            <div class="form-text" id="pwdStrengthHint"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Xác nhận mật khẩu mới</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmPassword" minlength="6" required>
+                                <button class="btn btn-outline-secondary" type="button" data-toggle-eye="#confirmPassword">👁</button>
+                                <div class="invalid-feedback">Không khớp.</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button class="btn btn-success mt-3 w-100">Cập nhật mật khẩu</button>
+                    <div id="changePasswordMsg" class="form-text mt-2"></div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- ========================== SCRIPTS ========================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const $ = (sel) => document.querySelector(sel);
+
+    function openModal(id) {
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById(id));
+        modal.show();
+    }
+
+    $("#btnManageContact").addEventListener("click", () => openModal("manageContactModal"));
+    $("#btnChangePassword").addEventListener("click", () => openModal("changePasswordModal"));
+
+    // Toggle eye icon
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-toggle-eye]");
+        if (!btn) return;
+        const input = document.querySelector(btn.getAttribute("data-toggle-eye"));
+        input.type = input.type === "password" ? "text" : "password";
+    });
+
+    /* ==================== CHANGE EMAIL ==================== */
+    $("#changeEmailForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const cur = $("#curEmail");
+        const neu = $("#newEmail");
+        const cfm = $("#confirmEmail");
+
+        let ok = true;
+        [cur, neu, cfm].forEach(inp => {
+            if (!inp.checkValidity()) { inp.classList.add("is-invalid"); ok = false; }
+            else inp.classList.remove("is-invalid");
+        });
+
+        if (neu.value !== cfm.value) {
+            cfm.classList.add("is-invalid");
+            ok = false;
+        }
+
+        if (!ok) return;
+
+        $("#changeEmailMsg").textContent = "✅ Email đã được cập nhật (fake)";
+        $("#emailMasked").textContent = neu.value.replace(/(.{3}).*@/, "$1***@");
+    });
+
+
+    /* ==================== CHANGE PASSWORD ==================== */
+    $("#newPassword").addEventListener("input", (e) => {
+        const v = e.target.value;
+        let score = 0;
+        if (v.length >= 8) score++;
+        if (/[A-Z]/.test(v)) score++;
+        if (/[a-z]/.test(v)) score++;
+        if (/[0-9]/.test(v)) score++;
+        if (/[^0-9A-Za-z]/.test(v)) score++;
+
+        const desc = ["Rất yếu", "Yếu", "OK", "Khá", "Mạnh", "Rất mạnh"];
+        $("#pwdStrengthHint").textContent = "Độ mạnh: " + desc[score];
+    });
+
+    $("#changePasswordForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const oldP = $("#oldPassword");
+        const newP = $("#newPassword");
+        const cfmP = $("#confirmPassword");
+
+        let ok = true;
+        [oldP, newP, cfmP].forEach(inp => {
+            if (!inp.checkValidity()) { inp.classList.add("is-invalid"); ok = false; }
+            else inp.classList.remove("is-invalid");
+        });
+
+        if (newP.value !== cfmP.value) {
+            cfmP.classList.add("is-invalid");
+            ok = false;
+        }
+
+        if (!ok) return;
+
+        $("#changePasswordMsg").textContent = "✅ Đổi mật khẩu thành công (fake)";
+    });
+
+</script>
+
+</body>
+
+</html>
