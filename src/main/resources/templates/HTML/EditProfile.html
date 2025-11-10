@@ -4,22 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile User</title>
+    <title>Forgot Password</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
-            background: #08121f;
+            background: #07111e;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             color: #fff;
+            font-family: "Inter", sans-serif;
         }
 
-        .profile-card {
+        .card-box {
+            width: 420px;
             background: rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 24px;
+            padding: 30px;
+            border-radius: 18px;
             backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
         }
 
         .form-control {
@@ -34,267 +42,97 @@
             color: #fff;
         }
 
-        .modal-content {
-            background: rgba(25, 42, 70, 0.8);
-            border-radius: 16px;
-            backdrop-filter: blur(12px);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.14);
+        .btn-primary {
+            background: #4da3ff;
+            border: none;
+            font-weight: 600;
         }
 
-        .btn-outline-secondary {
-            border-color: #5c738e;
-            color: #dfe7ef;
+        .btn-primary:hover {
+            background: #63b1ff;
         }
 
-        .btn-outline-secondary:hover {
-            background: #6fa3ff;
-            color: #000;
+        .link-back {
+            color: #9bb4d1;
+            text-decoration: none;
         }
 
-        .avatar-box {
-            width: 90px;
-            height: 90px;
-            overflow: hidden;
-            border-radius: 50%;
-            border: 2px solid #4da3ff;
-        }
-
-        .avatar-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .link-back:hover {
+            color: #cbe1ff;
+            text-decoration: underline;
         }
     </style>
 </head>
 
 <body>
 
-<div class="container py-5">
+<div class="card-box">
 
-    <div class="profile-card">
+    <h3 class="text-center mb-3">Quên mật khẩu</h3>
+    <p class="text-center text-secondary">
+        Nhập email để nhận mã xác thực đặt lại mật khẩu.
+    </p>
 
-        <!-- User info -->
-        <div class="d-flex align-items-center gap-3">
-            <div class="avatar-box">
-                <img src="https://i.pravatar.cc/300" alt="">
-            </div>
+    <!-- FORM -->
+    <form id="sendOtpForm" novalidate>
+        <label class="form-label mt-2">Email</label>
+        <input type="email" class="form-control" id="emailInput" required placeholder="your@email.com">
+        <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
 
-            <div>
-                <h3 id="usernameDisplay" class="mb-0">User Name</h3>
-                <span class="text-info" id="emailMasked">user***@gmail.com</span>
-            </div>
+        <button class="btn btn-primary w-100 mt-3" type="submit">
+            Gửi mã xác thực
+        </button>
+
+        <div id="msgBox" class="form-text mt-3"></div>
+
+        <div class="text-center mt-3">
+            <a href="/login" class="link-back">← Quay lại đăng nhập</a>
         </div>
-
-        <hr class="border-secondary my-4">
-
-        <!-- Buttons -->
-        <div class="row g-3">
-            <div class="col-md-6">
-                <button id="btnManageContact" class="btn btn-warning w-100">Quản lý Email</button>
-            </div>
-            <div class="col-md-6">
-                <button id="btnChangePassword" class="btn btn-danger w-100">Đổi mật khẩu</button>
-            </div>
-        </div>
-
-    </div>
+    </form>
 
 </div>
 
-
-
-<!-- ========================== MODAL CHANGE EMAIL ========================== -->
-<div class="modal fade" id="manageContactModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Đổi Email</h5>
-                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <form id="changeEmailForm" novalidate>
-                    <div class="row g-3">
-
-                        <div class="col-md-6">
-                            <label class="form-label">Email hiện tại</label>
-                            <input type="email" class="form-control" id="curEmail" required>
-                            <div class="invalid-feedback">Vui lòng nhập email hiện tại.</div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Email mới</label>
-                            <input type="email" class="form-control" id="newEmail" required>
-                            <div class="invalid-feedback">Email mới không hợp lệ.</div>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Xác nhận email mới</label>
-                            <input type="email" class="form-control" id="confirmEmail" required>
-                            <div class="invalid-feedback">Email xác nhận không khớp.</div>
-                        </div>
-
-                    </div>
-
-                    <button class="btn btn-primary mt-3 w-100">Cập nhật Email</button>
-                    <div id="changeEmailMsg" class="form-text mt-2"></div>
-                </form>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
-<!-- ========================== MODAL CHANGE PASSWORD ========================== -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Đổi mật khẩu</h5>
-                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-
-                <form id="changePasswordForm" novalidate>
-
-                    <div class="mb-3">
-                        <label class="form-label">Mật khẩu hiện tại</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="oldPassword" required>
-                            <button class="btn btn-outline-secondary" type="button" data-toggle-eye="#oldPassword">👁</button>
-                            <div class="invalid-feedback">Nhập mật khẩu hiện tại.</div>
-                        </div>
-                    </div>
-
-                    <div class="row g-3">
-
-                        <div class="col-md-6">
-                            <label class="form-label">Mật khẩu mới</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="newPassword" minlength="6" required>
-                                <button class="btn btn-outline-secondary" type="button" data-toggle-eye="#newPassword">👁</button>
-                                <div class="invalid-feedback">Tối thiểu 6 ký tự.</div>
-                            </div>
-                            <div class="form-text" id="pwdStrengthHint"></div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Xác nhận mật khẩu mới</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="confirmPassword" minlength="6" required>
-                                <button class="btn btn-outline-secondary" type="button" data-toggle-eye="#confirmPassword">👁</button>
-                                <div class="invalid-feedback">Không khớp.</div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <button class="btn btn-success mt-3 w-100">Cập nhật mật khẩu</button>
-                    <div id="changePasswordMsg" class="form-text mt-2"></div>
-
-                </form>
-
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
-
-<!-- ========================== SCRIPTS ========================== -->
-
+<!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const $ = (sel) => document.querySelector(sel);
+    const form = document.getElementById("sendOtpForm");
+    const emailInput = document.getElementById("emailInput");
+    const msgBox = document.getElementById("msgBox");
 
-    function openModal(id) {
-        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById(id));
-        modal.show();
-    }
-
-    $("#btnManageContact").addEventListener("click", () => openModal("manageContactModal"));
-    $("#btnChangePassword").addEventListener("click", () => openModal("changePasswordModal"));
-
-    // Toggle eye icon
-    document.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-toggle-eye]");
-        if (!btn) return;
-        const input = document.querySelector(btn.getAttribute("data-toggle-eye"));
-        input.type = input.type === "password" ? "text" : "password";
-    });
-
-    /* ==================== CHANGE EMAIL ==================== */
-    $("#changeEmailForm").addEventListener("submit", async (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const cur = $("#curEmail");
-        const neu = $("#newEmail");
-        const cfm = $("#confirmEmail");
-
-        let ok = true;
-        [cur, neu, cfm].forEach(inp => {
-            if (!inp.checkValidity()) { inp.classList.add("is-invalid"); ok = false; }
-            else inp.classList.remove("is-invalid");
-        });
-
-        if (neu.value !== cfm.value) {
-            cfm.classList.add("is-invalid");
-            ok = false;
+        if (!emailInput.checkValidity()) {
+            emailInput.classList.add("is-invalid");
+            return;
+        } else {
+            emailInput.classList.remove("is-invalid");
         }
 
-        if (!ok) return;
+        const email = emailInput.value.trim();
 
-        $("#changeEmailMsg").textContent = "✅ Email đã được cập nhật (fake)";
-        $("#emailMasked").textContent = neu.value.replace(/(.{3}).*@/, "$1***@");
-    });
+        // TODO: CALL API GỬI OTP
+        // Thay URL đúng backend của bạn
+        try {
+            const res = await fetch("/auth/send-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
 
-
-    /* ==================== CHANGE PASSWORD ==================== */
-    $("#newPassword").addEventListener("input", (e) => {
-        const v = e.target.value;
-        let score = 0;
-        if (v.length >= 8) score++;
-        if (/[A-Z]/.test(v)) score++;
-        if (/[a-z]/.test(v)) score++;
-        if (/[0-9]/.test(v)) score++;
-        if (/[^0-9A-Za-z]/.test(v)) score++;
-
-        const desc = ["Rất yếu", "Yếu", "OK", "Khá", "Mạnh", "Rất mạnh"];
-        $("#pwdStrengthHint").textContent = "Độ mạnh: " + desc[score];
-    });
-
-    $("#changePasswordForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const oldP = $("#oldPassword");
-        const newP = $("#newPassword");
-        const cfmP = $("#confirmPassword");
-
-        let ok = true;
-        [oldP, newP, cfmP].forEach(inp => {
-            if (!inp.checkValidity()) { inp.classList.add("is-invalid"); ok = false; }
-            else inp.classList.remove("is-invalid");
-        });
-
-        if (newP.value !== cfmP.value) {
-            cfmP.classList.add("is-invalid");
-            ok = false;
+            if (res.ok) {
+                msgBox.style.color = "#6aff8a";
+                msgBox.textContent = "✅ Mã xác thực đã gửi đến email của bạn!";
+            } else {
+                msgBox.style.color = "#ff6b6b";
+                msgBox.textContent = "❌ Không thể gửi mã. Vui lòng thử lại.";
+            }
+        } catch {
+            msgBox.style.color = "#ff6b6b";
+            msgBox.textContent = "❌ Lỗi mạng, vui lòng thử lại.";
         }
-
-        if (!ok) return;
-
-        $("#changePasswordMsg").textContent = "✅ Đổi mật khẩu thành công (fake)";
     });
-
 </script>
 
 </body>
