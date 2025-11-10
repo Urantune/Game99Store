@@ -431,13 +431,15 @@ public class HomeController {
                     java.net.URLEncoder.encode("Đã thêm vào giỏ hàng!", java.nio.charset.StandardCharsets.UTF_8));
         }
 
+
         return "redirect:/welcome/gamedetail/{game_id}";
     }
 
 
-    @GetMapping("/editprofile")
-    public String editProfile(Model model){
-
+    @GetMapping("/editprofile/{id}" )
+    public String editProfile(Model model, @PathVariable(value = "id")UUID id, HttpSession session){
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
         return "HTML/EditProfile";
     }
 
