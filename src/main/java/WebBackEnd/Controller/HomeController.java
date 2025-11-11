@@ -306,6 +306,9 @@ public class HomeController {
         if ("wait".equalsIgnoreCase(user.getStatus())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản chưa được kích hoạt"));
         }
+        if ("ban".equalsIgnoreCase(user.getStatus())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Tài khoảng của bạn đã bị cấm"));
+        }
 
         session.setAttribute("user", user);
         session.setAttribute("id", user.getId());
@@ -436,8 +439,8 @@ public class HomeController {
     }
 
     @GetMapping("/profile/{id}")
-    public String userDetail(@PathVariable UUID id, Model model) {
-        User user = userService.findById(id);
+    public String userDetail(@PathVariable UUID id, Model model,HttpSession session) {
+        User user = (User)  session.getAttribute("user");
         if (user == null) return "redirect:/welcome";
         model.addAttribute("user", user);
         model.addAttribute("id", id);

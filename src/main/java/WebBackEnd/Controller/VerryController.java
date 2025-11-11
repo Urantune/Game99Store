@@ -2,7 +2,10 @@ package WebBackEnd.Controller;
 
 
 import WebBackEnd.Entity.User;
+import WebBackEnd.Entity.UserGame;
 import WebBackEnd.service.DetailService;
+import WebBackEnd.service.GameSevice;
+import WebBackEnd.service.UserGameService;
 import WebBackEnd.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +27,10 @@ public class VerryController {
     private DetailService  detailService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserGameService userGameService;
+    @Autowired
+    private GameSevice gameSevice;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -156,6 +163,28 @@ public class VerryController {
 
         ra.addFlashAttribute("success", "Đổi mật khẩu thành công");
         return "redirect:/welcome";
+    }
+
+
+
+    @PostMapping("/checkaccount")
+    @ResponseBody
+    public String checkAccount(@RequestParam String username,
+                               @RequestParam String password,
+                               @RequestParam UUID gameUuid) {
+        User u = userService.findByUsername(username);
+        if (u != null
+                && "active".equalsIgnoreCase(u.getStatus())
+                && passwordEncoder.matches(password, u.getPassword())) {
+            UserGame userGame = userGameService.findByGameAndUser(gameSevice.findGameById(gameUuid), u);
+
+            if(userGame != null&&userGame.getStatus()==1){
+                return "OK";
+            }
+
+
+        }
+        return "FAIL";
     }
 
 
