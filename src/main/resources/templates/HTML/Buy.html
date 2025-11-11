@@ -214,41 +214,41 @@
             return vouchers.find(v => (v.name || '').trim().toLowerCase() === c) || null;
         }
 
-        // ===== kiểm tra hạn sử dụng (nếu có start/end) =====
+
         function isVoucherActive(v, now = new Date()) {
             if (!v) return false;
-            // nếu có start: now >= start
+
             if (v.start && now < v.start) return false;
-            // nếu có end: now <= end
+
             if (v.end && now > v.end) return false;
             return true;
         }
 
-        // ===== tính discount theo loại =====
+
         function calcDiscount(v, subtotal) {
             if (!v) return 0;
             if (subtotal <= 0) return 0;
             if (v.type === 'percent') {
-                // sale là %; ví dụ 10 => 10% tối đa không vượt subtotal
+
                 const raw = subtotal * (v.sale / 100.0);
                 return Math.min(subtotal, Math.max(0, raw));
             }
             if (v.type === 'fixed') {
-                // sale là số tiền VND
+
                 return Math.min(subtotal, Math.max(0, v.sale));
             }
-            // loại khác: không áp dụng
+
             return 0;
         }
 
-        // ===== render tổng =====
+
         function renderTotals() {
             const subtotal = getSubtotal();
             const code = (voucherInput.value || '').trim();
             const voucher = findVoucherByCode(code);
             let discount = 0;
 
-            // trạng thái voucher UI
+
             voucherBadge.style.display = 'none';
             voucherBadge.textContent = '';
             voucherBadge.className = '';
@@ -278,26 +278,26 @@
 
             const grand = Math.max(0, subtotal - discount);
 
-            // cập nhật UI
+
             cellSubtotal.textContent  = fmt(subtotal);
             cellDiscount.textContent  = '− ' + fmt(discount);
             cellGrand.textContent     = fmt(grand);
             headlineTotal.textContent = fmt(grand);
 
-            // đẩy hidden cho server
+
             voucherHidden.value = code;
             subtotalH.value     = Math.round(subtotal);
             discountH.value     = Math.round(discount);
             grandH.value        = Math.round(grand);
         }
 
-        // sự kiện
+
         btnApply && btnApply.addEventListener('click', renderTotals);
         voucherInput && voucherInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') renderTotals();
         });
 
-        // render ban đầu
+
         renderTotals();
     })();
 </script>
