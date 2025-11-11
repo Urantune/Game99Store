@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Đổi mật khẩu</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <style>
+        body{background:#07111e;min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;font-family:"Inter",sans-serif;padding:24px}
+        .card-box{width:420px;background:rgba(255,255,255,.06);padding:30px;border-radius:18px;border:1px solid rgba(255,255,255,.12);box-shadow:0 8px 25px rgba(0,0,0,.35);backdrop-filter:blur(12px)}
+        .form-control{background:#152337;border:none;color:#fff}
+        .form-control:focus{background:#1b324d;border:1px solid #4da3ff;color:#fff;box-shadow:none}
+        .btn-primary{background:#4da3ff;border:none;font-weight:600}
+        .btn-primary:hover{background:#63b1ff}
+        .link-back{color:#9bb4d1;text-decoration:none}
+        .link-back:hover{color:#cbe1ff;text-decoration:underline}
+        .toggle-btn{position:absolute;right:12px;top:36px;background:transparent;border:none;color:#9bb4d1}
+        .toggle-btn:hover{color:#cbe1ff}
+    </style>
+</head>
+<body>
+
+<div class="card-box">
+    <h3 class="text-center mb-3">Đổi mật khẩu</h3>
+    <p class="text-center text-secondary">Nhập mật khẩu mới cho tài khoản của bạn.</p>
+
+    <form method="post" action="/veryAccount/donePass" id="changePassForm" novalidate>
+
+        <input type="hidden" name="id" th:value="${idUser}">
+        <input type="hidden" name="code" th:value="${codeUser}">
+
+        <div class="mb-3 position-relative">
+            <label class="form-label">Mật khẩu mới</label>
+            <input type="password" class="form-control" name="newPassword" id="newPass" required minlength="8" placeholder="Tối thiểu 8 ký tự">
+            <div class="invalid-feedback">Mật khẩu phải ≥ 8 ký tự.</div>
+            <button type="button" class="toggle-btn" data-target="newPass">👁</button>
+        </div>
+
+        <div class="mb-2 position-relative">
+            <label class="form-label">Nhập lại mật khẩu</label>
+            <input type="password" class="form-control" name="confirmPassword" id="confirmPass" required minlength="8" placeholder="Nhập lại để xác nhận">
+            <div class="invalid-feedback">Mật khẩu nhập lại không khớp hoặc < 8 ký tự.</div>
+            <button type="button" class="toggle-btn" data-target="confirmPass">👁</button>
+        </div>
+
+        <button class="btn btn-primary w-100 mt-3" type="submit">Xác nhận đổi mật khẩu</button>
+
+        <div class="text-center mt-3">
+            <a href="/welcome" class="link-back">← Quay về trang chủ</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.querySelectorAll(".toggle-btn").forEach(btn=>{
+        const id=btn.getAttribute("data-target");
+        btn.addEventListener("click",()=> {
+            const input=document.getElementById(id);
+            input.type=input.type==="password"?"text":"password";
+        });
+    });
+
+    const form=document.getElementById("changePassForm");
+    const newPass=document.getElementById("newPass");
+    const confirmPass=document.getElementById("confirmPass");
+
+    function setInvalid(input, ok){
+        input.classList.toggle("is-invalid", !ok);
+    }
+
+    function validate(){
+        const ok1=newPass.value.length>=8;
+        const ok2=confirmPass.value.length>=8 && confirmPass.value===newPass.value;
+
+        setInvalid(newPass, ok1);
+        setInvalid(confirmPass, ok2);
+
+        return ok1 && ok2;
+    }
+
+    newPass.addEventListener("input", validate);
+    confirmPass.addEventListener("input", validate);
+
+    form.addEventListener("submit", e=>{
+        if(!validate()) e.preventDefault();
+    });
+</script>
+
+</body>
+</html>

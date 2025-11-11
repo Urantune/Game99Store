@@ -140,7 +140,7 @@
 
         <div class="card settings">
             <h2>⚙️ Cài đặt</h2>
-            <a th:href="@{/welcome/editprofile/{id}(id = ${id})}">
+            <a th:href="@{/welcome/editprofile/{id}(id=${user.id})}">
                 <button id="btnChangePassword">Đổi mật khẩu</button>
             </a>
             <button id="btnToggle2FA">Bật/Tắt 2FA</button>
