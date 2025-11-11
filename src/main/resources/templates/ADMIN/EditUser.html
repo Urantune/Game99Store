@@ -53,17 +53,33 @@
         </form>
 
         <div class="d-flex gap-2">
-            <form th:action="@{/welcomeAdmin/users/{id}/ban(id=${id})}" method="post">
+
+
+            <form th:if="${user.status?.toLowerCase() == 'banned'}"
+                  th:action="@{/welcomeAdmin/ban}" method="post">
+                <input type="hidden" name="id" th:value="${id}"/>
+                <button type="submit" class="btn btn-success btn-action">
+                    <i class="bi bi-unlock-fill me-1"></i> Unban Account
+                </button>
+            </form>
+
+
+            <form th:unless="${user.status?.toLowerCase() == 'banned'}"
+                  th:action="@{/welcomeAdmin/ban}" method="post">
+                <input type="hidden" name="id" th:value="${id}"/>
                 <button type="submit" class="btn btn-warning btn-action">
                     <i class="bi bi-slash-circle me-1"></i> Ban Account
                 </button>
             </form>
-            <form th:action="@{/welcomeAdmin/users/{id}/delete(id=${id})}" method="post" class="ms-auto"
-                  onsubmit="return confirm('Xóa vĩnh viễn tài khoản này?');">
+
+            <form th:action="@{/welcomeAdmin/deleteuser}"
+                  method="post">
+                <input type="hidden" name="id" th:value="${id}"/>
                 <button type="submit" class="btn btn-danger btn-action">
                     <i class="bi bi-trash-fill me-1"></i> Delete Account
                 </button>
             </form>
+
         </div>
     </div>
 </div>

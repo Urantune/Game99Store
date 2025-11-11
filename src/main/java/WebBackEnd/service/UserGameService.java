@@ -61,4 +61,9 @@ public class UserGameService {
     }
 
 
+    public void DeleteByUser(User user){
+        userGameRepository.deleteAllByUser(user);
+    }
+
+
 }

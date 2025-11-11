@@ -306,7 +306,7 @@ public class HomeController {
         if ("wait".equalsIgnoreCase(user.getStatus())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản chưa được kích hoạt"));
         }
-        if ("ban".equalsIgnoreCase(user.getStatus())) {
+        if ("banned".equalsIgnoreCase(user.getStatus())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Tài khoảng của bạn đã bị cấm"));
         }
 

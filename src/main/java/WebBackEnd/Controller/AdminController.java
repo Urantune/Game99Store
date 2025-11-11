@@ -21,6 +21,8 @@
     import java.util.Map;
     import java.util.UUID;
 
+
+
     @Controller
     @RequestMapping(value = "/welcomeAdmin")
     public class AdminController {
@@ -39,6 +41,8 @@
         private PasswordEncoder passwordEncoder;
         @Autowired
         private VouncherService vouncherService;
+        @Autowired
+        private UserGameService userGameService;
 
 
         @GetMapping({"", "/"})
@@ -63,6 +67,29 @@
             model.addAttribute("id", id);
             return "ADMIN/EditUser";
         }
+
+        @PostMapping("/ban")
+        public String banAccount(@RequestParam UUID id) {
+            User u = userService.findById(id);
+
+            if(u.getStatus().equalsIgnoreCase("active")){
+                u.setStatus("banned");
+                userService.save(u);
+            } else if(u.getStatus().equalsIgnoreCase("banned")){
+                u.setStatus("active");
+                userService.save(u);
+            }
+            return "redirect:/welcomeAdmin/edituser/" + id;
+        }
+
+        @PostMapping("/deleteuser")
+        public String deleteUser(@RequestParam UUID id, RedirectAttributes ra) {
+            userGameService.DeleteByUser(userService.findById(id));
+            userService.deleteById(id);
+            ra.addFlashAttribute("ok", "Đã xóa người dùng");
+            return "redirect:/welcomeAdmin/listuser";
+        }
+
 
         @PostMapping("/edituser/{id}")
         public String updateUser(@PathVariable UUID id,
@@ -350,6 +377,9 @@
             ra.addFlashAttribute("ok", voucherId == null ? "Tạo thành công" : "Cập nhật thành công");
             return "redirect:/welcomeAdmin/listvoucher";
         }
+
+
+
 
 
 
