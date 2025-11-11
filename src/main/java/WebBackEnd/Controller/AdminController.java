@@ -3,22 +3,23 @@
     import WebBackEnd.Entity.Event;
     import WebBackEnd.Entity.Game;
     import WebBackEnd.Entity.User;
+    import WebBackEnd.Entity.Vouncher;
     import WebBackEnd.SucDat.GameCore;
-    import WebBackEnd.service.AdminSevice;
-    import WebBackEnd.service.EventService;
-    import WebBackEnd.service.GameSevice;
-    import WebBackEnd.service.UserService;
+    import WebBackEnd.service.*;
+    import java.time.LocalDate;
     import jakarta.servlet.http.HttpSession;
     import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.format.annotation.DateTimeFormat;
     import org.springframework.http.ResponseEntity;
     import org.springframework.security.crypto.password.PasswordEncoder;
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.Model;
-    import org.springframework.util.StringUtils;
     import org.springframework.web.bind.annotation.*;
     import org.springframework.web.multipart.MultipartFile;
     import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+    import java.time.LocalDateTime;
+    import java.time.LocalTime;
     import java.util.List;
     import java.util.Map;
     import java.util.UUID;
@@ -39,6 +40,8 @@
         private EventService eventService;
         @Autowired
         private PasswordEncoder passwordEncoder;
+        @Autowired
+        private VouncherService vouncherService;
 
 
         @GetMapping({"", "/"})
@@ -185,6 +188,85 @@
             return "ADMIN/UploadGame";
         }
 
+        @PostMapping(value = "/upload", consumes = "multipart/form-data")
+        @ResponseBody
+        public ResponseEntity<?> uploadGame(
+                @RequestParam String gameName,
+                @RequestParam double price,
+                @RequestParam String category,
+                @RequestParam(required = false) String version,
+
+                @RequestParam(value = "description", required = false) String description,
+                @RequestParam(value = "dec_1", required = false) String dec1,
+                @RequestParam(value = "dec_2", required = false) String dec2,
+                @RequestParam(value = "dec_3", required = false) String dec3,
+                @RequestParam(value = "dec_4", required = false) String dec4,
+                @RequestParam(value = "dec_5", required = false) String dec5,
+
+                @RequestParam(value = "img_video", required = false) MultipartFile imgVideo,
+                @RequestParam(value = "img_1", required = false) MultipartFile img1,
+                @RequestParam(value = "img_2", required = false) MultipartFile img2,
+                @RequestParam(value = "img_3", required = false) MultipartFile img3,
+                @RequestParam(value = "img_cover", required = false) MultipartFile imgCover,
+
+                @RequestParam("packageFile") MultipartFile packageFile
+        ) {
+            try {
+                if (packageFile == null || packageFile.isEmpty()) {
+                    return ResponseEntity.badRequest().body("Vui lòng chọn file game");
+                }
+
+                String mainDesc = (description != null && !description.isBlank())
+                        ? description : (dec1 != null ? dec1 : "");
+
+                StringBuilder deception = new StringBuilder();
+                if (mainDesc != null) deception.append(mainDesc.trim());
+                if (dec2 != null && !dec2.isBlank()) deception.append("||").append(dec2.trim());
+                if (dec3 != null && !dec3.isBlank()) deception.append("||").append(dec3.trim());
+                if (dec4 != null && !dec4.isBlank()) deception.append("||").append(dec4.trim());
+                if (dec5 != null && !dec5.isBlank()) deception.append("||").append(dec5.trim());
+
+                String packagePath = gameCore.saveGamePackage(packageFile, category, gameName);
+
+                String video = (imgVideo != null && !imgVideo.isEmpty())
+                        ? gameCore.saveToFolderKeepName(imgVideo, "videos") : "";
+
+                String i1 = (img1 != null && !img1.isEmpty())
+                        ? gameCore.saveToFolderKeepName(img1, "img") : "";
+
+                String i2 = (img2 != null && !img2.isEmpty())
+                        ? gameCore.saveToFolderKeepName(img2, "img") : "";
+
+                String i3 = (img3 != null && !img3.isEmpty())
+                        ? gameCore.saveToFolderKeepName(img3, "img") : "";
+
+                String cover = (imgCover != null && !imgCover.isEmpty())
+                        ? gameCore.saveToFolderKeepName(imgCover, "img") : "";
+
+                String imageLinks = String.join("||", video, i1, i2, i3, cover);
+
+                Game g = new Game();
+                g.setGameName(gameName);
+                g.setPrice(price);
+                g.setGameCategory(category);
+                g.setGame_version(version);
+                g.setStatus("coming soon");
+                g.setLocate_game(packagePath);
+                g.setDeception(deception.toString());
+                g.setImageLinks(imageLinks);
+
+                gameSevice.save(g);
+                return ResponseEntity.ok("Upload thành công!");
+            } catch (Exception e) {
+                return ResponseEntity.status(500).body("Server error: " + e.getMessage());
+            }
+        }
+
+
+
+
+
+
 
         @GetMapping("/editevent")
         public String editEvent(Model model) {
@@ -216,6 +298,61 @@
             session.setAttribute("username", admin.getAdminName());
             return ResponseEntity.ok(Map.of("success", true));
         }
+
+
+
+        @GetMapping("/listvoucher")
+        public String listVoucher(Model model) {
+            model.addAttribute("vouncherList", vouncherService.findAll());
+            return "ADMIN/listVoucher";
+        }
+
+        @GetMapping("/voucher/form")
+        public String form(@RequestParam(required = false) UUID id, Model model) {
+            if (id != null) {
+                Vouncher v = vouncherService.findByUuid(id);
+                if (v == null) return "redirect:/welcomeAdmin/listvoucher";
+                model.addAttribute("voucher", v);
+                model.addAttribute("mode", "edit");
+            } else {
+                model.addAttribute("voucher", new Vouncher());
+                model.addAttribute("mode", "create");
+            }
+            return "ADMIN/CUVouncher";
+        }
+
+        @GetMapping("/voucher/delete")
+        public String delete(@RequestParam UUID id, RedirectAttributes ra) {
+            vouncherService.deleteById(id);
+            ra.addFlashAttribute("ok", "Xóa thành công");
+            return "redirect:/welcomeAdmin/listvoucher";
+        }
+
+        @PostMapping("/voucher/save")
+        public String save(@RequestParam(required = false) UUID voucherId,
+                           @RequestParam String name,
+                           @RequestParam double sale,
+                           @RequestParam String type,
+                           @RequestParam("date_start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateStart,
+                           @RequestParam("date_end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEnd,
+                           RedirectAttributes ra) {
+
+            Vouncher v = (voucherId != null) ? vouncherService.findByUuid(voucherId) : new Vouncher();
+            if (v == null) v = new Vouncher();
+
+            v.setName(name);
+            v.setSale(sale);
+            v.setType(type);
+            v.setDate_start(LocalDateTime.of(dateStart, LocalTime.MIN));
+            v.setDate_end(LocalDateTime.of(dateEnd, LocalTime.of(23, 59, 59)));
+
+            vouncherService.save(v);
+
+            ra.addFlashAttribute("ok", voucherId == null ? "Tạo thành công" : "Cập nhật thành công");
+            return "redirect:/welcomeAdmin/listvoucher";
+        }
+
+
 
 
 

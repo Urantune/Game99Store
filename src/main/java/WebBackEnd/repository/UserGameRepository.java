@@ -56,4 +56,7 @@ public interface UserGameRepository extends JpaRepository<UserGame, UserGameId> 
 
         boolean existsUserGameByUserAndGame(User user, Game game);
 
+        UserGame findByGameAndUser(Game game, User user);
+
+
 }

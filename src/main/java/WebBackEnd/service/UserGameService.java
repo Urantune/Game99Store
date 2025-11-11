@@ -46,15 +46,19 @@ public class UserGameService {
         return userGameRepository.findByUser(user);
     }
 
-    // Lấy danh sách game thành công
+
     public List<UserGame> getCompletedGames(User user) {
         return userGameRepository.findByUserAndStatus(user, 1);
     }
 
-    // Lấy danh sách game đang xử lý
+
     public List<UserGame> getPendingGames(User user) {
         return userGameRepository.findByUserAndStatus(user, 0);
     }
 
-    
+    public UserGame findByGameAndUser(Game game, User user){
+        return userGameRepository.findByGameAndUser(game,user);
+    }
+
+
 }
