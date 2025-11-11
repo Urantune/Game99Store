@@ -76,13 +76,13 @@
             <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcomeAdmin/upload}">UPLOAD</a></li>
         </ul>
         <div class="d-flex align-items-center">
-            <div th:if="${session.username == null}">
+            <div th:if="${session.adminName == null}">
                 <button class="btn btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
             </div>
-            <div th:if="${session.username != null}" class="d-flex align-items-center gap-3">
+            <div th:if="${session.adminName != null}" class="d-flex align-items-center gap-3">
                 <div class="text-end">
                     <div class="text-white-50 small">Signed in as</div>
-                    <div class="text-white fw-bold" th:text="${session.username}">admin</div>
+                    <div class="text-white fw-bold" th:text="${session.adminName}">admin</div>
                 </div>
                 <a class="d-inline-flex justify-content-center">
                     <img th:src="${session.avatar != null ? session.avatar : '/img/khangbo.jpg'}" alt="Avatar" class="rounded-circle" style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
@@ -117,11 +117,11 @@
 
 <section class="py-5" style="background-color:#0f1c2e;">
     <div class="container px-4 px-lg-5 mt-4">
-        <div th:if="${session.username == null}" class="alert alert-warning text-center">
+        <div th:if="${session.adminName == null}" class="alert alert-warning text-center">
             Khu vực quản trị — vui lòng <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">đăng nhập</a>.
         </div>
 
-        <div th:if="${session.username != null}">
+        <div th:if="${session.adminName != null}">
             <h2 class="fw-bolder mb-4 text-white text-center">Admin Tools</h2>
             <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
 
@@ -286,7 +286,7 @@
     });
 </script>
 
-<script th:if="${session.username == null}">
+<script th:if="${session.adminName == null}">
     document.addEventListener('DOMContentLoaded', () => {
         const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
         loginModal.show();

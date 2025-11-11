@@ -63,9 +63,9 @@
                 <tr th:each="item: ${listGame}">
                     <td>
                         <div class="thumb"
-                             th:with="imgs=${item.linkImage},
+                             th:with="imgs=${'/'+item.getLinkImage()[4]},
                           path=${(imgs != null and #arrays.length(imgs) > 0) ? '/' + imgs[0] : '/img/notfound.png'}">
-                            <img th:src="@{${path}}" alt="thumb">
+                            <img th:src="${'/'+item.getLinkImage()[4]}" alt="thumb">
                         </div>
                     </td>
 

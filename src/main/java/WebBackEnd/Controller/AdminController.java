@@ -1,9 +1,6 @@
     package WebBackEnd.Controller;
 
-    import WebBackEnd.Entity.Event;
-    import WebBackEnd.Entity.Game;
-    import WebBackEnd.Entity.User;
-    import WebBackEnd.Entity.Vouncher;
+    import WebBackEnd.Entity.*;
     import WebBackEnd.SucDat.GameCore;
     import WebBackEnd.service.*;
     import java.time.LocalDate;
@@ -45,7 +42,9 @@
 
 
         @GetMapping({"", "/"})
-        public String homeAdmin(Model model) {
+        public String homeAdmin(Model model,HttpSession session) {
+
+            Admin admin = (Admin) session.getAttribute("admin");
             return "ADMIN/IndexAdmin";
         }
 
@@ -282,11 +281,11 @@
 
         @PostMapping("/login")
         @ResponseBody
-        public ResponseEntity<?> login(@RequestParam String username,
-                                       @RequestParam String password,
+        public ResponseEntity<?> login(@RequestParam("username") String adminname,   // ← đổi tên key
+                                       @RequestParam("password") String password,
                                        HttpSession session) {
 
-            var admin = adminSevice.findByUsername(username);
+            var admin = adminSevice.findByUsername(adminname);
             if (admin == null) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản không tồn tại!"));
             }
@@ -295,7 +294,7 @@
             }
 
             session.setAttribute("id", admin.getAdmin_id());
-            session.setAttribute("username", admin.getAdminName());
+            session.setAttribute("adminName", admin.getAdminName());
             return ResponseEntity.ok(Map.of("success", true));
         }
 

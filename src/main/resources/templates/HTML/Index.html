@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
@@ -10,12 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
     <link th:href="@{/Accest/css/styles1.css}" rel="stylesheet"/>
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #0f1c2e !important;
-        }
+        html, body { height: 100%; margin: 0; padding: 0; background-color: #0f1c2e !important; }
         .container, .content, .main { background: transparent !important; }
     </style>
 </head>
@@ -45,8 +40,7 @@
                     <div id="loginError" style="display:none;"></div>
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" class="form-control" name="username"
-                               th:value="${enteredUsername}" required>
+                        <input type="text" class="form-control" name="username" th:value="${enteredUsername}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
@@ -64,133 +58,43 @@
 
 <!-- CSS Login -->
 <style>
-    #loginModal .modal-dialog {
-        max-width: 400px;
-        margin: 1.75rem auto;
-    }
-
+    #loginModal .modal-dialog { max-width: 400px; margin: 1.75rem auto; }
     #loginModal .modal-content {
-        border-radius: 20px;
-        background: rgba(17, 34, 64, 0.85);
+        border-radius: 20px; background: rgba(17, 34, 64, 0.85);
         border: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(10px);
-        overflow: hidden;
-        color: #fff;
+        backdrop-filter: blur(10px); overflow: hidden; color: #fff;
     }
-
-    /* Header */
     #loginModal .modal-header {
-        background: linear-gradient(135deg, #1565c0, #0d47a1);
-        color: #fff;
-        justify-content: center;
-        position: relative;
-        border-bottom: none;
+        background: linear-gradient(135deg, #1565c0, #0d47a1); color: #fff;
+        justify-content: center; position: relative; border-bottom: none;
     }
-
-    #loginModal .modal-header .modal-title {
-        font-weight: 600;
-        letter-spacing: 0.5px;
-    }
-
-    #loginModal .btn-close {
-        position: absolute;
-        right: 1rem;
-        filter: invert(1);
-        opacity: 0.8;
-        transition: 0.3s;
-    }
-    #loginModal .btn-close:hover {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-
-    /* Body */
-    #loginModal .modal-body {
-        padding: 1.8rem;
-    }
-
-    /* Input fields */
-    #loginModal .form-label {
-        color: #dce3ff;
-        font-weight: 500;
-        margin-bottom: 0.3rem;
-        text-align: left;
-        display: block;
-    }
-
+    #loginModal .modal-header .modal-title { font-weight: 600; letter-spacing: 0.5px; }
+    #loginModal .btn-close { position: absolute; right: 1rem; filter: invert(1); opacity: 0.8; transition: 0.3s; }
+    #loginModal .btn-close:hover { opacity: 1; transform: scale(1.1); }
+    #loginModal .modal-body { padding: 1.8rem; }
+    #loginModal .form-label { color: #dce3ff; font-weight: 500; margin-bottom: 0.3rem; text-align: left; display: block; }
     #loginModal .form-control {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 10px;
-        color: #fff;
-        font-size: 14px;
-        padding: 10px 12px;
-        transition: 0.3s;
+        background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px; color: #fff; font-size: 14px; padding: 10px 12px; transition: 0.3s;
     }
-    #loginModal .form-control:focus {
-        border-color: #00bcd4;
-        box-shadow: 0 0 8px rgba(0, 188, 212, 0.4);
-        background: rgba(255, 255, 255, 0.1);
-    }
-    /* Buttons */
+    #loginModal .form-control:focus { border-color: #00bcd4; box-shadow: 0 0 8px rgba(0, 188, 212, 0.4); background: rgba(255, 255, 255, 0.1); }
     #loginModal .btn-primary {
-        background: linear-gradient(135deg, #2196f3, #1565c0);
-        border: none;
-        border-radius: 10px;
-        padding: 0.5rem 1.3rem;
-        font-weight: 600;
-        transition: 0.3s;
+        background: linear-gradient(135deg, #2196f3, #1565c0); border: none; border-radius: 10px;
+        padding: 0.5rem 1.3rem; font-weight: 600; transition: 0.3s;
     }
-    #loginModal .btn-primary:hover {
-        background: linear-gradient(135deg, #42a5f5, #0d47a1);
-        transform: translateY(-2px);
-    }
-    /* Register Button */
+    #loginModal .btn-primary:hover { background: linear-gradient(135deg, #42a5f5, #0d47a1); transform: translateY(-2px); }
     #loginModal .btn-register {
-        background: linear-gradient(135deg, #00c6ff, #0072ff);
-        border: none;
-        border-radius: 10px;
-        padding: 0.5rem 1.3rem;
-        font-weight: 600;
-        color: #fff;
-        transition: 0.3s;
+        background: linear-gradient(135deg, #00c6ff, #0072ff); border: none; border-radius: 10px;
+        padding: 0.5rem 1.3rem; font-weight: 600; color: #fff; transition: 0.3s;
     }
-    #loginModal .btn-register:hover {
-            background: linear-gradient(135deg, #42a5f5, #0d47a1);
-            transform: translateY(-2px);
-    }
-    /* Forgot password link */
-    #loginModal a.text-decoration-none {
-        font-size: 0.9rem;
-        color: #dce3ff;
-        transition: 0.3s;
-    }
-    #loginModal a.text-decoration-none:hover {
-        color: #00bcd4;
-        text-decoration: underline;
-    }
-    /* Layout for buttons row */
-    #loginModal .d-flex {
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 1rem;
-    }
-    /* Glow effect on hover */
-    #loginModal .btn:hover {
-        box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
-    }
-
-    .modal.fade .modal-dialog {
-        transform: translateY(-20px);
-        opacity: 0;
-        transition: all 0.4s ease-out;
-    }
-    .modal.show .modal-dialog {
-        transform: translateY(0);
-        opacity: 1;
-    }
-
+    #loginModal .btn-register:hover { background: linear-gradient(135deg, #42a5f5, #0d47a1); transform: translateY(-2px); }
+    #loginModal a.text-decoration-none { font-size: 0.9rem; color: #dce3ff; transition: 0.3s; }
+    #loginModal a.text-decoration-none:hover { color: #00bcd4; text-decoration: underline; }
+    #loginModal .d-flex { justify-content: space-between; align-items: center; margin-top: 1rem; }
+    #loginModal .btn:hover { box-shadow: 0 0 10px rgba(0, 188, 212, 0.3); }
+    .modal.fade .modal-dialog { transform: translateY(-20px); opacity: 0; transition: all 0.4s ease-out; }
+    .modal.show .modal-dialog { transform: translateY(0); opacity: 1; }
 </style>
 
 <!-- JS Login -->
@@ -271,13 +175,10 @@
 <!-- CSS Register -->
 <style>
     #registerModal .modal-content {
-        border-radius: 20px;
-        background: rgba(17, 34, 64, 0.85);
+        border-radius: 20px; background: rgba(17, 34, 64, 0.85);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(10px);
-        overflow: hidden;
-        color: #fff;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
+        overflow: hidden; color: #fff;
     }
     #registerModal .modal-header {
         background: linear-gradient(135deg,#0d47a1,#1a237e); color: white; border-bottom: none;
@@ -287,32 +188,23 @@
     #registerModal .modal-header .btn-close { position: absolute; right: 1rem; filter: brightness(0) invert(1); }
     #registerModal .modal-body { padding: 2rem; background: rgba(17, 34, 64, 0.002); border-radius: 0 0 20px 20px; }
     #registerModal .form-control {
-        color: white;
-        background: rgba(17, 34, 64, 0.85);border-radius: 12px;
+        color: white; background: rgba(17, 34, 64, 0.85); border-radius: 12px;
         font-size: 14px; padding: .7rem 1rem; transition: all .3s ease;
     }
-    #registerModal .form-control:hover,
-    #registerModal .form-control:focus {
-        border-color: #00bcd4 !important;
-        box-shadow: 0 0 8px rgba(0, 188, 212, 0.3);
-        transition: all 0.3s ease;
+    #registerModal .form-control:hover, #registerModal .form-control:focus {
+        border-color: #00bcd4 !important; box-shadow: 0 0 8px rgba(0, 188, 212, 0.3); transition: all 0.3s ease;
     }
-
     #registerModal .form-label { font-weight: 500; }
     #registerModal .btn-success {
         border-radius: 12px; padding: .6rem 1.5rem; font-weight: 600;
         background: linear-gradient(135deg,#0d47a1,#1a237e); border: none; transition: .3s;
     }
-    #registerModal .btn-success:hover {
-        background: linear-gradient(135deg,#1565c0,#0d47a1); transform: translateY(-2px);
-    }
+    #registerModal .btn-success:hover { background: linear-gradient(135deg,#1565c0,#0d47a1); transform: translateY(-2px); }
     #registerAlert .alert { border-radius: 12px; font-size: .95rem; padding: .8rem 1rem; }
 </style>
 
-<!-- JS Register (gộp kiểm tra mật khẩu & submit) -->
-<!-- JS Register (gộp kiểm tra mật khẩu & submit) -->
+<!-- JS Register -->
 <script>
-    // Toast helper
     function showToast(text, type = 'success') {
         let container = document.querySelector('.toast-container');
         if (!container) {
@@ -323,9 +215,7 @@
         }
         const toast = document.createElement('div');
         toast.className = `toast align-items-center text-bg-${type} border-0`;
-        toast.setAttribute('role', 'alert');
-        toast.setAttribute('aria-live', 'assertive');
-        toast.setAttribute('aria-atomic', 'true');
+        toast.setAttribute('role', 'alert'); toast.setAttribute('aria-live', 'assertive'); toast.setAttribute('aria-atomic', 'true');
         toast.innerHTML = `
       <div class="d-flex">
         <div class="toast-body">${text}</div>
@@ -369,7 +259,6 @@
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const password = passwordInput.value;
             const confirm = confirmPasswordInput.value;
             if (password !== confirm) {
@@ -423,8 +312,7 @@
              </div>`;
                 }
             } catch (err) {
-                alertBox.innerHTML =
-                    '<div class="alert alert-danger text-center mt-2">Lỗi gửi form.</div>';
+                alertBox.innerHTML = '<div class="alert alert-danger text-center mt-2">Lỗi gửi form.</div>';
             } finally {
                 setTimeout(() => { alertBox.innerHTML = ''; }, 3000);
                 submitBtn.disabled = false;
@@ -432,8 +320,6 @@
         });
     });
 </script>
-
-
 
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#0f1c2e;">
@@ -450,11 +336,11 @@
         </ul>
 
         <div class="d-flex align-items-center">
-            <a th:if="${session.username != null}"
-               th:href="@{/welcome/Cart/{id}(id=${session.id})}"
+            <!-- Cart chỉ hiện khi user đã đăng nhập -->
+            <a th:if="${session.userId != null}"
+               th:href="@{/welcome/Cart/{id}(id=${session.userId})}"
                class="btn btn-cart me-2">
-                <i class="bi-cart-fill me-1"></i>
-                Cart
+                <i class="bi-cart-fill me-1"></i> Cart
             </a>
 
             <style>
@@ -485,27 +371,26 @@
                 .navbar-nav .nav-link:hover { color: #0dcaf0; transform: translateY(-2px); }
             </style>
 
-            <div th:if="${session.username == null}">
+            <!-- Chưa đăng nhập -->
+            <div th:if="${session.userId == null}">
                 <button class="btn btn-register me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
                 <button class="btn btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
             </div>
 
-            <div th:if="${session.username != null}" class="d-flex flex-column align-items-center">
-                <a th:href="@{/welcome/profile/{id}(id = ${session.id})}"
-                   class="d-inline-flex justify-content-center">
+            <!-- Đã đăng nhập -->
+            <div th:if="${session.userId != null}" class="d-flex flex-column align-items-center">
+                <a th:href="@{/welcome/profile/{id}(id = ${session.userId})}" class="d-inline-flex justify-content-center">
                     <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
                          alt="Avatar" class="rounded-circle"
                          style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
                 </a>
                 <span class="mt-1 text-light" style="font-size:.9rem;font-weight:600;"
-                      th:text="${session.username}"></span>
+                      th:text="${session.userUsername}">User</span>
             </div>
         </div>
 
         <style>
-            .btn-cart {
-                background: #146c43; color:#fff !important; border: none !important; font-weight: 500; transition: .3s;
-            }
+            .btn-cart { background: #146c43; color:#fff !important; border: none !important; font-weight: 500; transition: .3s; }
             .btn-cart:hover {
                 background: linear-gradient(90deg,#20c997,#28a745);
                 transform: translateY(-2px);
@@ -776,6 +661,7 @@
 <!-- Product section-->
 <section class="py-5" style="background-color: #0f1c2e">
     <div class="card-footer p-4 pt-0 border-top-0 text-center">
+        <!-- Ẩn/hiện theo role -->
         <div th:if="${session.role == null}"></div>
 
         <form th:if="${session.role == 'USER'}" th:action="@{/buy}" method="post">
@@ -791,7 +677,7 @@
     <div class="container px-4 px-lg-5 my-5">
         <div id="lienquan" class="row gx-4 gx-lg-5 align-items-center game-detail">
             <div class="col-md-6">
-                <a href="GameDetail.jsp?id=1" style="text-decoration: none; color: inherit;">
+                <a href="#" style="text-decoration: none; color: inherit;">
                     <img class="card-img-top mb-4 game-img" th:src="'/'+${gameMain.getLinkImage()[4]}" alt="Sản phẩm mới"/>
                 </a>
 
@@ -878,29 +764,24 @@
                 </div>
 
                 <div class="d-flex">
-                    <!-- Form Mua -->
+                    <!-- (Ví dụ) Form Mua: bạn thay bằng luồng thật của bạn -->
                     <form action="buy" method="post" class="me-2">
                         <input type="hidden" name="gameId" value="1">
-                        <input type="hidden" name="sourcePage"
-                               value="<%= request.getRequestURI().endsWith('GameDetail.jsp') ? 'GameDetail.jsp' : 'Index.jsp' %>">
                         <button type="submit" class="btn btn-success">Mua</button>
                     </form>
 
-                    <!-- Form Add to Cart -->
+                    <!-- (Ví dụ) Form Add to Cart -->
                     <form action="AddToCart" method="post">
                         <input type="hidden" name="gameId" value="1">
-                        <input type="hidden" name="sourcePage"
-                               value="<%= request.getRequestURI().endsWith('GameDetail.jsp') ? 'GameDetail.jsp' : 'Index.jsp' %>">
                         <button class="btn btn-outline-light flex-shrink-0 bg-primary" type="submit">
-                            <i class="bi-cart-fill me-1"></i>
-                            Add to cart
+                            <i class="bi-cart-fill me-1"></i> Add to cart
                         </button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- JS media (gộp, tránh trùng lặp) -->
+        <!-- JS media -->
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 // Video trailer modal play/pause
@@ -1032,21 +913,17 @@
                         </div>
                         <style>
                             .card.h-100 {
-                                background-color: #112240; /* Màu xanh đen hơi sáng hơn nền chính */
-                                border-radius: 16px; /* Bo góc mềm mại */
-                                box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Đổ bóng nhẹ cho nổi lên */
-                                border: 1px solid rgba(255, 255, 255, 0.05); /* Viền mờ tinh tế */
-                                transition: all 0.3s ease; /* Hiệu ứng mượt khi hover */
+                                background-color: #112240; border-radius: 16px;
+                                box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+                                border: 1px solid rgba(255, 255, 255, 0.05);
+                                transition: all 0.3s ease;
                             }
-
-                            /* Hiệu ứng khi di chuột qua khối */
                             .card.h-100:hover {
-                                transform: translateY(-6px); /* Nổi nhẹ lên */
-                                box-shadow: 0 0 25px rgba(0, 200, 255, 0.25); /* Ánh xanh lam nhẹ */
-                                background-color: #162e4d; /* Tăng sáng nhẹ khi hover */
-                                border-color: rgba(0, 200, 255, 0.2); /* Viền xanh lam ánh sáng */
+                                transform: translateY(-6px);
+                                box-shadow: 0 0 25px rgba(0, 200, 255, 0.25);
+                                background-color: #162e4d;
+                                border-color: rgba(0, 200, 255, 0.2);
                             }
-
                         </style>
                     </a>
                 </div>
@@ -1181,4 +1058,3 @@
 
 </body>
 </html>
-
