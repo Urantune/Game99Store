@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Thanh toán - Game Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
         body { background:#123965; font-family: Arial, sans-serif; }
         .checkout { max-width:1050px; margin:40px auto; background:rgba(0,60,100,0.6);
@@ -22,15 +21,31 @@
         .price-pos{color:#00E676;font-weight:700;}
         .hint{font-size:12px;color:#B0BEC5;}
         .divider{height:1px;background:rgba(255,255,255,.12);margin:14px 0;}
+        .badge-ok{background:rgba(0,230,118,.15);border:1px solid rgba(0,230,118,.4);color:#a5f5c9;padding:2px 8px;border-radius:10px;font-size:12px;}
+        .badge-expired{background:rgba(255,82,82,.15);border:1px solid rgba(255,82,82,.4);color:#ffc1c1;padding:2px 8px;border-radius:10px;font-size:12px;}
     </style>
 </head>
-
 <body>
+
 <div class="checkout">
     <div class="title">Thanh toán</div>
 
+    <!-- ==== NHÚNG DANH SÁCH VOUCHER TỪ SERVER THÀNH DATA-* ==== -->
+    <div id="voucher-dataset" hidden>
+        <div class="vitem"
+             th:each="v : ${vouchers}"
+             th:attr="data-name=${v.name},
+                  data-type=${#strings.toLowerCase(v.type)},
+                  data-sale=${v.sale},
+                  data-start=${v.date_start != null ? #temporals.format(v.date_start,'yyyy-MM-dd''T''HH:mm:ss') : ''},
+                  data-end=${v.date_end != null ? #temporals.format(v.date_end,'yyyy-MM-dd''T''HH:mm:ss') : ''}">
+        </div>
+    </div>
+    <!-- ========================================================= -->
+
     <div class="row g-3">
 
+        <!-- LEFT: danh sách game -->
         <div class="col-lg-7">
             <table class="table table-hover align-middle">
                 <thead class="table-dark">
@@ -47,24 +62,16 @@
 
                 <tr th:each="item: ${listGame}">
                     <td>
-
                         <div class="thumb"
                              th:with="imgs=${item.linkImage},
                           path=${(imgs != null and #arrays.length(imgs) > 0) ? '/' + imgs[0] : '/img/notfound.png'}">
                             <img th:src="@{${path}}" alt="thumb">
                         </div>
-                        <!--
-                        <div class="thumb"
-                             th:with="imgs=${item.linkImage != null ? #strings.arraySplit(item.linkImage, ',') : null},
-                                      path=${(imgs != null and #arrays.length(imgs) > 0) ? '/' + #strings.trim(imgs[0]) : '/img/notfound.png'}">
-                          <img th:src="@{${path}}" alt="thumb">
-                        </div>
-                        -->
                     </td>
 
                     <td>
                         <div th:text="${item.gameName}">Tên game</div>
-
+                        <!-- chuyển danh sách id đã chọn sang form thanh toán -->
                         <input type="hidden" name="selectedIds" th:value="${item.gameId}" form="checkoutForm">
                     </td>
 
@@ -80,31 +87,35 @@
             <a th:href="@{/welcome}" class="btn btn-primary">← Tiếp tục mua sắm</a>
         </div>
 
-
+        <!-- RIGHT: tóm tắt + voucher + nút thanh toán -->
         <div class="col-lg-5">
             <div class="summary-card">
-
 
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="subtle">Số dư ví của bạn</div>
                     <div class="fw-bold" id="walletBadge"
                          th:text="${#numbers.formatDecimal(user.price,0,'POINT',0,'POINT')} + ' ₫'">0 ₫
                     </div>
-
                 </div>
 
                 <div class="divider"></div>
 
-
+                <!-- ô nhập voucher -->
                 <div class="mb-2">
                     <label for="voucherInput" class="form-label mb-1">Mã voucher</label>
-                    <input id="voucherInput" type="text" class="form-control" placeholder="Nhập mã giảm giá (BE sẽ kiểm tra)">
-                    <div class="hint mt-1">Mã giảm sẽ gửi lên server và áp dụng ở backend. Ở đây chỉ hiển thị tạm thời (0₫).</div>
+                    <div class="d-flex gap-2">
+                        <input id="voucherInput" type="text" class="form-control" placeholder="Nhập mã giảm giá">
+                        <button id="btnApply" type="button" class="btn btn-primary">Áp dụng</button>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <span id="voucherStatus" class="hint">Nhập mã và bấm “Áp dụng”.</span>
+                        <span id="voucherBadge" class="" style="display:none;"></span>
+                    </div>
                 </div>
 
                 <div class="divider"></div>
 
-
+                <!-- bảng tổng -->
                 <div class="table-responsive">
                     <table class="table table-sm text-white align-middle mb-2">
                         <tbody>
@@ -124,20 +135,17 @@
                     </table>
                 </div>
 
-                <!-- Tổng headline -->
+                <!-- headline tổng -->
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="subtle">Thành tiền (ước tính)</div>
                     <div class="money-badge" id="headlineTotal">0 ₫</div>
                 </div>
 
-
+                <!-- form submit -->
                 <form id="checkoutForm" th:action="@{/welcome/checkout}" method="post" class="mt-2">
-
                     <input type="hidden" name="userId" th:value="${user.id}">
-                    <input type="hidden" name="walletBalance" th:value="${user.price}">
+                    <!-- gửi mã voucher + số tiền -->
                     <input type="hidden" name="voucherCode" id="voucherHidden">
-
-
                     <input type="hidden" name="subtotal" id="subtotalHidden">
                     <input type="hidden" name="discount" id="discountHidden" value="0">
                     <input type="hidden" name="grandTotal" id="grandHidden">
@@ -156,22 +164,41 @@
 </div>
 
 <script>
-    (function(){
-        const fmt = n => (n || 0).toLocaleString('vi-VN') + ' ₫';
+    (function () {
+        // ===== helpers =====
+        const fmt = n => (Math.max(0, n || 0)).toLocaleString('vi-VN') + ' ₫';
+        const parseISO = s => s ? new Date(s) : null;
 
+        // ===== DOM =====
         const linePrices    = document.querySelectorAll('.line-price');
-        const headlineTotal = document.getElementById('headlineTotal');
         const cellSubtotal  = document.getElementById('cellSubtotal');
         const cellDiscount  = document.getElementById('cellDiscount');
         const cellGrand     = document.getElementById('cellGrand');
+        const headlineTotal = document.getElementById('headlineTotal');
 
         const voucherInput  = document.getElementById('voucherInput');
+        const btnApply      = document.getElementById('btnApply');
+        const voucherStatus = document.getElementById('voucherStatus');
+        const voucherBadge  = document.getElementById('voucherBadge');
+
         const voucherHidden = document.getElementById('voucherHidden');
         const subtotalH     = document.getElementById('subtotalHidden');
         const discountH     = document.getElementById('discountHidden');
         const grandH        = document.getElementById('grandHidden');
 
-        function getSubtotal(){
+        // ===== lấy vouchers từ dataset =====
+        const voucherNodes = document.querySelectorAll('#voucher-dataset .vitem');
+        const vouchers = Array.from(voucherNodes).map(n => {
+            const name  = (n.dataset.name || '').trim();
+            const type  = (n.dataset.type || '').trim().toLowerCase(); // percent | fixed
+            const sale  = parseFloat(n.dataset.sale || '0') || 0;
+            const start = parseISO(n.dataset.start || '');
+            const end   = parseISO(n.dataset.end || '');
+            return { name, type, sale, start, end };
+        });
+
+        // ===== tính tạm tính =====
+        function getSubtotal() {
             let sum = 0;
             linePrices.forEach(el => {
                 const v = parseFloat(el.getAttribute('data-price') || '0') || 0;
@@ -180,27 +207,98 @@
             return sum;
         }
 
-        function render(){
+        // ===== tìm voucher theo mã (không phân biệt hoa thường) =====
+        function findVoucherByCode(code) {
+            if (!code) return null;
+            const c = code.trim().toLowerCase();
+            return vouchers.find(v => (v.name || '').trim().toLowerCase() === c) || null;
+        }
+
+        // ===== kiểm tra hạn sử dụng (nếu có start/end) =====
+        function isVoucherActive(v, now = new Date()) {
+            if (!v) return false;
+            // nếu có start: now >= start
+            if (v.start && now < v.start) return false;
+            // nếu có end: now <= end
+            if (v.end && now > v.end) return false;
+            return true;
+        }
+
+        // ===== tính discount theo loại =====
+        function calcDiscount(v, subtotal) {
+            if (!v) return 0;
+            if (subtotal <= 0) return 0;
+            if (v.type === 'percent') {
+                // sale là %; ví dụ 10 => 10% tối đa không vượt subtotal
+                const raw = subtotal * (v.sale / 100.0);
+                return Math.min(subtotal, Math.max(0, raw));
+            }
+            if (v.type === 'fixed') {
+                // sale là số tiền VND
+                return Math.min(subtotal, Math.max(0, v.sale));
+            }
+            // loại khác: không áp dụng
+            return 0;
+        }
+
+        // ===== render tổng =====
+        function renderTotals() {
             const subtotal = getSubtotal();
+            const code = (voucherInput.value || '').trim();
+            const voucher = findVoucherByCode(code);
+            let discount = 0;
 
+            // trạng thái voucher UI
+            voucherBadge.style.display = 'none';
+            voucherBadge.textContent = '';
+            voucherBadge.className = '';
 
-            const discount = 0;
+            if (voucher) {
+                if (isVoucherActive(voucher)) {
+                    discount = calcDiscount(voucher, subtotal);
+                    voucherStatus.textContent = 'Voucher hợp lệ.';
+                    voucherBadge.textContent = voucher.type === 'percent'
+                        ? ('-' + voucher.sale + '%')
+                        : ('-' + voucher.sale.toLocaleString('vi-VN') + '₫');
+                    voucherBadge.className = 'badge-ok';
+                    voucherBadge.style.display = 'inline-block';
+                } else {
+                    voucherStatus.textContent = 'Voucher đã hết hạn hoặc chưa đến thời gian áp dụng.';
+                    voucherBadge.textContent = 'expired';
+                    voucherBadge.className = 'badge-expired';
+                    voucherBadge.style.display = 'inline-block';
+                }
+            } else {
+                if (code.length > 0) {
+                    voucherStatus.textContent = 'Không tìm thấy voucher này.';
+                } else {
+                    voucherStatus.textContent = 'Nhập mã và bấm “Áp dụng”.';
+                }
+            }
+
             const grand = Math.max(0, subtotal - discount);
 
+            // cập nhật UI
             cellSubtotal.textContent  = fmt(subtotal);
             cellDiscount.textContent  = '− ' + fmt(discount);
             cellGrand.textContent     = fmt(grand);
             headlineTotal.textContent = fmt(grand);
 
-
-            voucherHidden.value = (voucherInput.value || '').trim();
+            // đẩy hidden cho server
+            voucherHidden.value = code;
             subtotalH.value     = Math.round(subtotal);
             discountH.value     = Math.round(discount);
             grandH.value        = Math.round(grand);
         }
 
-        voucherInput && voucherInput.addEventListener('input', render);
-        render();
+        // sự kiện
+        btnApply && btnApply.addEventListener('click', renderTotals);
+        voucherInput && voucherInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') renderTotals();
+        });
+
+        // render ban đầu
+        renderTotals();
     })();
 </script>
 

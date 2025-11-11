@@ -50,6 +50,8 @@
         private WebBackEnd.Service.UserTransactionService transactionService;
         @Autowired
         private PasswordEncoder passwordEncoder;
+        @Autowired
+        private VouncherService vouncherService;
 
 
 
@@ -124,43 +126,45 @@
         }
 
         @PostMapping("/buy")
-        public String buy(@RequestParam("selectedIds") List<UUID> selectedIds,
+        public String buy(@RequestParam(value = "selectedIds", required = false) List<UUID> selectedIds,
                           Model model,
-                          HttpSession session) {
+                          HttpSession session,
+                          RedirectAttributes ra) {
             UUID userId = (UUID) session.getAttribute("id");
             if (userId == null) return "redirect:/welcome/login";
 
             if (selectedIds == null || selectedIds.isEmpty()) {
-
+                ra.addFlashAttribute("message", "Vui lòng chọn ít nhất 1 game.");
                 return "redirect:/welcome/Cart/" + userId;
             }
 
-            List<Game> list = new ArrayList<>();
-
+            List<Game> valid = new ArrayList<>();
             for (UUID id : selectedIds) {
-                list.add(gameSevice.findGameById(id));
+                Game g = gameSevice.findGameById(id);
+                if (g != null) valid.add(g);
+            }
+            if (valid.isEmpty()) {
+                ra.addFlashAttribute("message", "Không tìm thấy game hợp lệ để thanh toán.");
+                return "redirect:/welcome/Cart/" + userId;
             }
 
-            model.addAttribute("listGame", list);
-            model.addAttribute("user", userService.findById(userId));
             session.setAttribute("checkoutSelectedIds", selectedIds);
+            model.addAttribute("listGame", valid);
+            model.addAttribute("user", userService.findById(userId));
+            model.addAttribute("vouchers", vouncherService.findAll());
             return "HTML/Buy";
         }
 
+
         @PostMapping("/checkout")
-        public String checkout(@RequestParam("selectedIds") List<UUID> selectedIds,
+        public String checkout(@RequestParam(value = "selectedIds", required = false) List<UUID> selectedIds,
                                @RequestParam("userId") UUID userIdFromForm,
                                HttpSession session,
                                Model model,
                                RedirectAttributes ra) {
-
-
             UUID sessionUserId = (UUID) session.getAttribute("id");
-            if (sessionUserId == null) {
-                return "redirect:/welcome/login";
-            }
+            if (sessionUserId == null) return "redirect:/welcome/login";
             if (!sessionUserId.equals(userIdFromForm)) {
-
                 ra.addFlashAttribute("message", "Phiên không hợp lệ. Vui lòng thử lại.");
                 return "redirect:/welcome/Cart/" + sessionUserId;
             }
@@ -169,53 +173,56 @@
                 @SuppressWarnings("unchecked")
                 List<UUID> idsInSession = (List<UUID>) session.getAttribute("checkoutSelectedIds");
                 if (idsInSession == null || idsInSession.isEmpty()) {
+                    ra.addFlashAttribute("message", "Vui lòng chọn game để thanh toán.");
                     return "redirect:/welcome/Cart/" + sessionUserId;
                 }
                 selectedIds = idsInSession;
             }
 
-
             User user = userService.findById(sessionUserId);
+            if (user == null) return "redirect:/welcome/login";
 
-            List<Game> list = new ArrayList<>();
+            List<Game> payable = new ArrayList<>();
             for (UUID id : selectedIds) {
                 Game g = gameSevice.findGameById(id);
-                if (g != null) list.add(g);
+                if (g != null) payable.add(g);
             }
-
-            if (list.isEmpty()) {
-                ra.addFlashAttribute("message", "Không tìm thấy game hợp lệ để thanh toán.");
+            if (payable.isEmpty()) {
+                ra.addFlashAttribute("message", "Không có game hợp lệ để thanh toán.");
                 return "redirect:/welcome/Cart/" + sessionUserId;
             }
 
             double total = 0d;
-            for (Game g : list) {
-                total += (g.getPrice() == 0 ? 0 : g.getPrice());
+            for (Game g : payable) {
+                total += (g.getPrice() > 0 ? g.getPrice() : 0d);
             }
 
-
-            if (user.getPrice() >= total) {
-                user.setPrice(user.getPrice() - total);
-                userService.save(user);
-
-                for (Game g : list) {
-                    UserGame ug = new UserGame(user, g, LocalDateTime.now(), 1);
-                    userGameService.saveUserGame(ug);
-                }
-
-
-                session.removeAttribute("checkoutSelectedIds");
-
-                ra.addFlashAttribute("message", "Thanh toán thành công!");
-                return "HTML/Succest";
-            } else {
+            if (user.getPrice() < total) {
                 model.addAttribute("thongbao", "khongdusodu");
-                model.addAttribute("listGame", list);
+                model.addAttribute("listGame", payable);
                 model.addAttribute("user", user);
-
                 return "HTML/Buy";
             }
+
+            user.setPrice(user.getPrice() - total);
+            userService.save(user);
+
+            for (Game g : payable) {
+                UserGame ug = userGameService.findByGameAndUser(g, user);
+                if (ug == null) {
+                    ug = new UserGame(user, g, LocalDateTime.now(), 1);
+                } else {
+                    ug.setStatus(1);
+                    ug.setPurchaseDate(LocalDateTime.now());
+                }
+                userGameService.saveUserGame(ug);
+            }
+
+            session.removeAttribute("checkoutSelectedIds");
+            ra.addFlashAttribute("message", "Thanh toán thành công!");
+            return "redirect:/welcome/Cart/" + sessionUserId;
         }
+
 
 
         @PostMapping("/register")
