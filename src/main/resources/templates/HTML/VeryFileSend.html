@@ -2,18 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>GameStore</title>
+    <title>Xác thực tài khoản | GameStore</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .verify-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px 60px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 500;
+        }
+
+        button {
+            background-color: #22c55e;
+            border: none;
+            color: white;
+            padding: 12px 40px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-
-<form th:action="@{/veryAccount/done/{id}/{code}(id = ${idUser},code = ${codeUser})}" method="post">
-    <h2>Nhấp vào nút dưới đây để xác thực tài khoản</h2>
-    <button type="submit">Submit</button>
-
-</form>
-
-
-
-
+<div class="verify-container">
+    <div class="logo">🎮 GameStore</div>
+    <h2>Nhấp vào nút bên dưới để xác thực tài khoản của bạn</h2>
+    <form th:action="@{/veryAccount/done/{id}/{code}(id=${idUser}, code=${codeUser})}" method="post">
+        <button type="submit">Xác thực ngay</button>
+    </form>
+</div>
 </body>
 </html>
