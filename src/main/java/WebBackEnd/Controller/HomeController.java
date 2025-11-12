@@ -423,7 +423,7 @@ public class HomeController {
     }
 
     @PostMapping("/refundGame")
-    public String refundGamePost(@RequestParam("gameId") UUID gameId,
+    public String refundGamePost(@RequestParam("gameId") UUID gameId,Model model,
                                  HttpSession session) {
 
         UUID userId = (UUID) session.getAttribute("userId");
@@ -438,8 +438,9 @@ public class HomeController {
 
         user.setPrice(user.getPrice() + game.getPrice());
         userService.save(user);
+        model.addAttribute("gameid",gameId);
 
-        return "redirect:/welcome/gamedetail/" + gameId;
+        return "HTML/SuccestRefund";
     }
 
 
@@ -630,14 +631,12 @@ public class HomeController {
         boolean existed = userGameService.findUserGameByUserAndGame(user, game);
 
         if (existed) {
-            ra.addAttribute("cartError",
-                    java.net.URLEncoder.encode("Bạn đã thêm game này vào giỏ hàng rồi", java.nio.charset.StandardCharsets.UTF_8));
+            ra.addAttribute("cartError", "Bạn đã thêm game này vào giỏ hàng rồi");
         } else {
-            UserGame ug = new UserGame(user, game, java.time.LocalDateTime.now(), 0);
-            userGameService.saveUserGame(ug);
-            ra.addAttribute("cartSuccess",
-                    java.net.URLEncoder.encode("Đã thêm vào giỏ hàng!", java.nio.charset.StandardCharsets.UTF_8));
+            userGameService.saveUserGame(new UserGame(user, game, java.time.LocalDateTime.now(), 0));
+            ra.addAttribute("cartSuccess", "Đã thêm vào giỏ hàng!");
         }
+
 
         return "redirect:/welcome/gamedetail/{game_id}";
     }
