@@ -3,20 +3,23 @@ package WebBackEnd.Controller;
 
 import WebBackEnd.Entity.User;
 import WebBackEnd.Entity.UserGame;
-import WebBackEnd.service.DetailService;
-import WebBackEnd.service.GameSevice;
-import WebBackEnd.service.UserGameService;
-import WebBackEnd.service.UserService;
+import WebBackEnd.service.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping("/veryAccount")
@@ -33,6 +36,9 @@ public class VerryController {
     private GameSevice gameSevice;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    private static final Map<String, Boolean> PAY_STATE = new ConcurrentHashMap<>();
+
 
     public VerryController(DetailService detailService, UserService userService) {
         this.detailService = detailService;
@@ -61,7 +67,9 @@ public class VerryController {
         System.out.println(fi);
 
         User user = userService.findById(id);
-        if(user.getStatus().equalsIgnoreCase("wait"))
+
+        String[] w = user.getStatus().split("\\|\\|");
+        if(w[0].equalsIgnoreCase("wait"))
         {
             if(user.getId().toString().equalsIgnoreCase(id.toString()))
             {
@@ -116,7 +124,8 @@ public class VerryController {
         System.out.println(fi);
 
         User user = userService.findById(id);
-        if(user.getStatus().equalsIgnoreCase("changePass"))
+        String[] w = user.getStatus().split("\\|\\|");
+        if(w[0].equalsIgnoreCase("changePass"))
         {
             if(user.getId().toString().equalsIgnoreCase(id.toString()))
             {
@@ -189,5 +198,84 @@ public class VerryController {
 
 
 
+    @RestController
+    @RequestMapping("/qr")
+    public static class QrController {
+
+        private QrService qrService;
+
+        @PostConstruct
+        void init() {
+            this.qrService = new QrService();
+        }
+
+
+        @GetMapping(produces = MediaType.IMAGE_PNG_VALUE)
+        public @ResponseBody byte[] qr(
+                @RequestParam String idpayment,
+                @RequestParam(defaultValue = "256") int size) {
+
+            int s = Math.max(64, Math.min(size, 1024));
+            return qrService.generatePng(idpayment, s);
+        }
+
+
+        @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+        public void download(
+                @RequestParam String idpayment,
+                @RequestParam(defaultValue = "256") int size,
+                HttpServletResponse resp) throws IOException {
+
+            byte[] png = qr(idpayment, size);
+            resp.setHeader("Content-Disposition", "attachment; filename=\"qr.png\"");
+            resp.getOutputStream().write(png);
+        }
+    }
+
+
+
+
+
+
+
+    @GetMapping("/test")
+    public String test() {
+        return "HTML/TestVery";
+    }
+
+
+
+    // (tuỳ chọn) trang success
+    @GetMapping("/success")
+    public String success() {
+        return "HTML/Success"; // file bạn đã đưa
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping(value = "/pay/confirm", produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> confirm(@RequestParam String pid) {
+        PAY_STATE.put(pid, true);
+        return Map.of("status", "ok");
+    }
+
+
+    // Desktop poll -> hỏi theo pid
+    @CrossOrigin(origins = "*")
+    @GetMapping("/pay/status")
+    @ResponseBody
+    public Map<String, Object> status(@RequestParam String pid) {
+        boolean paid = PAY_STATE.getOrDefault(pid, false);
+        return Map.of("paid", paid);
+    }
+
+    // Reset trước khi bắt đầu 1 lần quét mới (tránh dính trạng thái cũ)
+    @CrossOrigin(origins = "*")
+    @GetMapping("/pay/reset")
+    @ResponseBody
+    public Map<String, Object> reset(@RequestParam String pid) {
+        PAY_STATE.remove(pid);
+        return Map.of("status", "reset");
+    }
 
 }

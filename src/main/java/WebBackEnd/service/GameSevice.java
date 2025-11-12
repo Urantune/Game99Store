@@ -76,7 +76,9 @@ public class GameSevice {
     }
 
 
-
+    public void delete(UUID id) {
+        gameRepository.deleteByGameId(id);
+    }
 
 
 }

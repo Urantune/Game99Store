@@ -32,4 +32,6 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
 
     List<Game> findByGameCategoryIgnoreCase(String category);
 
+
+    void deleteByGameId(UUID gameId);
 }

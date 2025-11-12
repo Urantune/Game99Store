@@ -206,6 +206,17 @@
 
 
 
+        @PostMapping("/deletegame")
+        public String deleteGame(@RequestParam("id") UUID id) {
+            Game g = gameSevice.findById(id);
+            userGameService.DeleteByGame(g);
+            gameSevice.deleteGame(id);
+            return "redirect:/welcomeAdmin/listgame";
+        }
+
+
+
+
 
 
 
@@ -308,7 +319,7 @@
 
         @PostMapping("/login")
         @ResponseBody
-        public ResponseEntity<?> login(@RequestParam("username") String adminname,   // ← đổi tên key
+        public ResponseEntity<?> login(@RequestParam("username") String adminname,
                                        @RequestParam("password") String password,
                                        HttpSession session) {
 

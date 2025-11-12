@@ -247,7 +247,7 @@
             </div>
             <div th:if="${session.userId != null}" class="d-flex flex-column align-items-center">
                 <a th:href="@{/welcome/profile/{id}(id = ${session.id})}" class="d-inline-flex justify-content-center">
-                    <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
+                    <img th:src="${user.imageLinks != null ? '/'+user.imageLinks : '/img/5000.jpg'}"
                          alt="Avatar" class="rounded-circle"
                          style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
                 </a>
@@ -565,14 +565,25 @@
                     </form>
                 </div>
 
-                <div class="d-flex gap-2 mt-auto"
+                <div class="d-flex flex-column gap-2 mt-auto"
                      th:if="${session.userId != null and canFeedbackandDownload}">
                     <a class="btn btn-download w-100"
                        th:href="@{/api/files/download(path=${game.locate_game}, gameId=${game.gameId})}">
                         ⬇️ Tải về
                     </a>
 
+                    <div th:if="${!refund}">
+                        <form th:action="@{/welcome/refundGame}" method="post">
+                            <input type="hidden" name="gameId" th:value="${game.gameId}"/>
+                            <button type="submit" class="btn btn-danger w-100">
+                                💸 Hoàn tiền
+                            </button>
+                        </form>
+                    </div>
                 </div>
+
+
+
             </div>
         </div>
 

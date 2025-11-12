@@ -61,8 +61,19 @@ public interface UserGameRepository extends JpaRepository<UserGame, UserGameId> 
         UserGame findByGameAndUser(Game game, User user);
 
 
+
+
     @Modifying
     @Transactional
         void deleteAllByUser(User user);
+
+    @Modifying
+    @Transactional
+    void deleteAllByGame(Game game);
+
+
+    @Modifying
+    @Transactional
+    void deleteByUserAndGame(User user, Game game);
 
 }

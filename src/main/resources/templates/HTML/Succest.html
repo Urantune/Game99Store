@@ -88,12 +88,21 @@
 
         <div class="divider"></div>
 
-        <a th:href="@{/welcome}" href="/welcome" class="btn btn-back">
+        <a th:if="${gameid == 'ok'}"
+           th:href="@{/welcome}"
+           class="btn btn-back">
             ← Về trang chủ
         </a>
 
 
+        <a th:unless="${gameid == 'ok'}"
+           th:href="@{/welcome/gamedetail/{id}(id=${gameid})}"
+           class="btn btn-back">
+            ← Quay lại game
+        </a>
+
     </div>
+
 </div>
 
 

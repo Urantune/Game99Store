@@ -1,170 +1,61 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>💰 Ví GamePay</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
     <style>
-        body {
-            background: radial-gradient(circle at top, #19002b 0%, #0a0a0a 100%);
-            color: #fff;
-            font-family: 'Segoe UI', sans-serif;
-            min-height: 100vh;
-        }
-
-        .wallet-container {
-            max-width: 800px;
-            margin: 80px auto;
-            background: rgba(255,255,255,0.08);
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
-            padding: 40px;
-            backdrop-filter: blur(12px);
-        }
-
-        .wallet-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .wallet-header h2 {
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .balance {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-
-        .wallet-actions {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .wallet-actions .btn {
-            border-radius: 12px;
-            padding: 12px 25px;
-            font-weight: 500;
-        }
-
-        .wallet-status {
-            margin-top: 25px;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-
-        .card-history {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 15px;
-            margin-top: 30px;
-            color: #fff;
-        }
-
-        .chart-container {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        canvas {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 10px;
-        }
-
-        a.back-home {
-            color: #fff;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 25px;
-            font-weight: 500;
-        }
-
-        a.back-home:hover {
-            text-decoration: underline;
-        }
+        body{background:radial-gradient(circle at top,#19002b 0%,#0a0a0a 100%);color:#fff;font-family:'Segoe UI',sans-serif;min-height:100vh}
+        .wallet-container{max-width:800px;margin:80px auto;background:rgba(255,255,255,0.08);border-radius:20px;box-shadow:0 0 20px rgba(255,255,255,0.2);padding:40px;backdrop-filter:blur(12px)}
+        .wallet-header{text-align:center;margin-bottom:30px}
+        .wallet-header h2{font-weight:bold;color:#fff}
+        .balance{text-align:center;font-size:2rem;margin-bottom:8px}
+        .subtle{text-align:center;color:rgba(255,255,255,.7);margin-bottom:24px}
+        .chart-container{margin-top:30px;text-align:center}
+        canvas{background:rgba(255,255,255,0.05);border-radius:15px;padding:10px}
+        a.back-home{color:#fff;text-decoration:none;display:inline-block;margin-top:25px;font-weight:500}
+        a.back-home:hover{text-decoration:underline}
     </style>
 </head>
 <body>
 <div class="wallet-container">
     <div class="wallet-header">
         <h2><i class="bi bi-wallet2"></i> Ví GamePay</h2>
-        <p>Quản lý, nạp tiền và theo dõi giao dịch của bạn</p>
+        <p>Quản lý và theo dõi giao dịch của bạn</p>
     </div>
 
-    <!-- Số dư -->
     <div class="balance">
-        <strong>Số dư hiện tại:</strong> <span id="balance">0₫</span>
+        <strong>Tổng chi tiêu:</strong>
+        <span th:text="${#numbers.formatDecimal(balance, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
     </div>
 
-    <!-- Các hành động -->
-    <div class="wallet-actions">
-        <button class="btn btn-success" id="btnDeposit"><i class="bi bi-plus-circle"></i> Nạp tiền</button>
-        <button class="btn btn-warning" id="btnWithdraw"><i class="bi bi-arrow-down-circle"></i> Rút tiền</button>
-        <button class="btn btn-info" id="btnHistory"><i class="bi bi-clock-history"></i> Lịch sử</button>
-        <a href="GamePay.html" class="btn btn-light text-dark"><i class="bi bi-shop"></i> Mua Game ngay</a>
+    <div class="subtle">
+        Bắt đầu từ:
+        <span th:text="${timecreateAcc != null ? #temporals.format(timecreateAcc, 'dd/MM/yyyy') : '—'}">—</span>
     </div>
 
-    <!-- Trạng thái ví -->
-    <div class="wallet-status" id="walletStatus"></div>
-
-    <!-- Biểu đồ -->
     <div class="chart-container">
-        <h5 class="mt-4">📊 Thống kê giao dịch gần đây</h5>
+        <h5 class="mt-2">📊 Chi tiêu theo thời gian</h5>
         <canvas id="spendingChart" width="400" height="200"></canvas>
-    </div>
-
-    <!-- Lịch sử giao dịch -->
-    <div class="card card-history p-3 mt-4" id="historySection" style="display:none;">
-        <h5><i class="bi bi-list-ul"></i> Lịch sử giao dịch</h5>
-        <ul id="transactionList" class="list-unstyled mt-3 mb-0"></ul>
     </div>
 
     <a th:href="@{/welcome}" class="back-home"><i class="bi bi-arrow-left-circle"></i> Quay lại trang chủ</a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Dữ liệu giả lập
-    let balance = 250000;
-    let activated = false;
-    const transactionList = [
-        { type: "Nạp tiền", amount: "+100,000₫", date: "05/10/2025" },
-        { type: "Mua game", amount: "-50,000₫", date: "06/10/2025" },
-        { type: "Rút tiền", amount: "-30,000₫", date: "07/10/2025" },
-    ];
+<script th:inline="javascript">
+    const labels = /*[[${labels}]]*/ [];
+    const spendingData = /*[[${spendingData}]]*/ [];
 
-    // Cập nhật số dư
-    document.getElementById("balance").textContent = balance.toLocaleString("vi-VN") + "₫";
-
-    // Lịch sử giao dịch
-    document.getElementById("btnHistory").addEventListener("click", () => {
-        const list = document.getElementById("transactionList");
-        list.innerHTML = "";
-        transactionList.forEach(t => {
-            const li = document.createElement("li");
-            li.innerHTML = `<strong>${t.type}</strong> — ${t.amount} <span class="text-white-50">(${t.date})</span>`;
-            list.appendChild(li);
-        });
-        document.getElementById("historySection").style.display = "block";
-    });
-
-    // Vẽ biểu đồ
     const ctx = document.getElementById('spendingChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+            labels: labels,
             datasets: [{
-                label: 'Chi tiêu (₫)',
-                data: [0, 20000, 50000, 30000, 80000, 60000, 10000],
+                label: 'Tổng chi tiêu (₫)',
+                data: spendingData,
                 borderColor: '#00ffcc',
                 backgroundColor: 'rgba(0,255,204,0.3)',
                 fill: true,
@@ -172,12 +63,15 @@
             }]
         },
         options: {
-            plugins: {
-                legend: { labels: { color: '#fff' } }
-            },
+            plugins: { legend: { labels: { color: '#fff' } } },
             scales: {
                 x: { ticks: { color: '#fff' } },
-                y: { ticks: { color: '#fff' } }
+                y: {
+                    ticks: {
+                        color: '#fff',
+                        callback: function(v){ try{return v.toLocaleString('vi-VN')+'₫';}catch(e){return v;} }
+                    }
+                }
             }
         }
     });
