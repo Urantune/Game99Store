@@ -135,11 +135,15 @@ public class Register {
         String input = "wait" + user.getId();
         String fi;
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(input.getBytes());
+            MessageDigest md = MessageDigest
+                    .getInstance("MD5");
+            byte[] digest = md
+                    .digest(input.getBytes());
             StringBuilder sb = new StringBuilder();
-            for (byte b : digest) sb.append(String.format("%02x", b));
-            fi = sb.toString();
+            for (byte b : digest) sb
+                    .append(String.format("%02x", b));
+            fi = sb
+                    .toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
