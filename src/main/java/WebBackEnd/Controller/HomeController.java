@@ -213,26 +213,7 @@ public class HomeController {
 
 
 
-    @PostMapping("/refundGame")
-    public String refundGamePost(@RequestParam("gameId") UUID gameId, Model model,
-                                 HttpSession session) {
 
-        UUID userId = (UUID) session.getAttribute("userId");
-        if (userId == null) {
-            return "redirect:/welcome/login";
-        }
-
-        User user = userService.findById(userId);
-        Game game = gameSevice.findGameById(gameId);
-
-        userGameService.DeleteByUserGame(user, game);
-
-        user.setPrice(user.getPrice() + game.getPrice());
-        userService.save(user);
-        model.addAttribute("gameid", gameId);
-
-        return "HTML/SuccestRefund";
-    }
 
 
     @PostMapping("/gamedetail/{game_id}")
