@@ -329,8 +329,8 @@
         </a>
 
         <ul class="navbar-nav mx-auto">
-            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcome/news}" target="_blank">TIN TỨC</a></li>
-            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcome/newgame}" target="_blank">SỰ KIỆN</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcome/news}">TIN TỨC</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcome/newgame}">SỰ KIỆN</a></li>
             <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">TOP GAME</a></li>
             <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">GIẢM GIÁ</a></li>
         </ul>
@@ -339,7 +339,7 @@
             <!-- Cart chỉ hiện khi user đã đăng nhập -->
             <a th:if="${session.userId != null}"
                th:href="@{/welcome/Cart/{id}(id=${session.userId})}"
-               class="btn btn-cart me-2" target="_blank">
+               class="btn btn-cart me-2">
                 <i class="bi-cart-fill me-1" ></i> Cart
             </a>
 
@@ -379,7 +379,7 @@
 
             <!-- Đã đăng nhập -->
             <div th:if="${session.userId != null}" class="d-flex flex-column align-items-center">
-                <a th:href="@{/welcome/profile/{id}(id = ${session.userId})}" class="d-inline-flex justify-content-center" target="_blank">
+                <a th:href="@{/welcome/profile/{id}(id = ${session.userId})}" class="d-inline-flex justify-content-center">
                     <img th:src="${user.imageLinks != null ? '/'+user.imageLinks : '/img/5000.jpg'}"
                          alt="Avatar" class="rounded-circle"
                          style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
@@ -413,55 +413,55 @@
 <header class="banner">
     <div class="steam-menu">
         <div class="steam-menu-inner">
-            <a th:href="@{/welcome/about}" target="_blank">About</a>
-            <a th:href="@{/welcome/Newgame}" target="_blank">Coming Soon</a>
+            <a th:href="@{/welcome/about}" >About</a>
+            <a th:href="@{/welcome/Newgame}">Coming Soon</a>
 
             <div class="dropdown">
                 <div class="dropdown-toggle text-decoration-none text-white">Categories</div>
                 <div class="dropdown-menu">
                     <div class="dropdown-column">
                         <h4>Games</h4>
-                        <a th:href="@{/welcome/category/{product}(product='Action')}" target="_blank" rel="noopener noreferrer">Action</a>
-                        <a th:href="@{/welcome/category/{product}(product='Adventure')}" target="_blank" rel="noopener noreferrer">Adventure</a>
-                        <a th:href="@{/welcome/category/{product}(product='Horror')}" target="_blank" rel="noopener noreferrer">Horror</a>
-                        <a th:href="@{/welcome/category/{product}(product='Puzzle')}" target="_blank" rel="noopener noreferrer">Puzzle</a>
+                        <a th:href="@{/welcome/category/{product}(product='Action')}" rel="noopener noreferrer">Action</a>
+                        <a th:href="@{/welcome/category/{product}(product='Adventure')}"  rel="noopener noreferrer">Adventure</a>
+                        <a th:href="@{/welcome/category/{product}(product='Horror')}"  rel="noopener noreferrer">Horror</a>
+                        <a th:href="@{/welcome/category/{product}(product='Puzzle')}"  rel="noopener noreferrer">Puzzle</a>
                     </div>
 
                     <div class="dropdown-column">
                         <h4>Genres</h4>
-                        <a th:href="@{/welcome/category/{product}(product='Anime')}" target="_blank" rel="noopener noreferrer">Anime</a>
-                        <a th:href="@{/welcome/category/{product}(product='Sci-Fi')}" target="_blank" rel="noopener noreferrer">Sci-Fi</a>
-                        <a th:href="@{/welcome/category/{product}(product='Cyberpunk')}" target="_blank" rel="noopener noreferrer">Cyberpunk</a>
-                        <a th:href="@{/welcome/category/{product}(product='Open World')}" target="_blank" rel="noopener noreferrer">Open World</a>
-                        <a th:href="@{/welcome/category/{product}(product='Survival')}" target="_blank" rel="noopener noreferrer">Survival</a>
-                        <a th:href="@{/welcome/category/{product}(product='Space')}" target="_blank" rel="noopener noreferrer">Space</a>
+                        <a th:href="@{/welcome/category/{product}(product='Anime')}"  rel="noopener noreferrer">Anime</a>
+                        <a th:href="@{/welcome/category/{product}(product='Sci-Fi')}"  rel="noopener noreferrer">Sci-Fi</a>
+                        <a th:href="@{/welcome/category/{product}(product='Cyberpunk')}"  rel="noopener noreferrer">Cyberpunk</a>
+                        <a th:href="@{/welcome/category/{product}(product='Open World')}"rel="noopener noreferrer">Open World</a>
+                        <a th:href="@{/welcome/category/{product}(product='Survival')}" rel="noopener noreferrer">Survival</a>
+                        <a th:href="@{/welcome/category/{product}(product='Space')}"  rel="noopener noreferrer">Space</a>
                     </div>
 
                     <div class="dropdown-column">
                         <h4>By Popularity</h4>
-                        <a th:href="@{/welcome/category/{product}(product='New Releases')}" target="_blank" rel="noopener noreferrer">New Releases</a>
-                        <a th:href="@{/welcome/category/{product}(product='Coming Soon')}" target="_blank" rel="noopener noreferrer">Coming Soon</a>
-                        <a th:href="@{/welcome/category/{product}(product='Best Sellers')}" target="_blank" rel="noopener noreferrer">Best Sellers</a>
-                        <a th:href="@{/welcome/category/{product}(product='Top Rated')}" target="_blank" rel="noopener noreferrer">Top Rated</a>
-                        <a th:href="@{/welcome/category/{product}(product='Hot Games')}" target="_blank" rel="noopener noreferrer">Hot Games</a>
+                        <a th:href="@{/welcome/category/{product}(product='New Releases')}"  rel="noopener noreferrer">New Releases</a>
+                        <a th:href="@{/welcome/category/{product}(product='Coming Soon')}"  rel="noopener noreferrer">Coming Soon</a>
+                        <a th:href="@{/welcome/category/{product}(product='Best Sellers')}"  rel="noopener noreferrer">Best Sellers</a>
+                        <a th:href="@{/welcome/category/{product}(product='Top Rated')}"  rel="noopener noreferrer">Top Rated</a>
+                        <a th:href="@{/welcome/category/{product}(product='Hot Games')}"  rel="noopener noreferrer">Hot Games</a>
                     </div>
 
                     <div class="dropdown-column">
                         <h4>By Platform</h4>
-                        <a th:href="@{/welcome/category/{product}(product='PC')}" target="_blank" rel="noopener noreferrer">PC</a>
-                        <a th:href="@{/welcome/category/{product}(product='Smartphone')}" target="_blank" rel="noopener noreferrer">Smartphone</a>
-                        <a th:href="@{/welcome/category/{product}(product='PlayStation')}" target="_blank" rel="noopener noreferrer">PlayStation</a>
-                        <a th:href="@{/welcome/category/{product}(product='Xbox')}" target="_blank" rel="noopener noreferrer">Xbox</a>
-                        <a th:href="@{/welcome/category/{product}(product='Nintendo Switch')}" target="_blank" rel="noopener noreferrer">Nintendo Switch</a>
-                        <a th:href="@{/welcome/category/{product}(product='Mobile')}" target="_blank" rel="noopener noreferrer">Mobile</a>
-                        <a th:href="@{/welcome/category/{product}(product='VR')}" target="_blank" rel="noopener noreferrer">VR</a>
+                        <a th:href="@{/welcome/category/{product}(product='PC')}"  rel="noopener noreferrer">PC</a>
+                        <a th:href="@{/welcome/category/{product}(product='Smartphone')}"  rel="noopener noreferrer">Smartphone</a>
+                        <a th:href="@{/welcome/category/{product}(product='PlayStation')}"  rel="noopener noreferrer">PlayStation</a>
+                        <a th:href="@{/welcome/category/{product}(product='Xbox')}"  rel="noopener noreferrer">Xbox</a>
+                        <a th:href="@{/welcome/category/{product}(product='Nintendo Switch')}" rel="noopener noreferrer">Nintendo Switch</a>
+                        <a th:href="@{/welcome/category/{product}(product='Mobile')}" rel="noopener noreferrer">Mobile</a>
+                        <a th:href="@{/welcome/category/{product}(product='VR')}"  rel="noopener noreferrer">VR</a>
                     </div>
                 </div>
             </div>
 
 
-            <a th:href="@{/welcome/gamePay}" target="_blank">Wallet</a>
-            <a th:href="@{/welcome/support}" target="_blank">Support</a>
+            <a th:href="@{/welcome/gamePay}" >Wallet</a>
+            <a th:href="@{/welcome/support}" >Support</a>
 
             <!-- Search Box -->
             <div class="search-box">
@@ -678,10 +678,16 @@
     <div class="container px-4 px-lg-5 my-5">
         <div id="lienquan" class="row gx-4 gx-lg-5 align-items-center game-detail">
             <div class="col-md-6">
-                <a href="#" style="text-decoration: none; color: inherit;">
-                    <img class="card-img-top mb-4 game-img" th:src="'/'+${gameMain.getLinkImage()[4]}" alt="Sản phẩm mới"/>
+                <a th:href="@{/welcome/gamedetail/{game_id}(game_id=${gameMain.getGameId()})}"
+                   style="text-decoration:none; color:inherit;">
+                    Xem chi tiết
                 </a>
-
+                <a th:href="@{/welcome/gamedetail/{game_id}(game_id=${gameMain.getGameId()})}"
+                   style="text-decoration:none; color:inherit;">
+                    <img class="card-img-top mb-4 game-img"
+                         th:src="'/'+${gameMain.getLinkImage()[4]}"
+                         alt="Liên Quân Mobile"/>
+                </a>
                 <div class="media-section d-flex align-items-center mb-3">
                     <!-- Video nhỏ ngoài trang (mở modal video) -->
                     <div class="demo-video" data-bs-toggle="modal" data-bs-target="#gameTrailerModal">
@@ -969,13 +975,13 @@
                 <h5 class="text-uppercase text-primary glow-title mb-3">Liên hệ</h5>
                 <p><a href="tel:+84912345678" class="footer-link">+84 1900 1099</a></p>
                 <p><a href="mailto:support@gamestore.com" class="footer-link">support@gamestore.com</a></p>
-                <p><a href="https://surl.li/bhtojh" target="_blank" class="footer-link">https://surl.li/bhtojh/</a></p>
+                <p><a href="https://surl.li/bhtojh" class="footer-link">https://surl.li/bhtojh/</a></p>
             </div>
 
             <div class="col-md-3">
                 <h5 class="text-uppercase text-primary glow-title mb-3">Kết nối với chúng tôi</h5>
                 <div class="social-icons">
-                    <a href="https://surl.li/bhtojh" class="social-link" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="https://surl.li/bhtojh" class="social-link" ><i class="bi bi-facebook"></i></a>
                     <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
                     <a href="#" class="social-link"><i class="bi bi-discord"></i></a>
                     <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
