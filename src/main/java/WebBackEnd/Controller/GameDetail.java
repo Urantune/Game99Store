@@ -97,4 +97,31 @@ public class GameDetail {
 
         return "HTML/GameDetail";
     }
+
+
+    @PostMapping("/gamedetail/{game_id}")
+    public String saveFeedback(@PathVariable("game_id") UUID gameId,
+                               @RequestParam("star") Double star,
+                               @RequestParam("comment") String cmt,
+                               HttpSession session) {
+        UUID userId = (UUID) session.getAttribute("userId");
+        if (userId == null) return "redirect:/welcome/login";
+
+        List<Feedback> lst = feedbackService.findFeedbackByGameId(gameId);
+        Feedback my = lst.stream()
+                .filter(f -> f.getUserId().equals(userId))
+                .findFirst().orElse(null);
+
+        if (my == null) {
+            my = new Feedback(gameId, userId, cmt, star);
+        } else {
+            my.setStar(star);
+            my.setComment(cmt);
+        }
+        feedbackService.saveFeedback(my);
+
+        return "redirect:/welcome/gamedetail/" + gameId;
+    }
+
+
 }
