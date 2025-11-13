@@ -2,6 +2,7 @@
 
     import WebBackEnd.Entity.*;
     import WebBackEnd.SucDat.GameCore;
+    import WebBackEnd.SucDat.SendMailTest;
     import WebBackEnd.service.*;
     import java.time.LocalDate;
     import jakarta.servlet.http.HttpSession;
@@ -43,19 +44,24 @@
         private VouncherService vouncherService;
         @Autowired
         private UserGameService userGameService;
+        @Autowired
+        private SendMailTest sendMailTest;
 
 
         @GetMapping({"", "/"})
         public String homeAdmin(Model model,HttpSession session) {
 
-            Admin admin = (Admin) session.getAttribute("admin");
+            Admin admin = (Admin) session
+                    .getAttribute("admin");
+
             return "ADMIN/IndexAdmin";
         }
 
 
         @GetMapping("/listuser")
         public String editUser(Model model) {
-            model.addAttribute("listUser", userService.findAll());
+            model
+                    .addAttribute("listUser", userService.findAll());
             return "ADMIN/ListUser";
         }
 
@@ -63,9 +69,44 @@
         @GetMapping("/edituser/{id}")
         public String editUser(@PathVariable UUID id, Model model) {
             User user = userService.findById(id);
-            model.addAttribute("user", user);
-            model.addAttribute("id", id);
+            model
+                    .addAttribute("user", user);
+            model
+                    .addAttribute("id", id);
             return "ADMIN/EditUser";
+        }
+
+        @PostMapping("/users/{id}/reset-password")
+        public String resetPass(@PathVariable UUID id,
+                                @RequestParam String newPassword,
+                                RedirectAttributes ra) {
+            User user = userService.findById(id);
+            if (user == null) {
+                ra
+                        .addFlashAttribute("error", "Không tìm thấy người dùng.");
+                return "redirect:/welcomeAdmin/listuser";
+            }
+
+            if (newPassword == null || newPassword.isBlank()) {
+                ra
+                        .addFlashAttribute("error", "Mật khẩu trống. Hãy bấm Shuffle trước khi Apply.");
+                return "redirect:/welcomeAdmin/edituser/" + id;
+            }
+
+
+            user.setPassword(passwordEncoder
+                    .encode(newPassword.trim()));
+            userService.save(user);
+
+
+            String title = "Mật khẩu mới của bạn";
+            String content = "<p>Xin chào <b>" + user.getUsername() + "</b>,</p>"
+                    + "<p>Mật khẩu mới của bạn là: <b>" + newPassword + "</b></p>"
+                    + "<p>Vui lòng đăng nhập và đổi lại mật khẩu sau khi vào hệ thống.</p>";
+            sendMailTest.testSend(user.getEmail(), title, content);
+
+            ra.addFlashAttribute("success", "Đã đặt lại mật khẩu và gửi email cho " + user.getEmail());
+            return "redirect:/welcomeAdmin/edituser/" + id;
         }
 
         @PostMapping("/ban")
@@ -269,16 +310,16 @@
                         ? gameCore.saveToFolderKeepName(imgVideo, "videos") : "";
 
                 String i1 = (img1 != null && !img1.isEmpty())
-                        ? gameCore.saveToFolderKeepName(img1, "img") : "";
+                        ? gameCore.saveToFolderKeepName(img1, "static/img") : "";
 
                 String i2 = (img2 != null && !img2.isEmpty())
-                        ? gameCore.saveToFolderKeepName(img2, "img") : "";
+                        ? gameCore.saveToFolderKeepName(img2, "static/img") : "";
 
                 String i3 = (img3 != null && !img3.isEmpty())
-                        ? gameCore.saveToFolderKeepName(img3, "img") : "";
+                        ? gameCore.saveToFolderKeepName(img3, "static/img") : "";
 
                 String cover = (imgCover != null && !imgCover.isEmpty())
-                        ? gameCore.saveToFolderKeepName(imgCover, "img") : "";
+                        ? gameCore.saveToFolderKeepName(imgCover, "static/img") : "";
 
                 String imageLinks = String.join("||", video, i1, i2, i3, cover);
 
@@ -473,7 +514,7 @@
                 }
 
                 e.setInfo(sb.toString());
-                e.setImageLinks(gameCore.handleMediaReplace(e.getImageLinks(), imageFile, imageUrl, "img"));
+                e.setImageLinks(gameCore.handleMediaReplace(e.getImageLinks(), imageFile, imageUrl, "static/img"));
                 eventService.save(e);
                 return "redirect:/welcomeAdmin/editevent";
             }
@@ -483,7 +524,7 @@
                 String d = mainDesc  == null ? "" : mainDesc.trim();
                 String r = release   == null ? "" : release.trim();
                 e.setInfo(!r.isEmpty() ? (t + "||" + d + "||" + r) : (t + "||" + d));
-                e.setImageLinks(gameCore.handleMediaReplace(e.getImageLinks(), imageFile, imageUrl, "img"));
+                e.setImageLinks(gameCore.handleMediaReplace(e.getImageLinks(), imageFile, imageUrl, "static/img"));
                 eventService.save(e);
                 return "redirect:/welcomeAdmin/editevent";
             }

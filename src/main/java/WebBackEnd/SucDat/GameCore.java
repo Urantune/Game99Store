@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -90,7 +89,7 @@ public class GameCore {
     public void deleteOldIfLocal(String link){
         if(link==null || link.isBlank()) return;
         String rel = link.startsWith("/")? link.substring(1): link;
-        if(!(rel.startsWith("img/") || rel.startsWith("videos/"))) return;
+        if(!(rel.startsWith("static/img/") || rel.startsWith("videos/"))) return;
         try{
             Path p = STATIC_ROOT.resolve(rel).normalize();
             if(p.startsWith(STATIC_ROOT)) Files.deleteIfExists(p);

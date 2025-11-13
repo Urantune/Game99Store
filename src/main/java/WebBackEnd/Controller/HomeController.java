@@ -44,7 +44,7 @@ public class HomeController {
     @Autowired
     private EventService eventService;
     @Autowired
-    private WebBackEnd.Service.UserTransactionService transactionService;
+    private WebBackEnd.service.UserTransactionService transactionService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -55,9 +55,17 @@ public class HomeController {
         if (!model.containsAttribute("showForm")) {
             model.addAttribute("showForm", "");
         }
-        model.addAttribute("gameMain", gameSevice.findGameByStatus("main"));
-        model.addAttribute("listGame", gameSevice.list20GameIntoGame());
-        model.addAttribute("linkimage", GameCore.imageLinkGame(gameSevice.findGameByStatus("main").getImageLinks()));
+        model
+                .addAttribute("gameMain", gameSevice
+                .findGameByStatus("main"));
+        model
+                .addAttribute("listGame", gameSevice
+                .list20GameIntoGame());
+        model
+                .addAttribute("linkimage", GameCore
+                .imageLinkGame(gameSevice
+                        .findGameByStatus("main")
+                        .getImageLinks()));
 
         UUID userId = (UUID) session.getAttribute("userId");
         User user = null;
@@ -70,10 +78,9 @@ public class HomeController {
     }
 
 
-
     @GetMapping("/Cart/{id}")
-    public String payMent(@PathVariable UUID id, Model model,HttpSession session) {
-        if(session.getAttribute("user") == null) return "redirect:/welcome/about";
+    public String payMent(@PathVariable UUID id, Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/welcome/about";
         model.addAttribute("listGame", userGameService.showGameInCart(id));
         model.addAttribute("user", userService.findById(id));
         return "HTML/Cart";
@@ -201,111 +208,6 @@ public class HomeController {
         return "redirect:/welcome/Cart/" + sessionUserId;
     }
 
-    @PostMapping("/register")
-    @ResponseBody
-    public Map<String, Object> registerAjax(@RequestBody User user) {
-        Map<String, Object> response = new HashMap<>();
-        String username = user.getUsername();
-        String email = user.getEmail();
-        String rawPassword = user.getPassword();
-
-        if (username == null || username.trim().isEmpty()) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản không được để trống");
-            return response;
-        }
-        if (!username.matches("^[a-zA-Z0-9._]+$")) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản chỉ được chứa chữ, số, dấu chấm hoặc gạch dưới");
-            return response;
-        }
-        if (username.startsWith(".") || username.startsWith("_") ||
-                username.endsWith(".") || username.endsWith("_")) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản không được bắt đầu hoặc kết thúc bằng dấu chấm hoặc gạch dưới");
-            return response;
-        }
-        if (username.contains("..") || username.contains("__") ||
-                username.contains("._") || username.contains("_.")) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản không được chứa ký tự đặc biệt liên tiếp");
-            return response;
-        }
-        if (username.length() < 3 || username.length() > 20) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản phải có độ dài từ 3 đến 20 ký tự");
-            return response;
-        }
-
-        if (userRepository.existsByUsername(username)) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản đã tồn tại");
-            return response;
-        }
-        if (email == null || email.trim().isEmpty()) {
-            response.put("status", "error");
-            response.put("message", "Email không được để trống");
-            return response;
-        }
-        if (rawPassword == null || rawPassword.isBlank()) {
-            response.put("status", "error");
-            response.put("message", "Mật khẩu không được để trống");
-            return response;
-        }
-        if (rawPassword.length() < 8) {
-            response.put("status", "error");
-            response.put("message", "Mật khẩu phải từ 8 kí tự");
-            return response;
-        }
-
-        if(rawPassword.contains("<script")){
-            response.put("status", "error");
-            response.put("message", ";)");
-            return response;
-        }
-
-
-        LocalDateTime timeEnd = LocalDateTime.now().plusMinutes(1);
-
-        int day   = timeEnd.getDayOfMonth();
-        int hour  = timeEnd.getHour();
-        int minute = timeEnd.getMinute();
-        int second = timeEnd.getSecond();
-
-        String statuss = "wait||" + day + "||" + hour + "||" + minute + "||" + second;
-
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(rawPassword));
-        user.setScore(0);
-        user.setStatus(statuss);
-        user.setDateCreateAccount(LocalDateTime.now());
-        userRepository.save(user);
-
-        String input = "wait" + user.getId();
-        String fi;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(input.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) sb.append(String.format("%02x", b));
-            fi = sb.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        String title = "Xác nhận tài khoản của bạn";
-        String link = "https://a7c804c1ed63.ngrok-free.app/veryAccount/done/" + user.getId() + "/" + fi;
-        String content =
-                "<p>Hãy nhấp vào liên kết dưới đây để kích hoạt tài khoản của bạn:</p>"
-                        + "<p><a href=\"" + link + "\">Nhấn vào đây để kích hoạt</a></p>"
-                        + "<p>Nếu không bấm được, copy link sau dán vào trình duyệt:<br>" + link + "</p>";
-        sendMailTest.testSend(user.getEmail(), title, content);
-
-        response.put("status", "success");
-        response.put("message", "Đăng ký thành công! Một đường link xác thực tài khoản đã được gửi vào email của bạn.");
-        return response;
-    }
 
     @PostMapping("/login")
     @ResponseBody
@@ -337,9 +239,8 @@ public class HomeController {
     }
 
 
-
     @GetMapping("/category/{product}")
-    public String category(@PathVariable("product") String product, Model model,HttpSession session) {
+    public String category(@PathVariable("product") String product, Model model, HttpSession session) {
         UUID userId = (UUID) session.getAttribute("userId");
         User user = null;
         if (userId != null) {
@@ -391,7 +292,7 @@ public class HomeController {
             }
         }
 
-        model.addAttribute("user",userService.findById(userId));
+        model.addAttribute("user", userService.findById(userId));
         model.addAttribute("refund", refund);
         model.addAttribute("UserGame", userGame);
         model.addAttribute("canFeedbackandDownload", canFeedbackAndDownload);
@@ -402,7 +303,7 @@ public class HomeController {
     }
 
     @PostMapping("/refundGame")
-    public String refundGamePost(@RequestParam("gameId") UUID gameId,Model model,
+    public String refundGamePost(@RequestParam("gameId") UUID gameId, Model model,
                                  HttpSession session) {
 
         UUID userId = (UUID) session.getAttribute("userId");
@@ -417,7 +318,7 @@ public class HomeController {
 
         user.setPrice(user.getPrice() + game.getPrice());
         userService.save(user);
-        model.addAttribute("gameid",gameId);
+        model.addAttribute("gameid", gameId);
 
         return "HTML/SuccestRefund";
     }
@@ -494,10 +395,6 @@ public class HomeController {
     }
 
 
-
-
-
-
     @GetMapping("/Newgame")
     public String newgame(Model model, HttpSession session) {
         UUID userId = (UUID) session.getAttribute("userId");
@@ -514,15 +411,15 @@ public class HomeController {
         var smallEvents = eventService.findEventsByType("event_small");
         model.addAttribute("events", smallEvents != null ? smallEvents : java.util.Collections.emptyList());
 
-       model.addAttribute("games", java.util.Collections.emptyList());
+        model.addAttribute("games", java.util.Collections.emptyList());
         model.addAttribute("registeredGames", java.util.Collections.emptySet());
 
         return "HTML/NewGame";
     }
 
     @GetMapping("/profile/{id}")
-    public String userDetail(@PathVariable UUID id, Model model,HttpSession session) {
-        User user = (User)  session.getAttribute("user");
+    public String userDetail(@PathVariable UUID id, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/welcome";
 
         List<Game> game = userGameService.showGameInProfile(id);
@@ -601,8 +498,8 @@ public class HomeController {
     }
 
     @GetMapping("/editprofile/{id}")
-    public String editProfile(Model model, @PathVariable(value = "id") UUID id,HttpSession session) {
-        if(session.getAttribute("user") == null) return "redirect:/welcome/about";
+    public String editProfile(Model model, @PathVariable(value = "id") UUID id, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/welcome/about";
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
         return "HTML/EditProfile";
@@ -675,8 +572,6 @@ public class HomeController {
     }
 
 
-
-
     @GetMapping("/game/detail/{id}")
     public String gameDetail(@PathVariable UUID id, Model model) {
         Game game = gameSevice.findGameById(id);
@@ -713,12 +608,12 @@ public class HomeController {
 
     @GetMapping("/changepass")
     public String changePass(Model model, HttpSession session) {
-        if(session.getAttribute("user") == null) return "redirect:/welcome/about";
+        if (session.getAttribute("user") == null) return "redirect:/welcome/about";
         User user = userService.findById(UUID.fromString("6CE0FCF6-B584-4A63-AEDF-FAED48E78665"));
         LocalDateTime timeEnd = LocalDateTime.now().plusMinutes(1);
 
-        int day   = timeEnd.getDayOfMonth();
-        int hour  = timeEnd.getHour();
+        int day = timeEnd.getDayOfMonth();
+        int hour = timeEnd.getHour();
         int minute = timeEnd.getMinute();
         int second = timeEnd.getSecond();
 

@@ -30,6 +30,7 @@ public class WebInforController {
 
     @GetMapping("/buyguide")
     public String buyguide() {
+
         return "HTML/BuyGuide";
     }
 
@@ -40,6 +41,7 @@ public class WebInforController {
 
     @GetMapping("/support")
     public String support(Model model) {
+
         return "HTML/Support";
     }
 
