@@ -80,4 +80,32 @@ public class CartController {
 
         return "redirect:/welcome/Cart/" + userId;
     }
+
+
+
+    @PostMapping("/addGameToCard/{game_id}")
+    public String addGameToCard(@PathVariable("game_id") UUID gameId,
+                                HttpSession session,
+                                RedirectAttributes ra) {
+        UUID userId = (UUID) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/welcome/login";
+        }
+
+        var user = userService.findById(userId);
+        var game = gameSevice.findGameById(gameId);
+
+        boolean existed = userGameService.findUserGameByUserAndGame(user, game);
+
+        if (existed) {
+            ra.addAttribute("cartError", "Bạn đã thêm game này vào giỏ hàng rồi");
+        } else {
+            userGameService.saveUserGame(new UserGame(user, game, java.time.LocalDateTime.now(), 0));
+            ra.addAttribute("cartSuccess", "Đã thêm vào giỏ hàng!");
+        }
+
+
+        return "redirect:/welcome/gamedetail/{game_id}";
+    }
+
 }

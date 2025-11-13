@@ -21,10 +21,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-
 @Controller
-@RequestMapping("/welcome")
-public class LoginController {
+@RequestMapping(value = "/welcome")
+public class TransactionController {
+
 
     @Autowired
     private UserRepository userRepository;
@@ -51,45 +51,17 @@ public class LoginController {
     @Autowired
     private VouncherService vouncherService;
 
-
-    @PostMapping("/login")
-    @ResponseBody
-    public ResponseEntity<?> login(@RequestParam String username,
-                                   @RequestParam String password,
-                                   HttpSession session) {
-        User user = userService.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản không tồn tại!"));
-        }
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Sai mật khẩu!"));
-        }
-        String[] w = user.getStatus().split("\\|\\|");
-        if ("wait".equalsIgnoreCase(user.getStatus())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản chưa được kích hoạt"));
-        }
-        if ("banned".equalsIgnoreCase(user.getStatus())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Tài khoảng của bạn đã bị cấm"));
-        }
-
-        session.setAttribute("user", user);
-        session.setAttribute("id", user.getId());
-        session.setAttribute("username", user.getUsername());
-        session.setAttribute("userId", user.getId());
-        session.setAttribute("userUsername", user.getUsername());
-
-        return ResponseEntity.ok(Map.of("success", true));
-    }
-
-
-
-
-    @Controller
-    public class AuthController {
-        @GetMapping("/logout")
-        public String logout(HttpServletRequest request) {
-            request.getSession().invalidate();
+    @GetMapping("/transactions")
+    public String viewTransactions(HttpSession session, Model model) {
+        Object userIdObj = session.getAttribute("userId");
+        if (userIdObj == null) {
             return "redirect:/welcome";
         }
+        User currentUser = userService.findById((java.util.UUID) userIdObj);
+        model.addAttribute("user", currentUser);
+        model.addAttribute("topups", transactionService.getTopups(currentUser));
+        model.addAttribute("purchases", userGameService.getGamesByUser(currentUser));
+        model.addAttribute("refunds", transactionService.getRefunds(currentUser));
+        return "HTML/TransactionHistory";
     }
 }
