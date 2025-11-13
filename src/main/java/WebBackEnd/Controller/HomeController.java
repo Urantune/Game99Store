@@ -209,34 +209,7 @@ public class HomeController {
     }
 
 
-    @PostMapping("/login")
-    @ResponseBody
-    public ResponseEntity<?> login(@RequestParam String username,
-                                   @RequestParam String password,
-                                   HttpSession session) {
-        User user = userService.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản không tồn tại!"));
-        }
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Sai mật khẩu!"));
-        }
-        String[] w = user.getStatus().split("\\|\\|");
-        if ("wait".equalsIgnoreCase(user.getStatus())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản chưa được kích hoạt"));
-        }
-        if ("banned".equalsIgnoreCase(user.getStatus())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Tài khoảng của bạn đã bị cấm"));
-        }
 
-        session.setAttribute("user", user);
-        session.setAttribute("id", user.getId());
-        session.setAttribute("username", user.getUsername());
-        session.setAttribute("userId", user.getId());
-        session.setAttribute("userUsername", user.getUsername());
-
-        return ResponseEntity.ok(Map.of("success", true));
-    }
 
 
     @GetMapping("/category/{product}")
