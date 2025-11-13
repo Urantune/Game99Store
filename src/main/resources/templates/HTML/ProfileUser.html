@@ -48,10 +48,10 @@
 
         <div class="info mt-3">
             <p>Email: <span id="emailMasked" th:text="${user.email}"></span></p>
-            <p>
-                Số điện thoại: <span id="phoneDisplay">----------</span>
-                <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editPhoneModal">⚙️</button>
-            </p>
+<!--            <p>-->
+<!--                Số điện thoại: <span id="phoneDisplay">&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;</span>-->
+<!--                <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editPhoneModal">⚙️</button>-->
+<!--            </p>-->
             <p>
                 Quốc gia: <span id="countryDisplay">----------</span>
                 <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editCountryModal">⚙️</button>
@@ -298,5 +298,6 @@
         else document.getElementById('pinError').textContent='PIN không đúng. Vui lòng thử lại.';
     }
 </script>
+<script th:src="@{/Accest/JS/code.js}"></script>
 </body>
 </html>

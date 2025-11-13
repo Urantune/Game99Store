@@ -187,20 +187,16 @@
 
 <script th:inline="javascript">
     (() => {
-        /* =========================
-           CONFIG
-           ========================= */
-        const BASE        = /*[[@{/}]]*/ ""; // ví dụ "/"
-        const NGROK_BASE  = "https://45eead7e5983.ngrok-free.app";
+
+        const BASE        = /*[[@{/}]]*/ "";
+        const NGROK_BASE  = "https://7c740acca540.ngrok-free.app";
         const PHONE_TEST  = `${NGROK_BASE}/veryAccount/test`;
 
         const QR_ENDPOINT = `${BASE}qr`;
         const STATUS_URL  = `${BASE}veryAccount/pay/status`;
         const RESET_URL   = `${BASE}veryAccount/pay/reset`;
 
-        /* =========================
-           DOM
-           ========================= */
+
         const linePrices    = document.querySelectorAll('.line-price');
         const cellSubtotal  = document.getElementById('cellSubtotal');
         const cellDiscount  = document.getElementById('cellDiscount');
@@ -222,9 +218,11 @@
         const qrImg         = document.getElementById('qrImage');
         const checkoutForm  = document.getElementById('checkoutForm');
 
-        /* =========================
-           HELPERS
-           ========================= */
+
+
+
+
+
         const fmt = n => (Math.max(0, n || 0)).toLocaleString('vi-VN') + ' ₫';
         const parseISO = s => (s ? new Date(s) : null);
 
@@ -238,14 +236,14 @@
                 .map(i => (i.value || '').trim())
                 .filter(Boolean);
 
-// Build URL /welcome/succestpayment?userId=...&selectedIds=...&selectedIds=...
+
         const buildSuccessUrl = () => `${BASE}welcome/succestpayment`;
 
-// Vouchers dataset do Thymeleaf render
+
         const voucherNodes = document.querySelectorAll('#voucher-dataset .vitem');
         const vouchers = Array.from(voucherNodes).map(n => {
             const name  = (n.dataset.name || '').trim();
-            const type  = (n.dataset.type || '').trim().toLowerCase(); // "percent" | "fixed"
+            const type  = (n.dataset.type || '').trim().toLowerCase();
             const sale  = parseFloat(n.dataset.sale || '0') || 0;
             const start = parseISO(n.dataset.start || '');
             const end   = parseISO(n.dataset.end || '');
@@ -286,9 +284,7 @@
             return 0;
         }
 
-        /* =========================
-           TOTALS + VOUCHER
-           ========================= */
+
         function renderTotals() {
             const subtotal = getSubtotal();
             const code     = (voucherInput ? (voucherInput.value || '') : '').trim();
@@ -343,11 +339,16 @@
         voucherInput && voucherInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') renderTotals(); });
         renderTotals();
 
-        /* =========================
-           QR FLOW
-           ========================= */
+
+
+
+
+
+
+
+
         const POLL_INTERVAL_MS = 1500;
-        const POLL_TIMEOUT_MS  = 2 * 60 * 1000; // 2 phút
+        const POLL_TIMEOUT_MS  = 2 * 60 * 1000;
         let pollTimer = null;
         let pollTimeoutTimer = null;
 
@@ -384,7 +385,6 @@
                 const j = await fetchJson(`${STATUS_URL}?pid=${encodeURIComponent(pid)}`);
                 if (j && j.paid) {
                     stopPolling();
-                    // ✅ QR thành công → chuyển tới succestpayment kèm userId + selectedIds
                     window.location.href = buildSuccessUrl();
                 }
             } catch (e) {
@@ -413,11 +413,11 @@
             try {
                 setQrUiLoading(true);
 
-                // Tạo pid & reset trạng thái
+
                 const pid = buildPaymentId();
                 try { await fetch(`${RESET_URL}?pid=${encodeURIComponent(pid)}`, { cache: 'no-store' }); } catch {}
 
-                // Lưu pid (nếu server cần)
+
                 let hidden = document.getElementById('paymentIdHidden');
                 if (!hidden) {
                     hidden = document.createElement('input');
@@ -428,11 +428,11 @@
                 }
                 hidden.value = pid;
 
-                // Render QR (URL mở trên điện thoại)
+
                 const phoneUrl = `${PHONE_TEST}?pid=${encodeURIComponent(pid)}`;
                 showQrFor(phoneUrl);
 
-                // Poll kết quả
+
                 startPolling(pid);
             } catch (e) {
                 console.error(e);
@@ -455,12 +455,12 @@
                 ret.name = 'returnUrl';
                 checkoutForm.appendChild(ret);
             }
-            // return về /welcome/succestpayment?userId=...&selectedIds=...
+
             ret.value = buildSuccessUrl();
         })();
     })();
 </script>
-
+<script th:src="@{/Accest/JS/code.js}"></script>
 
 
 </body>

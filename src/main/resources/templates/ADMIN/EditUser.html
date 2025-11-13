@@ -19,7 +19,7 @@
     <div class="card mx-auto" style="max-width:640px;">
         <h3 class="text-center mb-4">Edit User Profile</h3>
 
-        <!-- Save username + email -->
+
         <form th:action="@{/welcomeAdmin/edituser/{id}(id=${id})}" th:object="${user}" method="post" class="mb-4">
             <input type="hidden" th:field="*{id}"/>
             <div class="mb-3">
@@ -92,5 +92,7 @@
         document.getElementById('genPwd').value = out;
     };
 </script>
+<script th:src="@{/Accest/JS/code.js}"></script>
 </body>
+
 </html>

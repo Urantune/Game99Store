@@ -27,12 +27,12 @@
 
     <div class="balance">
         <strong>Tổng chi tiêu:</strong>
-        <span th:text="${#numbers.formatDecimal(balance, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
+        <span th:text="'$'+${#numbers.formatDecimal(balance, 0, 'COMMA', 0, 'POINT')}">0</span>
     </div>
 
     <div class="subtle">
-        Bắt đầu từ:
-        <span th:text="${timecreateAcc != null ? #temporals.format(timecreateAcc, 'dd/MM/yyyy') : '—'}">—</span>
+        Số dư trong ví:
+        <span th:text="'$'+${#numbers.formatDecimal(user.price, 0, 'COMMA', 0, 'POINT')}">—</span>
     </div>
 
     <div class="chart-container">
@@ -76,5 +76,6 @@
         }
     });
 </script>
+<script th:src="@{/Accest/JS/code.js}"></script>
 </body>
 </html>
