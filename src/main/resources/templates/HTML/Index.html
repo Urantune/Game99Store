@@ -329,8 +329,8 @@
         </a>
 
         <ul class="navbar-nav mx-auto">
-            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcome/news}">TIN TỨC</a></li>
-            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">SỰ KIỆN</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcome/news}" target="_blank">TIN TỨC</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcome/newgame}" target="_blank">SỰ KIỆN</a></li>
             <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">TOP GAME</a></li>
             <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">GIẢM GIÁ</a></li>
         </ul>
@@ -339,8 +339,8 @@
             <!-- Cart chỉ hiện khi user đã đăng nhập -->
             <a th:if="${session.userId != null}"
                th:href="@{/welcome/Cart/{id}(id=${session.userId})}"
-               class="btn btn-cart me-2">
-                <i class="bi-cart-fill me-1"></i> Cart
+               class="btn btn-cart me-2" target="_blank">
+                <i class="bi-cart-fill me-1" ></i> Cart
             </a>
 
             <style>
@@ -379,8 +379,8 @@
 
             <!-- Đã đăng nhập -->
             <div th:if="${session.userId != null}" class="d-flex flex-column align-items-center">
-                <a th:href="@{/welcome/profile/{id}(id = ${session.userId})}" class="d-inline-flex justify-content-center">
-                    <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
+                <a th:href="@{/welcome/profile/{id}(id = ${session.userId})}" class="d-inline-flex justify-content-center" target="_blank">
+                    <img th:src="${user.imageLinks != null ? '/'+user.imageLinks : '/img/5000.jpg'}"
                          alt="Avatar" class="rounded-circle"
                          style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
                 </a>
@@ -413,54 +413,55 @@
 <header class="banner">
     <div class="steam-menu">
         <div class="steam-menu-inner">
-            <a th:href="@{/welcome/about}">About</a>
-            <a th:href="@{/welcome/Newgame}">Coming Soon</a>
+            <a th:href="@{/welcome/about}" target="_blank">About</a>
+            <a th:href="@{/welcome/Newgame}" target="_blank">Coming Soon</a>
 
             <div class="dropdown">
                 <div class="dropdown-toggle text-decoration-none text-white">Categories</div>
                 <div class="dropdown-menu">
                     <div class="dropdown-column">
                         <h4>Games</h4>
-                        <a th:href="@{/welcome/category/{product}(product='Action')}">Action</a>
-                        <a th:href="@{/welcome/category/{product}(product='Adventure')}">Adventure</a>
-                        <a th:href="@{/welcome/category/{product}(product='Horror')}">Horror</a>
-                        <a th:href="@{/welcome/category/{product}(product='Puzzle')}">Puzzle</a>
+                        <a th:href="@{/welcome/category/{product}(product='Action')}" target="_blank" rel="noopener noreferrer">Action</a>
+                        <a th:href="@{/welcome/category/{product}(product='Adventure')}" target="_blank" rel="noopener noreferrer">Adventure</a>
+                        <a th:href="@{/welcome/category/{product}(product='Horror')}" target="_blank" rel="noopener noreferrer">Horror</a>
+                        <a th:href="@{/welcome/category/{product}(product='Puzzle')}" target="_blank" rel="noopener noreferrer">Puzzle</a>
                     </div>
 
                     <div class="dropdown-column">
                         <h4>Genres</h4>
-                        <a th:href="@{/welcome/category/{product}(product='Anime')}">Anime</a>
-                        <a th:href="@{/welcome/category/{product}(product='Sci-Fi')}">Sci-Fi</a>
-                        <a th:href="@{/welcome/category/{product}(product='Cyberpunk')}">Cyberpunk</a>
-                        <a th:href="@{/welcome/category/{product}(product='Open World')}">Open World</a>
-                        <a th:href="@{/welcome/category/{product}(product='Survival')}">Survival</a>
-                        <a th:href="@{/welcome/category/{product}(product='Space')}">Space</a>
+                        <a th:href="@{/welcome/category/{product}(product='Anime')}" target="_blank" rel="noopener noreferrer">Anime</a>
+                        <a th:href="@{/welcome/category/{product}(product='Sci-Fi')}" target="_blank" rel="noopener noreferrer">Sci-Fi</a>
+                        <a th:href="@{/welcome/category/{product}(product='Cyberpunk')}" target="_blank" rel="noopener noreferrer">Cyberpunk</a>
+                        <a th:href="@{/welcome/category/{product}(product='Open World')}" target="_blank" rel="noopener noreferrer">Open World</a>
+                        <a th:href="@{/welcome/category/{product}(product='Survival')}" target="_blank" rel="noopener noreferrer">Survival</a>
+                        <a th:href="@{/welcome/category/{product}(product='Space')}" target="_blank" rel="noopener noreferrer">Space</a>
                     </div>
 
                     <div class="dropdown-column">
                         <h4>By Popularity</h4>
-                        <a th:href="@{/welcome/category/{product}(product='New Releases')}">New Releases</a>
-                        <a th:href="@{/welcome/category/{product}(product='Coming Soon')}">Coming Soon</a>
-                        <a th:href="@{/welcome/category/{product}(product='Best Sellers')}">Best Sellers</a>
-                        <a th:href="@{/welcome/category/{product}(product='Top Rated')}">Top Rated</a>
-                        <a th:href="@{/welcome/category/{product}(product='Hot Games')}">Hot Games</a>
+                        <a th:href="@{/welcome/category/{product}(product='New Releases')}" target="_blank" rel="noopener noreferrer">New Releases</a>
+                        <a th:href="@{/welcome/category/{product}(product='Coming Soon')}" target="_blank" rel="noopener noreferrer">Coming Soon</a>
+                        <a th:href="@{/welcome/category/{product}(product='Best Sellers')}" target="_blank" rel="noopener noreferrer">Best Sellers</a>
+                        <a th:href="@{/welcome/category/{product}(product='Top Rated')}" target="_blank" rel="noopener noreferrer">Top Rated</a>
+                        <a th:href="@{/welcome/category/{product}(product='Hot Games')}" target="_blank" rel="noopener noreferrer">Hot Games</a>
                     </div>
 
                     <div class="dropdown-column">
                         <h4>By Platform</h4>
-                        <a th:href="@{/welcome/category/{product}(product='PC')}">PC</a>
-                        <a th:href="@{/welcome/category/{product}(product='Smartphone')}">Smartphone</a>
-                        <a th:href="@{/welcome/category/{product}(product='PlayStation')}">PlayStation</a>
-                        <a th:href="@{/welcome/category/{product}(product='Xbox')}">Xbox</a>
-                        <a th:href="@{/welcome/category/{product}(product='Nintendo Switch')}">Nintendo Switch</a>
-                        <a th:href="@{/welcome/category/{product}(product='Mobile')}">Mobile</a>
-                        <a th:href="@{/welcome/category/{product}(product='VR')}">VR</a>
+                        <a th:href="@{/welcome/category/{product}(product='PC')}" target="_blank" rel="noopener noreferrer">PC</a>
+                        <a th:href="@{/welcome/category/{product}(product='Smartphone')}" target="_blank" rel="noopener noreferrer">Smartphone</a>
+                        <a th:href="@{/welcome/category/{product}(product='PlayStation')}" target="_blank" rel="noopener noreferrer">PlayStation</a>
+                        <a th:href="@{/welcome/category/{product}(product='Xbox')}" target="_blank" rel="noopener noreferrer">Xbox</a>
+                        <a th:href="@{/welcome/category/{product}(product='Nintendo Switch')}" target="_blank" rel="noopener noreferrer">Nintendo Switch</a>
+                        <a th:href="@{/welcome/category/{product}(product='Mobile')}" target="_blank" rel="noopener noreferrer">Mobile</a>
+                        <a th:href="@{/welcome/category/{product}(product='VR')}" target="_blank" rel="noopener noreferrer">VR</a>
                     </div>
                 </div>
             </div>
 
-            <a href="#">Point Store</a>
-            <a th:href="@{/welcome/support}">Support</a>
+
+            <a th:href="@{/welcome/gamePay}" target="_blank">Wallet</a>
+            <a th:href="@{/welcome/support}" target="_blank">Support</a>
 
             <!-- Search Box -->
             <div class="search-box">
@@ -1055,6 +1056,8 @@
     }
     /*]]>*/
 </script>
+
+<script th:src="@{/Accest/JS/code.js}"></script>
 
 </body>
 </html>

@@ -83,19 +83,13 @@
         <div class="success-icon">
             <i class="bi bi-check2-circle" style="font-size: 48px; color: #00E676;"></i>
         </div>
-        <div class="success-title">Thanh toán thành công</div>
-        <div class="success-sub">Cảm ơn bạn đã mua hàng tại GameStore. Đơn hàng đã được ghi nhận.</div>
+        <div class="success-title">Hoàn tiền thành công</div>
+        <div class="success-sub">Tiền của bạn đã được chuyển vào ví</div>
 
         <div class="divider"></div>
 
-        <a th:if="${gameid == 'ok'}"
-           th:href="@{/welcome}"
-           class="btn btn-back">
-            ← Về trang chủ
-        </a>
 
-
-        <a th:unless="${gameid == 'ok'}"
+        <a
            th:href="@{/welcome/gamedetail/{id}(id=${gameid})}"
            class="btn btn-back">
             ← Quay lại game

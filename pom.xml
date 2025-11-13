@@ -10,6 +10,8 @@
         <relativePath/>
     </parent>
 
+
+
     <groupId>com.example</groupId>
     <artifactId>app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -88,8 +90,17 @@
         </dependency>
 
 
-
-
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>3.5.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>javase</artifactId>
+                <version>3.5.3</version>
+            </dependency>
+        
     </dependencies>
 
     <build>
@@ -98,6 +109,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
         </plugins>
+
+
     </build>
 </project>

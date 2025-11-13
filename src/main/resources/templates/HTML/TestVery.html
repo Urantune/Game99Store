@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Xác nhận thanh toán</title>
+
+    <style>
+        body {
+            background: #0f1c2e;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 22px;
+        }
+        .wrap {
+            margin-top: 60px;
+        }
+        .btn-confirm {
+            background: linear-gradient(135deg, #28a745, #006400);
+            padding: 14px 22px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            border: none;
+            width: 86%;
+            margin-top: 24px;
+        }
+        .btn-confirm:active {
+            scale: 0.96;
+        }
+        .note {
+            font-size: 14px;
+            color: #b0bec5;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrap">
+    <h1>GameStore</h1>
+    <h3>Thanh toán với QR</h3>
+
+    <p>Nhấn nút dưới đây để xác nhận thanh toán.</p>
+
+    <button id="btnConfirm" class="btn-confirm">✅ Xác nhận thanh toán</button>
+
+    <p class="note">Sau khi xác nhận, màn hình máy tính sẽ tự chuyển sang trang “Thanh toán thành công”.</p>
+</div>
+
+<script>
+    /* =======================
+       CONFIG
+       ======================= */
+    // Nếu trang này được mở qua NGROK (khuyến nghị), để API_BASE = '' để dùng same-origin.
+    // Còn nếu bạn render trang này từ domain khác (VD: file tĩnh ở localhost),
+    // set API_BASE = 'https://45eead7e5983.ngrok-free.app' để gọi đúng server qua ngrok.
+    const API_BASE = ''; // '' (same-origin) hoặc 'https://45eead7e5983.ngrok-free.app'
+
+    // Bật/tắt auto-confirm sau khi trang mở (hữu ích khi chỉ cần scan là duyệt)
+    const AUTOCONFIRM = false;
+    // Độ trễ auto-confirm (ms)
+    const AUTOCONFIRM_DELAY = 1200;
+
+    // =======================
+    // Helpers
+    // =======================
+    const $ = (sel) => document.querySelector(sel);
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+    function toast(msg) {
+        // dùng alert cho đơn giản; bạn có thể thay bằng toast UI riêng
+        alert(msg);
+    }
+
+    function setButtonState(disabled, label) {
+        const btn = $('#btnConfirm');
+        if (!btn) return;
+        btn.disabled = !!disabled;
+        if (label) btn.textContent = label;
+    }
+
+    function getPidFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('pid');
+    }
+
+    // Retry wrapper với exponential backoff
+    async function fetchWithRetry(url, opts = {}, tries = 3, baseDelay = 400) {
+        let lastErr;
+        for (let i = 0; i < tries; i++) {
+            try {
+                const res = await fetch(url, { cache: 'no-store', ...opts });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res;
+            } catch (err) {
+                lastErr = err;
+                if (i < tries - 1) {
+                    await sleep(baseDelay * Math.pow(2, i)); // 400ms, 800ms, 1600ms
+                }
+            }
+        }
+        throw lastErr;
+    }
+
+    // =======================
+    // Main confirm logic
+    // =======================
+    async function confirmPayment(pid) {
+        if (!pid) {
+            toast('Thiếu mã thanh toán (pid).');
+            return;
+        }
+
+        const confirmUrl = `${API_BASE}/veryAccount/pay/confirm?pid=${encodeURIComponent(pid)}`;
+
+        try {
+            // Khóa nút + hiển thị trạng thái
+            setButtonState(true, '⏳ Đang xác nhận...');
+
+            // Controller của bạn dùng @GetMapping nên method phải là GET
+            const res = await fetchWithRetry(confirmUrl, { method: 'GET' }, 3, 400);
+
+            // Thử parse JSON (controller trả {status:"ok"})
+            let data = {};
+            try { data = await res.json(); } catch {}
+
+            // Thành công
+            setButtonState(true, '✅ Đã xác nhận');
+            try { navigator.vibrate && navigator.vibrate(60); } catch {}
+
+            toast('✅ Đã xác nhận thanh toán!\nBạn có thể quay lại máy tính.');
+
+            // (tuỳ chọn) đóng tab sau vài giây nếu chạy trong webview/app
+            // setTimeout(() => window.close(), 800);
+
+        } catch (e) {
+            console.error('Confirm error:', e);
+            setButtonState(false, '✅ Xác nhận thanh toán');
+            toast('Lỗi khi xác nhận. Vui lòng thử lại!');
+        }
+    }
+
+    // =======================
+    // Init
+    // =======================
+    (function init() {
+        const pid = getPidFromUrl();
+
+
+
+        const btn = $('#btnConfirm');
+        if (btn) {
+            btn.addEventListener('click', () => confirmPayment(pid));
+        }
+
+        if (!pid) {
+            setButtonState(true, 'Thiếu pid trên URL');
+            return;
+        }
+
+        if (AUTOCONFIRM) {
+            setTimeout(() => confirmPayment(pid), AUTOCONFIRM_DELAY);
+        }
+    })();
+</script>
+<script th:src="@{/Accest/JS/code.js}"></script>
+
+</body>
+</html>

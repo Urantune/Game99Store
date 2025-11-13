@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.MessageDigest;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -43,7 +44,7 @@ public class HomeController {
     @Autowired
     private EventService eventService;
     @Autowired
-    private WebBackEnd.Service.UserTransactionService transactionService;
+    private WebBackEnd.service.UserTransactionService transactionService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -54,9 +55,17 @@ public class HomeController {
         if (!model.containsAttribute("showForm")) {
             model.addAttribute("showForm", "");
         }
-        model.addAttribute("gameMain", gameSevice.findGameByStatus("main"));
-        model.addAttribute("listGame", gameSevice.list20GameIntoGame());
-        model.addAttribute("linkimage", GameCore.imageLinkGame(gameSevice.findGameByStatus("main").getImageLinks()));
+        model
+                .addAttribute("gameMain", gameSevice
+                .findGameByStatus("main"));
+        model
+                .addAttribute("listGame", gameSevice
+                .list20GameIntoGame());
+        model
+                .addAttribute("linkimage", GameCore
+                .imageLinkGame(gameSevice
+                        .findGameByStatus("main")
+                        .getImageLinks()));
 
         UUID userId = (UUID) session.getAttribute("userId");
         User user = null;
@@ -68,18 +77,10 @@ public class HomeController {
         return "HTML/Index";
     }
 
-    @GetMapping("/news")
-    public String news(Model model) {
-        return "HTML/news";
-    }
-
-    @GetMapping("/test")
-    public String homepage2(Model model) {
-        return "HTML/seat.html";
-    }
 
     @GetMapping("/Cart/{id}")
-    public String payMent(@PathVariable UUID id, Model model) {
+    public String payMent(@PathVariable UUID id, Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/welcome/about";
         model.addAttribute("listGame", userGameService.showGameInCart(id));
         model.addAttribute("user", userService.findById(id));
         return "HTML/Cart";
@@ -207,89 +208,6 @@ public class HomeController {
         return "redirect:/welcome/Cart/" + sessionUserId;
     }
 
-    @PostMapping("/register")
-    @ResponseBody
-    public Map<String, Object> registerAjax(@RequestBody User user) {
-        Map<String, Object> response = new HashMap<>();
-        String username = user.getUsername();
-        String email = user.getEmail();
-        String rawPassword = user.getPassword();
-
-        if (username == null || username.trim().isEmpty()) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản không được để trống");
-            return response;
-        }
-        if (!username.matches("^[a-zA-Z0-9._]+$")) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản chỉ được chứa chữ, số, dấu chấm hoặc gạch dưới");
-            return response;
-        }
-        if (username.startsWith(".") || username.startsWith("_") ||
-                username.endsWith(".") || username.endsWith("_")) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản không được bắt đầu hoặc kết thúc bằng dấu chấm hoặc gạch dưới");
-            return response;
-        }
-        if (username.contains("..") || username.contains("__") ||
-                username.contains("._") || username.contains("_.")) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản không được chứa ký tự đặc biệt liên tiếp");
-            return response;
-        }
-        if (username.length() < 3 || username.length() > 20) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản phải có độ dài từ 3 đến 20 ký tự");
-            return response;
-        }
-        if (userRepository.existsByUsername(username)) {
-            response.put("status", "error");
-            response.put("message", "Tên tài khoản đã tồn tại");
-            return response;
-        }
-        if (email == null || email.trim().isEmpty()) {
-            response.put("status", "error");
-            response.put("message", "Email không được để trống");
-            return response;
-        }
-        if (rawPassword == null || rawPassword.isBlank()) {
-            response.put("status", "error");
-            response.put("message", "Mật khẩu không được để trống");
-            return response;
-        }
-
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(rawPassword));
-        user.setScore(0);
-        user.setStatus("wait");
-        user.setDateCreateAccount(LocalDateTime.now());
-        userRepository.save(user);
-
-        String input = "wait" + user.getId();
-        String fi;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(input.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) sb.append(String.format("%02x", b));
-            fi = sb.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        String title = "Xác nhận tài khoản của bạn";
-        String link = "https://a7c804c1ed63.ngrok-free.app/veryAccount/done/" + user.getId() + "/" + fi;
-        String content =
-                "<p>Hãy nhấp vào liên kết dưới đây để kích hoạt tài khoản của bạn:</p>"
-                        + "<p><a href=\"" + link + "\">Nhấn vào đây để kích hoạt</a></p>"
-                        + "<p>Nếu không bấm được, copy link sau dán vào trình duyệt:<br>" + link + "</p>";
-        sendMailTest.testSend(user.getEmail(), title, content);
-
-        response.put("status", "success");
-        response.put("message", "Đăng ký thành công! Một đường link xác thực tài khoản đã được gửi vào email của bạn.");
-        return response;
-    }
 
     @PostMapping("/login")
     @ResponseBody
@@ -303,8 +221,12 @@ public class HomeController {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Sai mật khẩu!"));
         }
+        String[] w = user.getStatus().split("\\|\\|");
         if ("wait".equalsIgnoreCase(user.getStatus())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản chưa được kích hoạt"));
+        }
+        if ("banned".equalsIgnoreCase(user.getStatus())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Tài khoảng của bạn đã bị cấm"));
         }
 
         session.setAttribute("user", user);
@@ -316,23 +238,15 @@ public class HomeController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
-    @GetMapping("/about")
-    public String controllAbout(Model model) {
-        return "HTML/About";
-    }
-
-    @GetMapping("/refundGame")
-    public String refundGame() {
-        return "HTML/RefundGame";
-    }
-
-    @GetMapping("/buyguide")
-    public String buyguide() {
-        return "HTML/BuyGuide";
-    }
 
     @GetMapping("/category/{product}")
-    public String category(@PathVariable("product") String product, Model model) {
+    public String category(@PathVariable("product") String product, Model model, HttpSession session) {
+        UUID userId = (UUID) session.getAttribute("userId");
+        User user = null;
+        if (userId != null) {
+            user = userService.getUserById(userId);
+        }
+        model.addAttribute("user", user);
         List<Game> games = gameSevice.findGamesByCetagory(product);
         model.addAttribute("listGame", games);
         model.addAttribute("currentCategory", product);
@@ -351,7 +265,7 @@ public class HomeController {
         boolean userGame = false;
         boolean canFeedbackAndDownload = false;
         Feedback myFeedback = null;
-
+        boolean refund = true;
         List<Feedback> list = new ArrayList<>(feedbackService.findFeedbackByGameId(game_id));
 
         if (userId != null) {
@@ -364,11 +278,22 @@ public class HomeController {
                     break;
                 }
             }
+
             UserGame ug = userGameService.findByGameAndUser(game, user);
             userGame = (ug != null);
             canFeedbackAndDownload = (ug != null && ug.getStatus() == 1);
+            LocalDateTime now = LocalDateTime.now();
+            if (ug != null) {
+                if (now.isBefore(ug.getPurchaseDate().plusMinutes(30))) {
+                    refund = false;
+                }
+            } else {
+                refund = false;
+            }
         }
 
+        model.addAttribute("user", userService.findById(userId));
+        model.addAttribute("refund", refund);
         model.addAttribute("UserGame", userGame);
         model.addAttribute("canFeedbackandDownload", canFeedbackAndDownload);
         model.addAttribute("listFeedback", list);
@@ -376,6 +301,28 @@ public class HomeController {
 
         return "HTML/GameDetail";
     }
+
+    @PostMapping("/refundGame")
+    public String refundGamePost(@RequestParam("gameId") UUID gameId, Model model,
+                                 HttpSession session) {
+
+        UUID userId = (UUID) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/welcome/login";
+        }
+
+        User user = userService.findById(userId);
+        Game game = gameSevice.findGameById(gameId);
+
+        userGameService.DeleteByUserGame(user, game);
+
+        user.setPrice(user.getPrice() + game.getPrice());
+        userService.save(user);
+        model.addAttribute("gameid", gameId);
+
+        return "HTML/SuccestRefund";
+    }
+
 
     @PostMapping("/gamedetail/{game_id}")
     public String saveFeedback(@PathVariable("game_id") UUID gameId,
@@ -401,49 +348,129 @@ public class HomeController {
         return "redirect:/welcome/gamedetail/" + gameId;
     }
 
-    @GetMapping("/BuyGuide")
-    public String buyGuide(Model model) {
-        return "HTML/BuyGuide";
+    @GetMapping("/succestpayment")
+    public String succestory(
+            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false, name = "selectedIds") List<UUID> selectedIds,
+            Model model,
+            HttpSession session) {
+
+        if (session.getAttribute("user") == null) {
+            return "redirect:/welcome/about";
+        }
+
+        UUID goBackGameId = null;
+
+        if (userId != null && selectedIds != null && !selectedIds.isEmpty()) {
+            User user = userService.findById(userId);
+
+            for (UUID gameId : selectedIds) {
+                Game game = gameSevice.findGameById(gameId);
+                UserGame existing = userGameService.findByGameAndUser(game, user);
+
+                if (existing == null) {
+                    UserGame newUG = new UserGame();
+                    newUG.setId(new UserGameId(user.getId(), game.getGameId()));
+                    newUG.setUser(user);
+                    newUG.setGame(game);
+                    newUG.setStatus(1);
+                    newUG.setPurchaseDate(LocalDateTime.now());
+                    userGameService.saveUserGame(newUG);
+                } else if (existing.getStatus() == 0) {
+                    existing.setStatus(1);
+                    existing.setPurchaseDate(LocalDateTime.now());
+                    userGameService.saveUserGame(existing);
+                }
+            }
+
+
+            if (selectedIds.size() == 1) {
+                goBackGameId = selectedIds.get(0);
+            }
+        }
+
+
+        model.addAttribute("gameid", (goBackGameId != null) ? goBackGameId.toString() : "ok");
+        return "HTML/Succest";
     }
 
+
     @GetMapping("/Newgame")
-    public String newgame(Model model) {
+    public String newgame(Model model, HttpSession session) {
+        UUID userId = (UUID) session.getAttribute("userId");
+        User user = null;
+        if (userId != null) {
+            user = userService.getUserById(userId);
+        }
+        model.addAttribute("user", user);
+
         model.addAttribute("gameCore", gameCore);
         model.addAttribute("eventMain", eventService.findEventByType("event_main"));
         model.addAttribute("eventNext", eventService.findEventByType("event_next"));
-        model.addAttribute("events", eventService.findEventsByType("event_small"));
+
+        var smallEvents = eventService.findEventsByType("event_small");
+        model.addAttribute("events", smallEvents != null ? smallEvents : java.util.Collections.emptyList());
+
+        model.addAttribute("games", java.util.Collections.emptyList());
+        model.addAttribute("registeredGames", java.util.Collections.emptySet());
+
         return "HTML/NewGame";
     }
 
-    @GetMapping("/privacypolicy")
-    public String privacypolicy() {
-        return "HTML/PrivacyPolicy";
-    }
-
-    @GetMapping("/support")
-    public String support(Model model) {
-        return "HTML/Support";
-    }
-
-    @GetMapping("/supporttransaction")
-    public String supporttransaction(Model model) {
-        return "HTML/SupportTransaction";
-    }
-
-    @GetMapping("/termsofservice")
-    public String termsofservice() {
-        return "HTML/TermsOfService";
-    }
-
     @GetMapping("/profile/{id}")
-    public String userDetail(@PathVariable UUID id, Model model) {
-        User user = userService.findById(id);
+    public String userDetail(@PathVariable UUID id, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/welcome";
+
+        List<Game> game = userGameService.showGameInProfile(id);
+        game.removeIf(g -> {
+            UserGame userGame = userGameService.findByGameAndUser(g, user);
+            return userGame != null && userGame.getStatus() != 1;
+        });
+
         model.addAttribute("user", user);
         model.addAttribute("id", id);
-        model.addAttribute("listGame", userGameService.showGameInProfile(id));
+        model.addAttribute("listGame", game);
         return "HTML/ProfileUser";
     }
+
+
+    @PostMapping("/profile/{id}/avatar")
+    @ResponseBody
+    public ResponseEntity<?> updateAvatar(@PathVariable UUID id,
+                                          @RequestParam("avatarPath") String avatarPath,
+                                          HttpSession session) {
+
+        User sessionUser = (User) session.getAttribute("user");
+        if (sessionUser == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Bạn chưa đăng nhập"));
+        }
+
+        if (!sessionUser.getId().equals(id)) {
+            return ResponseEntity.status(403).body(Map.of("error", "Không có quyền đổi avatar của người khác"));
+        }
+
+
+        List<String> allowed = List.of(
+                "/img/a.png", "/img/NataliKhang.jpg", "/img/JoLong.jpg",
+                "/img/khangbo.jpg", "/img/BiTrong.jpg", "/img/5000.jpg"
+        );
+        if (!allowed.contains(avatarPath)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Ảnh không hợp lệ"));
+        }
+
+
+        User user = userService.findById(id);
+        user.setImageLinks(avatarPath.startsWith("/") ? avatarPath.substring(1) : avatarPath);
+
+        userService.save(user);
+
+
+        session.setAttribute("user", user);
+
+        return ResponseEntity.ok(Map.of("success", true, "avatar", "/" + user.getImageLinks()));
+    }
+
 
     @PostMapping("/addGameToCard/{game_id}")
     public String addGameToCard(@PathVariable("game_id") UUID gameId,
@@ -460,20 +487,19 @@ public class HomeController {
         boolean existed = userGameService.findUserGameByUserAndGame(user, game);
 
         if (existed) {
-            ra.addAttribute("cartError",
-                    java.net.URLEncoder.encode("Bạn đã thêm game này vào giỏ hàng rồi", java.nio.charset.StandardCharsets.UTF_8));
+            ra.addAttribute("cartError", "Bạn đã thêm game này vào giỏ hàng rồi");
         } else {
-            UserGame ug = new UserGame(user, game, java.time.LocalDateTime.now(), 0);
-            userGameService.saveUserGame(ug);
-            ra.addAttribute("cartSuccess",
-                    java.net.URLEncoder.encode("Đã thêm vào giỏ hàng!", java.nio.charset.StandardCharsets.UTF_8));
+            userGameService.saveUserGame(new UserGame(user, game, java.time.LocalDateTime.now(), 0));
+            ra.addAttribute("cartSuccess", "Đã thêm vào giỏ hàng!");
         }
+
 
         return "redirect:/welcome/gamedetail/{game_id}";
     }
 
     @GetMapping("/editprofile/{id}")
-    public String editProfile(Model model, @PathVariable(value = "id") UUID id) {
+    public String editProfile(Model model, @PathVariable(value = "id") UUID id, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/welcome/about";
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
         return "HTML/EditProfile";
@@ -503,9 +529,48 @@ public class HomeController {
     }
 
     @GetMapping("/gamePay")
-    public String gamePay(Model model) {
+    public String gamePay(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/welcome/about";
+        User user = (User) session.getAttribute("user");
+
+        List<UserGame> userGames = userGameService.getGamesByUser(user);
+        userGames.sort(Comparator.comparing(UserGame::getPurchaseDate));
+
+        Map<LocalDate, Double> spendByDate = new TreeMap<>();
+        for (UserGame ug : userGames) {
+            if (ug.getPurchaseDate() == null || ug.getGame() == null) continue;
+            if (ug.getStatus() != 1) continue;
+            spendByDate.merge(ug.getPurchaseDate().toLocalDate(), ug.getGame().getPrice(), Double::sum);
+        }
+
+        LocalDate start = user.getDateCreateAccount() != null
+                ? user.getDateCreateAccount().toLocalDate()
+                : (spendByDate.isEmpty() ? LocalDate.now() : spendByDate.keySet().iterator().next());
+
+        List<String> labels = new ArrayList<>();
+        List<Double> cumulative = new ArrayList<>();
+        double totalDouble = 0.0;
+
+        labels.add(start.toString());
+        cumulative.add(0.0);
+
+        for (Map.Entry<LocalDate, Double> e : spendByDate.entrySet()) {
+            if (e.getKey().isBefore(start)) continue;
+            totalDouble += e.getValue();
+            labels.add(e.getKey().toString());
+            cumulative.add(totalDouble);
+        }
+
+
+        long balance = Math.round(totalDouble);
+
+        model.addAttribute("timecreateAcc", user.getDateCreateAccount());
+        model.addAttribute("labels", labels);
+        model.addAttribute("spendingData", cumulative);
+        model.addAttribute("balance", balance);
         return "HTML/GamePay";
     }
+
 
     @GetMapping("/game/detail/{id}")
     public String gameDetail(@PathVariable UUID id, Model model) {
@@ -543,8 +608,18 @@ public class HomeController {
 
     @GetMapping("/changepass")
     public String changePass(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/welcome/about";
         User user = userService.findById(UUID.fromString("6CE0FCF6-B584-4A63-AEDF-FAED48E78665"));
-        user.setStatus("changePass");
+        LocalDateTime timeEnd = LocalDateTime.now().plusMinutes(1);
+
+        int day = timeEnd.getDayOfMonth();
+        int hour = timeEnd.getHour();
+        int minute = timeEnd.getMinute();
+        int second = timeEnd.getSecond();
+
+        String statuss = "changePass||" + day + "||" + hour + "||" + minute + "||" + second;
+
+        user.setStatus(statuss);
         userService.save(user);
 
         String input = "wait" + user.getId();

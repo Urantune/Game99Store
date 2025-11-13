@@ -1,4 +1,4 @@
-package WebBackEnd.Service;
+package WebBackEnd.service;
 
 import WebBackEnd.Entity.User;
 import WebBackEnd.Entity.UserTransaction;

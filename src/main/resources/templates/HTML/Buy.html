@@ -142,7 +142,10 @@
                 </div>
 
                 <!-- form submit -->
-                <form id="checkoutForm" th:action="@{/welcome/checkout}" method="post" class="mt-2">
+                <form id="checkoutForm"
+                      th:action="@{/welcome/succestpayment}"
+                      method="get"
+                      class="mt-2">
                     <input type="hidden" name="userId" th:value="${user.id}">
                     <!-- gửi mã voucher + số tiền -->
                     <input type="hidden" name="voucherCode" id="voucherHidden">
@@ -155,7 +158,26 @@
                         Số dư không đủ. Vui lòng nạp thêm hoặc bỏ bớt sản phẩm.
                     </div>
 
-                    <button type="submit" class="btn btn-success w-100">Thanh toán</button>
+                    <div class="d-flex gap-2 mt-2">
+
+                        <button type="button"
+                                class="btn btn-warning w-50"
+                                id="btnPayQr">
+                            Thanh toán bằng QR
+                        </button>
+
+
+                        <button type="submit"
+                                class="btn btn-success w-50">
+                            Thanh toán
+                        </button>
+                    </div>
+                    <div id="qrArea" class="mt-3" style="display:none;">
+                        <div class="text-center p-3" style="background:rgba(0,0,0,.2);border-radius:12px;">
+                            <img id="qrImage" src="" alt="QR" width="260" height="260" style="border-radius:12px;">
+                            <div class="small hint mt-2">Quét QR để thanh toán. Mã chứa số tiền &amp; userId.</div>
+                        </div>
+                    </div>
                 </form>
 
             </div>
@@ -163,13 +185,18 @@
     </div>
 </div>
 
-<script>
-    (function () {
-        // ===== helpers =====
-        const fmt = n => (Math.max(0, n || 0)).toLocaleString('vi-VN') + ' ₫';
-        const parseISO = s => s ? new Date(s) : null;
+<script th:inline="javascript">
+    (() => {
 
-        // ===== DOM =====
+        const BASE        = /*[[@{/}]]*/ "";
+        const NGROK_BASE  = "https://7c740acca540.ngrok-free.app";
+        const PHONE_TEST  = `${NGROK_BASE}/veryAccount/test`;
+
+        const QR_ENDPOINT = `${BASE}qr`;
+        const STATUS_URL  = `${BASE}veryAccount/pay/status`;
+        const RESET_URL   = `${BASE}veryAccount/pay/reset`;
+
+
         const linePrices    = document.querySelectorAll('.line-price');
         const cellSubtotal  = document.getElementById('cellSubtotal');
         const cellDiscount  = document.getElementById('cellDiscount');
@@ -186,18 +213,43 @@
         const discountH     = document.getElementById('discountHidden');
         const grandH        = document.getElementById('grandHidden');
 
-        // ===== lấy vouchers từ dataset =====
+        const btnPayQr      = document.getElementById('btnPayQr');
+        const qrArea        = document.getElementById('qrArea');
+        const qrImg         = document.getElementById('qrImage');
+        const checkoutForm  = document.getElementById('checkoutForm');
+
+
+
+
+
+
+        const fmt = n => (Math.max(0, n || 0)).toLocaleString('vi-VN') + ' ₫';
+        const parseISO = s => (s ? new Date(s) : null);
+
+        const getUserId = () => {
+            const el = document.querySelector('input[name="userId"]');
+            return el ? (el.value || '').trim() : '';
+        };
+
+        const getSelectedIds = () =>
+            Array.from(document.querySelectorAll('input[name="selectedIds"]'))
+                .map(i => (i.value || '').trim())
+                .filter(Boolean);
+
+
+        const buildSuccessUrl = () => `${BASE}welcome/succestpayment`;
+
+
         const voucherNodes = document.querySelectorAll('#voucher-dataset .vitem');
         const vouchers = Array.from(voucherNodes).map(n => {
             const name  = (n.dataset.name || '').trim();
-            const type  = (n.dataset.type || '').trim().toLowerCase(); // percent | fixed
+            const type  = (n.dataset.type || '').trim().toLowerCase();
             const sale  = parseFloat(n.dataset.sale || '0') || 0;
             const start = parseISO(n.dataset.start || '');
             const end   = parseISO(n.dataset.end || '');
             return { name, type, sale, start, end };
         });
 
-        // ===== tính tạm tính =====
         function getSubtotal() {
             let sum = 0;
             linePrices.forEach(el => {
@@ -207,100 +259,209 @@
             return sum;
         }
 
-        // ===== tìm voucher theo mã (không phân biệt hoa thường) =====
         function findVoucherByCode(code) {
             if (!code) return null;
             const c = code.trim().toLowerCase();
             return vouchers.find(v => (v.name || '').trim().toLowerCase() === c) || null;
         }
 
-
         function isVoucherActive(v, now = new Date()) {
             if (!v) return false;
-
             if (v.start && now < v.start) return false;
-
-            if (v.end && now > v.end) return false;
+            if (v.end   && now > v.end)   return false;
             return true;
         }
 
-
         function calcDiscount(v, subtotal) {
-            if (!v) return 0;
-            if (subtotal <= 0) return 0;
+            if (!v || subtotal <= 0) return 0;
             if (v.type === 'percent') {
-
                 const raw = subtotal * (v.sale / 100.0);
                 return Math.min(subtotal, Math.max(0, raw));
             }
             if (v.type === 'fixed') {
-
                 return Math.min(subtotal, Math.max(0, v.sale));
             }
-
             return 0;
         }
 
 
         function renderTotals() {
             const subtotal = getSubtotal();
-            const code = (voucherInput.value || '').trim();
-            const voucher = findVoucherByCode(code);
-            let discount = 0;
+            const code     = (voucherInput ? (voucherInput.value || '') : '').trim();
+            const voucher  = findVoucherByCode(code);
+            let discount   = 0;
 
-
-            voucherBadge.style.display = 'none';
-            voucherBadge.textContent = '';
-            voucherBadge.className = '';
+            if (voucherBadge) {
+                voucherBadge.style.display = 'none';
+                voucherBadge.textContent   = '';
+                voucherBadge.className     = '';
+            }
 
             if (voucher) {
                 if (isVoucherActive(voucher)) {
                     discount = calcDiscount(voucher, subtotal);
-                    voucherStatus.textContent = 'Voucher hợp lệ.';
-                    voucherBadge.textContent = voucher.type === 'percent'
-                        ? ('-' + voucher.sale + '%')
-                        : ('-' + voucher.sale.toLocaleString('vi-VN') + '₫');
-                    voucherBadge.className = 'badge-ok';
-                    voucherBadge.style.display = 'inline-block';
+                    voucherStatus && (voucherStatus.textContent = 'Voucher hợp lệ.');
+                    if (voucherBadge) {
+                        voucherBadge.textContent = voucher.type === 'percent'
+                            ? ('-' + voucher.sale + '%')
+                            : ('-' + voucher.sale.toLocaleString('vi-VN') + '₫');
+                        voucherBadge.className   = 'badge-ok';
+                        voucherBadge.style.display = 'inline-block';
+                    }
                 } else {
-                    voucherStatus.textContent = 'Voucher đã hết hạn hoặc chưa đến thời gian áp dụng.';
-                    voucherBadge.textContent = 'expired';
-                    voucherBadge.className = 'badge-expired';
-                    voucherBadge.style.display = 'inline-block';
+                    voucherStatus && (voucherStatus.textContent = 'Voucher đã hết hạn hoặc chưa đến thời gian áp dụng.');
+                    if (voucherBadge) {
+                        voucherBadge.textContent = 'expired';
+                        voucherBadge.className   = 'badge-expired';
+                        voucherBadge.style.display = 'inline-block';
+                    }
                 }
             } else {
-                if (code.length > 0) {
-                    voucherStatus.textContent = 'Không tìm thấy voucher này.';
-                } else {
-                    voucherStatus.textContent = 'Nhập mã và bấm “Áp dụng”.';
-                }
+                voucherStatus && (voucherStatus.textContent = code.length > 0
+                    ? 'Không tìm thấy voucher này.'
+                    : 'Nhập mã và bấm “Áp dụng”.');
             }
 
             const grand = Math.max(0, subtotal - discount);
 
+            cellSubtotal  && (cellSubtotal.textContent  = fmt(subtotal));
+            cellDiscount  && (cellDiscount.textContent  = '− ' + fmt(discount));
+            cellGrand     && (cellGrand.textContent     = fmt(grand));
+            headlineTotal && (headlineTotal.textContent = fmt(grand));
 
-            cellSubtotal.textContent  = fmt(subtotal);
-            cellDiscount.textContent  = '− ' + fmt(discount);
-            cellGrand.textContent     = fmt(grand);
-            headlineTotal.textContent = fmt(grand);
-
-
-            voucherHidden.value = code;
-            subtotalH.value     = Math.round(subtotal);
-            discountH.value     = Math.round(discount);
-            grandH.value        = Math.round(grand);
+            voucherHidden && (voucherHidden.value = code);
+            subtotalH     && (subtotalH.value     = Math.round(subtotal));
+            discountH     && (discountH.value     = Math.round(discount));
+            grandH        && (grandH.value        = Math.round(grand));
         }
 
+        btnApply     && btnApply.addEventListener('click', renderTotals);
+        voucherInput && voucherInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') renderTotals(); });
+        renderTotals();
 
-        btnApply && btnApply.addEventListener('click', renderTotals);
-        voucherInput && voucherInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') renderTotals();
+
+
+
+
+
+
+
+
+        const POLL_INTERVAL_MS = 1500;
+        const POLL_TIMEOUT_MS  = 2 * 60 * 1000;
+        let pollTimer = null;
+        let pollTimeoutTimer = null;
+
+        function setQrUiLoading(isLoading) {
+            if (!btnPayQr) return;
+            btnPayQr.disabled = !!isLoading;
+            btnPayQr.textContent = isLoading ? '⏳ Đang chờ thanh toán...' : 'Thanh toán bằng QR';
+        }
+
+        function buildPaymentId() {
+            renderTotals();
+            const userId = getUserId() || 'UNKNOWN_USER';
+            const amount = (grandH && grandH.value) ? grandH.value : '0';
+            const ts     = Date.now();
+            return `PAY|${userId}|${amount}|${ts}`;
+        }
+
+        function showQrFor(textOrUrl) {
+            if (!qrImg) return;
+            const url = `${QR_ENDPOINT}?idpayment=${encodeURIComponent(textOrUrl)}&size=300&_=${Date.now()}`;
+            if (qrArea) qrArea.style.display = 'block';
+            qrImg.onerror = () => { qrImg.alt = 'Không tải được QR. Kiểm tra endpoint /qr'; };
+            qrImg.src = url;
+        }
+
+        async function fetchJson(url) {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return await res.json();
+        }
+
+        async function pollStatus(pid) {
+            try {
+                const j = await fetchJson(`${STATUS_URL}?pid=${encodeURIComponent(pid)}`);
+                if (j && j.paid) {
+                    stopPolling();
+                    window.location.href = buildSuccessUrl();
+                }
+            } catch (e) {
+                console.debug('poll error:', e);
+            }
+        }
+
+        function startPolling(pid) {
+            stopPolling();
+            pollTimer = setInterval(() => pollStatus(pid), POLL_INTERVAL_MS);
+            pollTimeoutTimer = setTimeout(() => {
+                stopPolling();
+                setQrUiLoading(false);
+                alert('Hết thời gian chờ thanh toán. Vui lòng quét lại mã.');
+            }, POLL_TIMEOUT_MS);
+        }
+
+        function stopPolling() {
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = null;
+            if (pollTimeoutTimer) clearTimeout(pollTimeoutTimer);
+            pollTimeoutTimer = null;
+        }
+
+        btnPayQr && btnPayQr.addEventListener('click', async () => {
+            try {
+                setQrUiLoading(true);
+
+
+                const pid = buildPaymentId();
+                try { await fetch(`${RESET_URL}?pid=${encodeURIComponent(pid)}`, { cache: 'no-store' }); } catch {}
+
+
+                let hidden = document.getElementById('paymentIdHidden');
+                if (!hidden) {
+                    hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = 'paymentId';
+                    hidden.id   = 'paymentIdHidden';
+                    checkoutForm && checkoutForm.appendChild(hidden);
+                }
+                hidden.value = pid;
+
+
+                const phoneUrl = `${PHONE_TEST}?pid=${encodeURIComponent(pid)}`;
+                showQrFor(phoneUrl);
+
+
+                startPolling(pid);
+            } catch (e) {
+                console.error(e);
+                alert('Không khởi tạo được thanh toán. Thử lại sau.');
+                setQrUiLoading(false);
+                stopPolling();
+            }
         });
 
 
-        renderTotals();
+        window.addEventListener('beforeunload', () => stopPolling());
+
+
+        (function ensureReturnUrl() {
+            if (!checkoutForm) return;
+            let ret = checkoutForm.querySelector('input[name="returnUrl"]');
+            if (!ret) {
+                ret = document.createElement('input');
+                ret.type = 'hidden';
+                ret.name = 'returnUrl';
+                checkoutForm.appendChild(ret);
+            }
+
+            ret.value = buildSuccessUrl();
+        })();
     })();
 </script>
+<script th:src="@{/Accest/JS/code.js}"></script>
+
 
 </body>
 </html>

@@ -159,9 +159,26 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-save mt-4 w-100"><i class="bi bi-check2-circle me-1"></i> Lưu thay đổi</button>
+        <div class="d-flex gap-3 mt-4">
+
+            <button type="submit"
+                    class="btn btn-danger w-100 py-2"
+                    formaction="/welcomeAdmin/deletegame"
+                    formmethod="post"
+                    onclick="return confirm('Bạn có chắc muốn xóa game này không?');">
+                <i class="bi bi-trash-fill me-1"></i> Delete Game
+            </button>
+
+
+            <button type="submit" class="btn btn-save w-100 py-2">
+                <i class="bi bi-check2-circle me-1"></i> Lưu thay đổi
+            </button>
+        </div>
+
     </form>
 </div>
+<script th:src="@{/Accest/JS/code.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

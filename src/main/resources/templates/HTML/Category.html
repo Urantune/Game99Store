@@ -45,7 +45,7 @@
         <div class="d-flex align-items-center">
             <a th:if="${session.userId != null}"
                th:href="@{/welcome/Cart/{id}(id=${session.id})}"
-               class="btn btn-cart me-2">
+               class="btn btn-cart me-2" target="_blank">
                 <i class="bi bi-cart-fill me-1"></i> Cart
             </a>
 
@@ -56,11 +56,11 @@
 
             <div th:if="${session.userId != null}" class="d-flex flex-column align-items-center">
                 <a th:href="@{/welcome/profile/{id}(id=${session.id})}" class="d-inline-flex justify-content-center">
-                    <img th:src="${session.avatar != null ? session.avatar : '/img/demo1.jpg'}"
+                    <img th:src="${user.imageLinks != null ? '/'+user.imageLinks : '/img/5000.jpg'}"
                          alt="Avatar" class="rounded-circle"
                          style="width:45px;height:45px;object-fit:cover;border:2px solid #666;cursor:pointer;">
                 </a>
-                <span class="mt-1 text-light" style="font-size:.9rem;font-weight:600" th:text="${session.userId}"></span>
+                <span class="mt-1 text-light" style="font-size:.9rem;font-weight:600" th:text="${user.username}"></span>
             </div>
         </div>
     </div>
@@ -75,7 +75,7 @@
             <th:block th:each="game : ${listGame}">
                 <div class="col mb-5">
                     <a th:href="@{'/welcome/gamedetail/' + ${game.gameId}}"
-                       style="text-decoration:none; color:inherit;">
+                       style="text-decoration:none; color:inherit;" target="_blank">
                         <div class="card h-100">
 
                             <img class="card-img-top"
@@ -190,5 +190,6 @@
         f.addEventListener('submit',e=>{ if(p.value!==c.value){ e.preventDefault(); m.textContent='Mật khẩu không khớp!'; }});
     });
 </script>
+<script th:src="@{/Accest/JS/code.js}"></script>
 </body>
 </html>

@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -90,7 +89,7 @@ public class GameCore {
     public void deleteOldIfLocal(String link){
         if(link==null || link.isBlank()) return;
         String rel = link.startsWith("/")? link.substring(1): link;
-        if(!(rel.startsWith("img/") || rel.startsWith("videos/"))) return;
+        if(!(rel.startsWith("static/img/") || rel.startsWith("videos/"))) return;
         try{
             Path p = STATIC_ROOT.resolve(rel).normalize();
             if(p.startsWith(STATIC_ROOT)) Files.deleteIfExists(p);
@@ -118,11 +117,13 @@ public class GameCore {
 
     public String saveGamePackage(MultipartFile f, String category, String gameName){
         try{
-            if(f==null || f.isEmpty()) throw new IllegalArgumentException("Empty");
+            if (f == null || f.isEmpty()) throw new IllegalArgumentException("Empty");
 
-            String fn = f.getOriginalFilename()==null? "" : f.getOriginalFilename().toLowerCase();
-            if(!(fn.endsWith(".zip") || fn.endsWith(".rar") || fn.endsWith(".7z") || fn.endsWith(".iso")))
-                throw new IllegalArgumentException("Invalid format");
+            String fn = f.getOriginalFilename() == null ? "" : f.getOriginalFilename().toLowerCase();
+
+            boolean ok = fn.endsWith(".zip") || fn.endsWith(".rar") || fn.endsWith(".7z")
+                    || fn.endsWith(".iso") || fn.endsWith(".jar");
+            if (!ok) throw new IllegalArgumentException("Invalid format (.zip/.rar/.7z/.iso/.jar)");
 
             String cat = sanitizeFolder(category);
             String gname = sanitizeFolder(gameName);
@@ -137,9 +138,11 @@ public class GameCore {
             Files.write(t, f.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
             return cat + "/" + gname + "/gamefile/" + safe;
-
-        }catch (Exception e){ throw new RuntimeException("Save package error"); }
+        }catch (Exception e){
+            throw new RuntimeException("Save package error");
+        }
     }
+
 
     @RestController
     @RequestMapping("/api/files")
