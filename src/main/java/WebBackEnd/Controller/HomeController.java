@@ -212,22 +212,6 @@ public class HomeController {
 
 
 
-    @GetMapping("/category/{product}")
-    public String category(@PathVariable("product") String product, Model model, HttpSession session) {
-        UUID userId = (UUID) session.getAttribute("userId");
-        User user = null;
-        if (userId != null) {
-            user = userService.getUserById(userId);
-        }
-        model.addAttribute("user", user);
-        List<Game> games = gameSevice.findGamesByCetagory(product);
-        model.addAttribute("listGame", games);
-        model.addAttribute("currentCategory", product);
-        model.addAttribute("tieude", product);
-        return "HTML/Category";
-    }
-
-
 
     @PostMapping("/refundGame")
     public String refundGamePost(@RequestParam("gameId") UUID gameId, Model model,
