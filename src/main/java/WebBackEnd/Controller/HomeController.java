@@ -227,53 +227,7 @@ public class HomeController {
         return "HTML/Category";
     }
 
-    @GetMapping("/gamedetail/{game_id}")
-    public String gameDetail(@PathVariable("game_id") UUID game_id,
-                             Model model,
-                             HttpSession session) {
-        Game game = gameSevice.findGameById(game_id);
-        model.addAttribute("game", game);
 
-        UUID userId = (UUID) session.getAttribute("userId");
-        boolean userGame = false;
-        boolean canFeedbackAndDownload = false;
-        Feedback myFeedback = null;
-        boolean refund = true;
-        List<Feedback> list = new ArrayList<>(feedbackService.findFeedbackByGameId(game_id));
-
-        if (userId != null) {
-            User user = userService.findById(userId);
-            for (Iterator<Feedback> it = list.iterator(); it.hasNext(); ) {
-                Feedback f = it.next();
-                if (f.getUserId().equals(userId)) {
-                    myFeedback = f;
-                    it.remove();
-                    break;
-                }
-            }
-
-            UserGame ug = userGameService.findByGameAndUser(game, user);
-            userGame = (ug != null);
-            canFeedbackAndDownload = (ug != null && ug.getStatus() == 1);
-            LocalDateTime now = LocalDateTime.now();
-            if (ug != null) {
-                if (now.isBefore(ug.getPurchaseDate().plusMinutes(30))) {
-                    refund = false;
-                }
-            } else {
-                refund = false;
-            }
-        }
-
-        model.addAttribute("user", userService.findById(userId));
-        model.addAttribute("refund", refund);
-        model.addAttribute("UserGame", userGame);
-        model.addAttribute("canFeedbackandDownload", canFeedbackAndDownload);
-        model.addAttribute("listFeedback", list);
-        model.addAttribute("myFeedback", myFeedback);
-
-        return "HTML/GameDetail";
-    }
 
     @PostMapping("/refundGame")
     public String refundGamePost(@RequestParam("gameId") UUID gameId, Model model,
