@@ -29,7 +29,6 @@
         <strong>Tổng chi tiêu:</strong>
         <span th:text="'$'+${#numbers.formatDecimal(balance, 0, 'COMMA', 0, 'POINT')}">0</span>
     </div>
-
     <div class="subtle">
         Số dư trong ví:
         <span th:text="'$'+${#numbers.formatDecimal(user.price, 0, 'COMMA', 0, 'POINT')}">—</span>

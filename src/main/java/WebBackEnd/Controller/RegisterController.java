@@ -49,9 +49,12 @@ public class RegisterController {
     @ResponseBody
     public Map<String, Object> registerAjax(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
-        String username = user.getUsername();
-        String email = user.getEmail();
-        String rawPassword = user.getPassword();
+        String username = user
+                .getUsername();
+        String email = user
+                .getEmail();
+        String rawPassword = user
+                .getPassword();
 
         if (username == null || username.trim().isEmpty()) {
             response.put("status", "error");
@@ -143,7 +146,7 @@ public class RegisterController {
         }
 
         String title = "Xác nhận tài khoản của bạn";
-        String link = "https://a7c804c1ed63.ngrok-free.app/veryAccount/done/" + user.getId() + "/" + fi;
+        String link = "localhost:8080/veryAccount/done/" + user.getId() + "/" + fi;
         String content =
                 "<p>Hãy nhấp vào liên kết dưới đây để kích hoạt tài khoản của bạn:</p>"
                         + "<p><a href=\"" + link + "\">Nhấn vào đây để kích hoạt</a></p>"
