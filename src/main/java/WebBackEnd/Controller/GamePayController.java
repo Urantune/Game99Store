@@ -87,7 +87,7 @@ public class GamePayController {
 
 
         long balance = Math.round(totalDouble);
-
+        model.addAttribute("user", user);
         model.addAttribute("timecreateAcc", user.getDateCreateAccount());
         model.addAttribute("labels", labels);
         model.addAttribute("spendingData", cumulative);
