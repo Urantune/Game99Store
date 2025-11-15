@@ -1,7 +1,6 @@
 package WebBackEnd.service;
 
 import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.JavaMailSender;
