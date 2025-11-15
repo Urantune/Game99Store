@@ -73,4 +73,10 @@ public class NewGameController {
         return "HTML/NewGame";
     }
 
+    @GetMapping("/viewGameNew")
+    public String newsGameEternalQuest() {
+        return "HTML/ViewGameNews";
+    }
+
+
 }

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eternal Quest – GameStore</title>
+
+    <style>
+        body {
+            background: #0b1b3f;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #e2e8f0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #11224d;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.35);
+        }
+        h1 {
+            font-size: 36px;
+            color: #9d4edd;
+            margin-bottom: 10px;
+        }
+        .tag {
+            background: #3c096c;
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .banner {
+            width: 100%;
+            border-radius: 14px;
+            margin-top: 20px;
+            margin-bottom: 25px;
+        }
+        .content {
+            line-height: 1.8;
+            font-size: 17px;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 22px;
+            background: #7209b7;
+            border-radius: 10px;
+            color: #fff;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .back-btn:hover {
+            background: #560bad;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <span class="tag">🎮 GAME MỚI RA MẮT</span>
+    <h1>Dragon Age – Hành trình RPG hoành tráng trong thế giới phép thuật</h1>
+
+    <img src="/img/viewgamenew.jpg" alt="Eternal Quest" class="banner">
+
+    <div class="content">
+        <p>
+            <b>Dragon Age</b> là tựa game RPG mới nhất ra mắt trên GameStore,
+            mang phong cách hành động — nhập vai kết hợp phiêu lưu thế giới mở.
+        </p>
+
+        <p>
+            Trong game, người chơi sẽ hóa thân thành một Pháp Sư Lữ Hành, phiêu lưu qua những vùng đất
+            huyền bí, chiến đấu với quái vật cổ đại và khám phá bí mật của Vùng Đất Vĩnh Hằng.
+        </p>
+
+        <h3>✨ Điểm nổi bật:</h3>
+        <ul>
+            <li>🌌 Thế giới mở rộng lớn với đồ họa cực đẹp</li>
+            <li>⚔ Hệ thống chiến đấu kết hợp phép thuật độc đáo</li>
+            <li>🐉 Boss khổng lồ mang tính thử thách cao</li>
+            <li>🎵 Nhạc nền fantasy hoành tráng</li>
+            <li>
+                <a th:href="@{/welcome/gamedetail/A4EBEFFD-0FA1-4A32-8DDE-EFC13C32D3D4}">
+                    Xem chi tiết
+                </a>
+            </li>
+        </ul>
+
+        <p>
+            Game hứa hẹn sẽ trở thành một trong những bom tấn RPG lớn nhất cuối năm,
+            thu hút cộng đồng game thủ yêu thích hành động – phiêu lưu.
+        </p>
+    </div>
+
+    <a href="/welcome/news" class="back-btn">⬅ Quay lại trang tin tức</a>
+</div>
+
+</body>
+</html>
