@@ -91,7 +91,13 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label">Thể loại</label>
-                <input class="form-control" name="category" th:value="${game!=null?game.gameCategory:''}"/>
+                <select class="form-control form-select" name="category">
+                    <option value="" disabled th:selected="${game == null}">-- Chọn thể loại --</option>
+                    <option value="Action" th:selected="${game != null and game.gameCategory == 'Action'}">Action</option>
+                    <option value="Adventure" th:selected="${game != null and game.gameCategory == 'Adventure'}">Adventure</option>
+                    <option value="RPG" th:selected="${game != null and game.gameCategory == 'Horror'}">Horror</option>
+                    <option value="Strategy" th:selected="${game != null and game.gameCategory == 'Puzzle'}">Puzzle</option>
+                </select>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Trạng thái</label>

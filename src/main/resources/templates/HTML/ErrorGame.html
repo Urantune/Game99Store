@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>🎮 Lỗi thường gặp khi chơi game - GameStore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: radial-gradient(circle at top, #19002b 0%, #0a0a0a 100%);
+            color: #f0f0f0;
+            font-family: "Segoe UI", "Roboto", sans-serif;
+            min-height: 100vh;
+            padding: 80px 0;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+
+        h2 {
+            font-weight: 600;
+            font-size: 1.9rem;
+            color: #c68cff;
+            text-shadow: 0 0 10px rgba(140, 45, 226, 0.7);
+            margin-bottom: 25px;
+        }
+
+        .rules {
+            background: rgba(60, 40, 90, 0.2);
+            border: 1px solid rgba(160, 90, 255, 0.4);
+            border-left: 5px solid #a35aff;
+            padding: 15px 20px;
+            margin-bottom: 35px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 10px rgba(140, 45, 226, 0.2);
+        }
+
+        .rules h5 {
+            color: #d7b0ff;
+            margin-bottom: 8px;
+        }
+
+        .rules ul {
+            margin: 0;
+            padding-left: 18px;
+            color: #ccc;
+        }
+
+        label {
+            font-weight: 500;
+            color: #ddd;
+            margin-top: 10px;
+            display: block;
+        }
+
+        select, textarea {
+            background: rgba(35, 35, 55, 0.9);
+            color: #fff;
+            border: 1px solid rgba(150, 80, 255, 0.4);
+            border-radius: 8px;
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 5px;
+        }
+
+        select:focus, textarea:focus {
+            border-color: #b96fff;
+            box-shadow: 0 0 10px rgba(160, 90, 255, 0.4);
+            outline: none;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .btn-submit {
+            background: linear-gradient(90deg, #8E2DE2, #4A00E0);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 12px 35px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(90deg, #a85ff0, #6b2ae2);
+            box-shadow: 0 0 20px rgba(142, 45, 226, 0.6);
+            transform: scale(1.02);
+        }
+
+        #faqAnswer {
+            margin-top: 10px;
+            color: #fff;
+            background: rgba(60, 40, 90, 0.2);
+            border: 1px solid rgba(160, 90, 255, 0.4);
+            border-radius: 8px;
+            padding: 10px 15px;
+        }
+
+        /* Hộp gửi lỗi riêng */
+        #sideQuestion {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 300px;
+            background: rgba(35,35,55,0.95);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(160,90,255,0.4);
+            box-shadow: 0 0 15px rgba(140,45,226,0.5);
+        }
+
+        #sideQuestion h5 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2 class="mt-3 text-center">🎮 Lỗi thường gặp khi chơi game</h2>
+
+    <div class="rules">
+        <h5>⚙️ Một số lưu ý trước khi xử lý lỗi:</h5>
+        <ul>
+            <li>Đảm bảo đã cài đặt đủ <b>DirectX, Visual C++ Redistributable, .NET Framework</b>.</li>
+            <li>Cập nhật <b>driver card đồ họa</b> (NVIDIA, AMD, Intel) mới nhất.</li>
+            <li>Chạy game bằng quyền <b>Administrator</b>.</li>
+            <li>Kiểm tra <b>chống virus hoặc Windows Defender</b> có đang chặn file game không.</li>
+            <li>Kiểm tra dung lượng ổ đĩa và đường dẫn cài đặt không chứa ký tự đặc biệt.</li>
+        </ul>
+    </div>
+
+    <!-- Form Lỗi Game -->
+    <form id="faqForm" class="p-3 rounded" style="background: rgba(40,30,60,0.3); box-shadow: 0 0 10px rgba(150,90,255,0.3);">
+        <div class="mb-3">
+            <label for="faqCategory">Loại lỗi game</label>
+            <select class="form-select" id="faqCategory" name="faqCategory">
+                <option value="">-- Chọn loại lỗi --</option>
+                <option value="launch">Lỗi khi mở game</option>
+                <option value="performance">Lỗi giật, lag, drop FPS</option>
+                <option value="sound">Lỗi âm thanh hoặc mic</option>
+                <option value="network">Lỗi kết nối mạng hoặc server</option>
+                <option value="crash">Game bị crash hoặc văng ra Desktop</option>
+                <option value="save">Lỗi lưu tiến trình hoặc tài khoản</option>
+                <option value="graphic">Lỗi đồ họa (đen màn hình, mất texture,...)</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="faqQuestion">Chi tiết lỗi</label>
+            <select class="form-select" id="faqQuestion" style="display:none;">
+                <option value="">-- Chọn chi tiết lỗi --</option>
+            </select>
+        </div>
+
+        <div id="faqAnswer"></div>
+    </form>
+</div>
+
+<!-- Form gửi lỗi riêng -->
+<div id="sideQuestion">
+    <h5>🛠️ Báo lỗi chi tiết</h5>
+    <form id="customQuestionForm">
+        <div class="mb-2">
+            <label for="userQuestion" style="color:#fff;">Mô tả lỗi bạn gặp</label>
+            <textarea id="userQuestion" class="form-control" rows="3" placeholder="Nhập mô tả lỗi..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-submit w-100">Gửi báo lỗi</button>
+    </form>
+</div>
+
+<script>
+    // ========================== DỮ LIỆU FAQ LỖI GAME ==========================
+    const faqData = {
+        "launch": {
+            "Game không mở được / không khởi động": "Hãy chạy game bằng quyền Administrator, tắt tường lửa và phần mềm diệt virus. Nếu vẫn lỗi, thử cài lại DirectX và Visual C++.",
+            "Xuất hiện lỗi 'Missing DLL' khi khởi động": "Cài lại gói Microsoft Visual C++ Redistributable (2015–2022) và khởi động lại máy.",
+            "Không có phản hồi khi bấm nút chơi": "Kiểm tra file game còn đủ không, nếu thiếu hãy xác minh tệp trong thư mục cài đặt hoặc cài lại game."
+        },
+        "performance": {
+            "Game bị lag hoặc drop FPS": "Giảm thiết lập đồ họa, tắt V-Sync, cập nhật driver GPU, đóng ứng dụng nền (Chrome, Discord, OBS...).",
+            "Game bị giật khung hình dù cấu hình đủ": "Bật chế độ hiệu suất cao trong Windows, và kiểm tra lại nhiệt độ CPU/GPU.",
+            "Ổ cứng hoặc RAM đầy gây chậm": "Xóa cache hệ thống và đảm bảo còn ít nhất 10GB trống trong ổ chứa game."
+        },
+        "sound": {
+            "Không có âm thanh trong game": "Kiểm tra thiết bị âm thanh đầu ra, tắt mute trong Windows, cài lại driver âm thanh.",
+            "Mic không hoạt động trong game voice chat": "Cấp quyền truy cập micro cho game trong phần cài đặt hệ thống.",
+            "Âm thanh bị rè hoặc méo": "Giảm âm lượng tổng thể và tắt các hiệu ứng âm thanh 3D hoặc surround trong driver."
+        },
+        "network": {
+            "Không kết nối được server": "Kiểm tra mạng, đổi DNS sang 8.8.8.8 và 1.1.1.1. Nếu vẫn lỗi, thử bật VPN để test.",
+            "Ping cao hoặc rớt mạng giữa chừng": "Đóng các ứng dụng chiếm băng thông (YouTube, torrent...), và dùng dây LAN thay Wi-Fi.",
+            "Thông báo 'Connection Lost' liên tục": "Server có thể đang bảo trì, hãy thử lại sau vài phút hoặc kiểm tra trang thông báo của GameStore."
+        },
+        "crash": {
+            "Game bị crash giữa chừng": "Cập nhật driver card đồ họa, tắt overlay (Discord, Steam), và chạy lại ở chế độ windowed.",
+            "Game tự tắt không báo lỗi": "Do thiếu quyền hoặc file lỗi, thử chạy lại với quyền admin hoặc cài lại.",
+            "Crash khi load màn chơi": "File lưu có thể bị hỏng, thử xóa save tạm hoặc chơi lại từ đầu."
+        },
+        "save": {
+            "Không lưu được tiến trình": "Kiểm tra quyền ghi thư mục game, tắt chế độ chỉ đọc và chạy bằng quyền admin.",
+            "Mất tiến trình khi tắt game": "Tệp save có thể bị ghi đè, hãy bật đồng bộ lưu đám mây (nếu có).",
+            "Không đăng nhập được tài khoản": "Kiểm tra kết nối mạng và đồng bộ thời gian hệ thống."
+        },
+        "graphic": {
+            "Màn hình đen khi khởi động": "Đặt game ở chế độ windowed, tắt full-screen optimization, cập nhật driver GPU.",
+            "Thiếu texture hoặc nhân vật bị trong suốt": "Kiểm tra file game, xác minh integrity hoặc cài lại.",
+            "Màu sắc hiển thị sai / bóng đổ lỗi": "Cập nhật DirectX và bật chế độ tương thích trong phần cài đặt đồ họa."
+        }
+    };
+
+    const faqCategory = document.getElementById("faqCategory");
+    const faqQuestion = document.getElementById("faqQuestion");
+    const faqAnswer = document.getElementById("faqAnswer");
+
+    faqCategory.addEventListener("change", function() {
+        const selectedCategory = this.value;
+        faqQuestion.innerHTML = '<option value="">-- Chọn chi tiết lỗi --</option>';
+        faqAnswer.innerHTML = "";
+        if (selectedCategory && faqData[selectedCategory]) {
+            faqQuestion.style.display = "block";
+            Object.keys(faqData[selectedCategory]).forEach(q => {
+                const opt = document.createElement("option");
+                opt.value = q;
+                opt.text = q;
+                faqQuestion.appendChild(opt);
+            });
+        } else {
+            faqQuestion.style.display = "none";
+        }
+    });
+
+    faqQuestion.addEventListener("change", function() {
+        const cat = faqCategory.value;
+        const q = this.value;
+        faqAnswer.innerHTML = q ? faqData[cat][q] : "";
+    });
+</script>
+
+<!-- ========================== EMAILJS GỬI BÁO LỖI ========================== -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+    (function() {
+        emailjs.init("PBiaYvMLWpe-woLFT"); // Thay bằng public key của bạn
+    })();
+
+    document.getElementById("customQuestionForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const question = document.getElementById("userQuestion").value.trim();
+
+        if (!question) {
+            alert("❌ Vui lòng nhập mô tả lỗi trước khi gửi.");
+            return;
+        }
+
+        const params = { user_question: question };
+
+        emailjs.send("service_7s3q9n7", "template_b49f7wf", params)
+            .then(() => {
+                alert("✅ Báo lỗi đã được gửi!");
+                e.target.reset();
+            })
+            .catch((error) => {
+                console.error("Lỗi gửi email:", error);
+                alert("❌ Gửi thất bại. Vui lòng thử lại sau!");
+            });
+    });
+</script>
+</body>
+</html>

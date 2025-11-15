@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>📚 Câu hỏi thường gặp (FAQ) - GameStore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: radial-gradient(circle at top, #19002b 0%, #0a0a0a 100%);
+            color: #f0f0f0;
+            font-family: "Segoe UI", "Roboto", sans-serif;
+            min-height: 100vh;
+            padding: 80px 0;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+
+        h2 {
+            font-weight: 600;
+            font-size: 1.9rem;
+            color: #c68cff;
+            text-shadow: 0 0 10px rgba(140, 45, 226, 0.7);
+            margin-bottom: 25px;
+        }
+
+        .rules {
+            background: rgba(60, 40, 90, 0.2);
+            border: 1px solid rgba(160, 90, 255, 0.4);
+            border-left: 5px solid #a35aff;
+            padding: 15px 20px;
+            margin-bottom: 35px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 10px rgba(140, 45, 226, 0.2);
+        }
+
+        .rules h5 {
+            color: #d7b0ff;
+            margin-bottom: 8px;
+        }
+
+        .rules ul {
+            margin: 0;
+            padding-left: 18px;
+            color: #ccc;
+        }
+
+        label {
+            font-weight: 500;
+            color: #ddd;
+            margin-top: 10px;
+            display: block;
+        }
+
+        select, textarea {
+            background: rgba(35, 35, 55, 0.9);
+            color: #fff;
+            border: 1px solid rgba(150, 80, 255, 0.4);
+            border-radius: 8px;
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 5px;
+        }
+
+        select:focus, textarea:focus {
+            border-color: #b96fff;
+            box-shadow: 0 0 10px rgba(160, 90, 255, 0.4);
+            outline: none;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .btn-submit {
+            background: linear-gradient(90deg, #8E2DE2, #4A00E0);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 12px 35px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(90deg, #a85ff0, #6b2ae2);
+            box-shadow: 0 0 20px rgba(142, 45, 226, 0.6);
+            transform: scale(1.02);
+        }
+
+        #faqAnswer {
+            margin-top: 10px;
+            color: #fff;
+            background: rgba(60, 40, 90, 0.2);
+            border: 1px solid rgba(160, 90, 255, 0.4);
+            border-radius: 8px;
+            padding: 10px 15px;
+        }
+
+        /* Hộp gửi câu hỏi riêng */
+        #sideQuestion {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 300px;
+            background: rgba(35,35,55,0.95);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(160,90,255,0.4);
+            box-shadow: 0 0 15px rgba(140,45,226,0.5);
+        }
+
+        #sideQuestion h5 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2 class="mt-3 text-center">📚 Câu hỏi thường gặp (FAQ)</h2>
+
+
+    <!-- Form FAQ -->
+    <form id="faqForm" class="p-3 rounded" style="background: rgba(40,30,60,0.3); box-shadow: 0 0 10px rgba(150,90,255,0.3);">
+        <div class="mb-3">
+            <label for="faqCategory">FAQ về mua game</label>
+            <select class="form-select" id="faqCategory" name="faqCategory">
+                <option value="">-- Chọn chủ đề --</option>
+                <option value="product">Thông tin sản phẩm</option>
+                <option value="payment">Thanh toán</option>
+                <option value="download">Tải xuống & cài đặt</option>
+                <option value="license">Bản quyền & kích hoạt</option>
+                <option value="refundFaq">Hoàn tiền & hủy mua</option>
+                <option value="support">Hỗ trợ kỹ thuật</option>
+                <option value="content">Nội dung & bảo mật</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="faqQuestion">Loại câu hỏi</label>
+            <select class="form-select" id="faqQuestion" style="display:none;">
+                <option value="">-- Chọn câu hỏi --</option>
+            </select>
+        </div>
+
+        <div id="faqAnswer"></div>
+    </form>
+</div>
+
+<!-- Form gửi câu hỏi riêng -->
+<div id="sideQuestion">
+    <h5>❓ Gửi câu hỏi riêng</h5>
+    <form id="customQuestionForm">
+        <div class="mb-2">
+            <label for="userQuestion" style="color:#fff;">Câu hỏi của bạn</label>
+            <textarea id="userQuestion" class="form-control" rows="3" placeholder="Nhập câu hỏi..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-submit w-100">Gửi câu hỏi</button>
+    </form>
+</div>
+
+<script>
+    // ========================== DỮ LIỆU FAQ ==========================
+    const faqData = {
+        "product": {
+            "Game này có những phiên bản nào?": "Game có các phiên bản Standard, Deluxe, và Ultimate, mỗi phiên bản có nội dung và phần thưởng riêng.",
+            "Yêu cầu cấu hình tối thiểu và đề xuất là gì?": "Tối thiểu tùy thuộc vào NPT trò chơi.",
+            "Game có hỗ trợ tiếng Việt không?": "Có, hỗ trợ giao diện và phụ đề tiếng Việt.",
+            "Có bản demo không?": "Có, bạn có thể tải bản demo miễn phí."
+        },
+        "payment": {
+            "Tôi có thể thanh toán bằng phương thức nào?": "Hỗ trợ thẻ tín dụng, ví điện tử và PayPal.",
+            "Game có giảm giá không?": "Có, thường xuyên có sự kiện giảm giá.",
+            "Có thể mua game làm quà không?": "Có, chọn tùy chọn 'Mua làm quà' khi thanh toán."
+        },
+        "download": {
+            "Sau khi mua, tôi tải game ở đâu?": "Bạn có thể tải trực tiếp từ trang GameStore hoặc qua nền tảng game như Steam, Epic, Origin.",
+            "Game có cần cài đặt qua Steam/Epic/Origin không?": "Có, một số game yêu cầu cài đặt qua nền tảng phân phối.",
+            "Tôi có thể cài game trên nhiều thiết bị không?": "Tùy game, hầu hết có thể cài trên nhiều thiết bị với cùng một tài khoản.",
+            "Tốc độ tải có nhanh không và có hỗ trợ tải lại nếu gián đoạn không?": "Tốc độ tải phụ thuộc vào đường truyền, nhưng hỗ trợ resume nếu bị gián đoạn."
+        },
+        "license": {
+            "Tôi có nhận key hay mã kích hoạt không?": "Có, hầu hết game sẽ cung cấp key hoặc mã kích hoạt sau khi mua.",
+            "Key có thể sử dụng nhiều lần không?": "Không, mỗi key thường chỉ dùng cho một tài khoản.",
+            "Có thể chuyển nhượng hoặc bán lại key không?": "Không, việc chuyển nhượng key tùy thuộc chính sách của nhà phát triển.",
+            "Game có DRM hay cần kết nối Internet liên tục không?": "Một số game yêu cầu DRM hoặc kết nối Internet, thông tin sẽ được nêu rõ khi mua."
+        },
+        "refundFaq": {
+            "Có chính sách hoàn tiền nếu tôi không thích game không?": "Có, bạn có thể yêu cầu hoàn tiền trong vòng 24h và chưa chơi quá 2 giờ.",
+            "Tôi có thể hủy đơn hàng trước khi tải game không?": "Có thể hủy đơn hàng nếu chưa bắt đầu tải xuống.",
+            "Thời gian hoàn tiền mất bao lâu và có phí không?": "Hoàn tiền về ví GamePay trong vòng 24h, không mất phí."
+        },
+        "support": {
+            "Tôi gặp lỗi khi cài đặt hoặc chạy game thì làm sao?": "Bạn có thể liên hệ support qua email hoặc chat trực tuyến trên GameStore.",
+            "Game có cập nhật thường xuyên không?": "Có, game sẽ nhận các bản cập nhật định kỳ.",
+            "Tôi có thể báo lỗi hoặc gửi yêu cầu hỗ trợ ở đâu?": "Truy cập trang hỗ trợ kỹ thuật hoặc diễn đàn chính thức.",
+            "Có cộng đồng hay diễn đàn hỗ trợ game không?": "Có, GameStore và nhà phát triển có cộng đồng riêng."
+        },
+        "content": {
+            "Game có nội dung dành cho độ tuổi nào?": "Thông tin độ tuổi được ghi rõ trên trang sản phẩm, thường từ 12+, 16+ hoặc 18+ tùy game.",
+            "Có hỗ trợ chế độ nhiều người chơi trực tuyến không?": "Có, nhiều game hỗ trợ multiplayer trực tuyến.",
+            "Thông tin cá nhân của tôi có được bảo mật không?": "GameStore cam kết bảo mật thông tin cá nhân của người dùng."
+        }
+    };
+
+    const faqCategory = document.getElementById("faqCategory");
+    const faqQuestion = document.getElementById("faqQuestion");
+    const faqAnswer = document.getElementById("faqAnswer");
+
+    faqCategory.addEventListener("change", function() {
+        const selectedCategory = this.value;
+        faqQuestion.innerHTML = '<option value="">-- Chọn câu hỏi --</option>';
+        faqAnswer.innerHTML = "";
+        if (selectedCategory && faqData[selectedCategory]) {
+            faqQuestion.style.display = "block";
+            Object.keys(faqData[selectedCategory]).forEach(q => {
+                const opt = document.createElement("option");
+                opt.value = q;
+                opt.text = q;
+                faqQuestion.appendChild(opt);
+            });
+        } else {
+            faqQuestion.style.display = "none";
+        }
+    });
+
+    faqQuestion.addEventListener("change", function() {
+        const cat = faqCategory.value;
+        const q = this.value;
+        faqAnswer.innerHTML = q ? faqData[cat][q] : "";
+    });
+</script>
+
+<!-- ========================== EMAILJS ========================== -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+    // Khởi tạo EmailJS
+    (function() {
+        emailjs.init("PBiaYvMLWpe-woLFT");
+    })();
+
+    // Gửi câu hỏi riêng
+    document.getElementById("customQuestionForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const question = document.getElementById("userQuestion").value.trim();
+
+        if (!question) {
+            alert("❌ Vui lòng nhập câu hỏi trước khi gửi.");
+            return;
+        }
+
+        const params = { user_question: question };
+
+        emailjs.send("service_7s3q9n7", "template_b49f7wf", params)
+            .then(() => {
+                alert("✅ Câu hỏi của bạn đã được gửi thành công! Chúng tôi sẽ phản hồi qua email trong thời gian sớm nhất.");
+                e.target.reset();
+            })
+            .catch((error) => {
+                console.error("Lỗi gửi email:", error);
+                alert("❌ Gửi thất bại. Vui lòng thử lại sau!");
+            });
+    });
+</script>
+
+</body>
+</html>

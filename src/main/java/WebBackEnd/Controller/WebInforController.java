@@ -28,6 +28,27 @@ public class WebInforController {
 //        return "HTML/RefundGame";
 //    }
 
+    @GetMapping("/game")
+    public String game() {
+        return "HTML/ErrorGame";
+    }
+
+
+    @GetMapping("/account")
+    public String account() {
+        return "HTML/Account";
+    }
+
+    @GetMapping("/fag")
+    public String fag() {
+        return "HTML/FAQ";
+    }
+
+    @GetMapping("/contact")
+    public  String contact() {
+        return  "HTML/Contact";
+    }
+
     @GetMapping("/buyguide")
     public String buyguide() {
 
@@ -44,6 +65,9 @@ public class WebInforController {
 
         return "HTML/Support";
     }
+
+
+
 
     @GetMapping("/supporttransaction")
     public String supporttransaction(Model model) {
