@@ -666,8 +666,12 @@
         <div th:if="${session.role == null}"></div>
 
         <form th:if="${session.role == 'USER'}" th:action="@{/buy}" method="post">
-            <input type="hidden" name="gameId" th:value="${game.id}">
-            <button type="submit" class="btn btn-success">Mua</button>
+
+                <input type="hidden" name="gameId" th:value="${game.id}">
+                <button type="submit" class="btn btn-success">Mua</button>
+
+
+
         </form>
 
         <div th:if="${session.role == 'ADMIN'}">
@@ -771,22 +775,52 @@
                 </div>
 
                 <div class="d-flex">
-                    <!-- (Ví dụ) Form Mua: bạn thay bằng luồng thật của bạn -->
-                    <form action="buy" method="post" class="me-2">
-                        <input type="hidden" name="gameId" value="1">
+                    <!-- Form Mua -->
+                    <form th:action="@{/welcome/buy}" method="post" class="me-2 login-check-form">
+
+                        <input type="hidden" name="selectedIds" th:value="${gameMain.gameId}"/>
+
+
+
                         <button type="submit" class="btn btn-success">Mua</button>
                     </form>
 
-                    <!-- (Ví dụ) Form Add to Cart -->
-                    <form action="AddToCart" method="post">
-                        <input type="hidden" name="gameId" value="1">
+
+                    <!-- Form Add to Cart -->
+                    <form th:action="@{/welcome/addGameToCard/{game_id}(game_id=${gameMain.getGameId()})}" method="post" class="login-check-form">
+                        <input type="hidden" name="gameId" th:value="${gameMain.gameId}">
                         <button class="btn btn-outline-light flex-shrink-0 bg-primary" type="submit">
                             <i class="bi-cart-fill me-1"></i> Add to cart
                         </button>
                     </form>
                 </div>
+
             </div>
         </div>
+
+
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const isLoggedIn = /*[[${session.userId != null}]]*/ false;
+
+                const forms = document.querySelectorAll('.login-check-form');
+                const modalEl = document.getElementById('loginModal');
+
+                forms.forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        if (!isLoggedIn) {
+                            e.preventDefault();
+                            if (modalEl) {
+                                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                                modal.show();
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
+
 
         <!-- JS media -->
         <script>
