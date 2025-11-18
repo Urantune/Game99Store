@@ -456,29 +456,38 @@
                 <h4 class="text-glow mb-3">Hình ảnh & Video</h4>
                 <div class="main-media-wrapper mb-3">
                     <img id="mainImg"
-                         th:src="@{'/' + ${game.linkImage[4]}}"
+                         th:src="@{'/' + ${img.mainImage}}"
                          src="/img/notfound.png"
                          alt="Game"
                          class="img-fluid rounded main-img shadow-sm"/>
+
                 </div>
                 <div class="thumbs-row d-flex justify-content-between gap-2">
-                    <video class="thumb thumb-video" muted autoplay loop
-                           th:attr="onclick=|openVideoModal('/'+'${game.linkImage[0]}')|">
-                        <source th:src="@{'/' + ${game.linkImage[0]}}" type="video/mp4"/>
+                    <video class="thumb thumb-video"
+                           muted autoplay loop
+                           onclick="openVideoModal(this.querySelector('source').src)">
+                        <source th:src="@{'/' + ${img.video}}" type="video/mp4"/>
                     </video>
+
+
                     <img class="thumb"
-                         th:src="@{'/' + ${game.linkImage[1]}}"
-                         th:attr="onclick=|openImageModal('/'+'${game.linkImage[1]}')|"
+                         th:src="@{'/' + ${img.imageOne}}"
+                         onclick="openImageModal(this.src)"
                          alt="thumb 1"/>
+
                     <img class="thumb"
-                         th:src="@{'/' + ${game.linkImage[2]}}"
-                         th:attr="onclick=|openImageModal('/'+'${game.linkImage[2]}')|"
+                         th:src="@{'/' + ${img.imageTwo}}"
+                         onclick="openImageModal(this.src)"
                          alt="thumb 2"/>
+
                     <img class="thumb"
-                         th:src="@{'/' + ${game.linkImage[3]}}"
-                         th:attr="onclick=|openImageModal('/'+'${game.linkImage[3]}')|"
+                         th:src="@{'/' + ${img.imageThree}}"
+                         onclick="openImageModal(this.src)"
                          alt="thumb 3"/>
+
+
                 </div>
+
             </div>
 
             <div class="modal fade" id="imageModal" tabindex="-1">
@@ -553,14 +562,14 @@
                      th:if="${session.userId != null and !canFeedbackandDownload}">
                     <form id="buyForm" class="w-100"
                           th:action="@{/welcome/buy}"
-                    method="post">
+                          method="post">
 
-                    <input type="hidden" name="selectedIds" th:value="${game.gameId}"/>
+                        <input type="hidden" name="selectedIds" th:value="${game.gameId}"/>
 
 
-                    <input type="hidden" th:if="${_csrf!=null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <input type="hidden" th:if="${_csrf!=null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
-                    <button type="submit" class="btn btn-buy w-100">🛒 Mua ngay</button>
+                        <button type="submit" class="btn btn-buy w-100">🛒 Mua ngay</button>
                     </form>
                     <form id="addCartForm" class="w-100"
                           th:action="@{/welcome/addGameToCard/{game_id}(game_id=${game.gameId})}"

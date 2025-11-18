@@ -414,7 +414,7 @@
     <div class="steam-menu">
         <div class="steam-menu-inner">
             <a th:href="@{/welcome/about}" >About</a>
-            <a th:href="@{/welcome/Newgame}">Coming Soon</a>
+            <a th:href="@{/welcome/Newgame}">Bill</a>
 
             <div class="dropdown">
                 <div class="dropdown-toggle text-decoration-none text-white">Categories</div>
@@ -666,12 +666,8 @@
         <div th:if="${session.role == null}"></div>
 
         <form th:if="${session.role == 'USER'}" th:action="@{/buy}" method="post">
-
-                <input type="hidden" name="gameId" th:value="${game.id}">
-                <button type="submit" class="btn btn-success">Mua</button>
-
-
-
+            <input type="hidden" name="gameId" th:value="${game.id}">
+            <button type="submit" class="btn btn-success">Mua</button>
         </form>
 
         <div th:if="${session.role == 'ADMIN'}">
@@ -680,34 +676,50 @@
     </div>
 
     <div class="container px-4 px-lg-5 my-5">
-        <div id="lienquan" class="row gx-4 gx-lg-5 align-items-center game-detail">
+        <!-- Lấy ImageGame cho gameMain -->
+        <div id="lienquan"
+             class="row gx-4 gx-lg-5 align-items-center game-detail"
+             th:with="imgMain=${gameCore.imageLinkGame(gameMain)}">
+
             <div class="col-md-6">
-                <a th:href="@{/welcome/gamedetail/{game_id}(game_id=${gameMain.getGameId()})}"
+                <a th:href="@{/welcome/gamedetail/{game_id}(game_id=${gameMain.gameId})}"
                    style="text-decoration:none; color:inherit;">
                     Xem chi tiết
                 </a>
-                <a th:href="@{/welcome/gamedetail/{game_id}(game_id=${gameMain.getGameId()})}"
+                <a th:href="@{/welcome/gamedetail/{game_id}(game_id=${gameMain.gameId})}"
                    style="text-decoration:none; color:inherit;">
                     <img class="card-img-top mb-4 game-img"
-                         th:src="'/'+${gameMain.getLinkImage()[4]}"
-                         alt="Liên Quân Mobile"/>
+                         th:if="${imgMain != null and imgMain.mainImage != null}"
+                         th:src="${'/' + imgMain.mainImage}"
+                         th:alt="${gameMain.gameName}" />
+                    <img class="card-img-top mb-4 game-img"
+                         th:if="${imgMain == null or imgMain.mainImage == null}"
+                         th:src="@{/img/default.jpg}"
+                         th:alt="${gameMain.gameName}" />
                 </a>
+
                 <div class="media-section d-flex align-items-center mb-3">
                     <!-- Video nhỏ ngoài trang (mở modal video) -->
                     <div class="demo-video" data-bs-toggle="modal" data-bs-target="#gameTrailerModal">
                         <div class="video-wrapper">
-                            <video class="w-100 rounded shadow" muted>
-                                <source th:src="'/'+${gameMain.getLinkImage()[0]}" type="video/mp4">
+                            <video class="w-100 rounded shadow" muted
+                                   th:if="${imgMain != null and imgMain.video != null}">
+                                <source th:src="${'/' + imgMain.video}" type="video/mp4">
                             </video>
-                            <div class="play-button"></div>
                         </div>
                     </div>
 
                     <!-- Ảnh demo (mở modal ảnh) -->
-                    <div class="demo-images d-flex flex-row gap-2">
-                        <img th:src="@{${linkimage[1]}}" class="img-fluid demo-thumb" alt="Demo 1">
-                        <img th:src="@{${linkimage[2]}}" class="img-fluid demo-thumb" alt="Demo 2">
-                        <img th:src="@{${linkimage[3]}}" class="img-fluid demo-thumb" alt="Demo 3">
+                    <div class="demo-images d-flex flex-row gap-2" th:if="${imgMain != null}">
+                        <img th:if="${imgMain.imageOne != null}"
+                             th:src="${'/' + imgMain.imageOne}"
+                             class="img-fluid demo-thumb" alt="Demo 1">
+                        <img th:if="${imgMain.imageTwo != null}"
+                             th:src="${'/' + imgMain.imageTwo}"
+                             class="img-fluid demo-thumb" alt="Demo 2">
+                        <img th:if="${imgMain.imageThree != null}"
+                             th:src="${'/' + imgMain.imageThree}"
+                             class="img-fluid demo-thumb" alt="Demo 3">
                     </div>
                 </div>
 
@@ -716,8 +728,9 @@
                     <div class="modal-dialog modal-xl modal-dialog-centered">
                         <div class="modal-content bg-dark">
                             <div class="modal-body p-0">
-                                <video id="gameTrailerModalVideo" class="w-100" controls>
-                                    <source th:src="@{${linkimage[0]}}" type="video/mp4">
+                                <video id="gameTrailerModalVideo" class="w-100" controls
+                                       th:if="${imgMain != null and imgMain.video != null}">
+                                    <source th:src="${'/' + imgMain.video}" type="video/mp4">
                                     Trình duyệt của bạn không hỗ trợ video.
                                 </video>
                             </div>
@@ -748,46 +761,45 @@
 
             <div class="col-md-6">
                 <div class="small mb-1 text-white">@Tencent Games</div>
-                <h1 class="display-5 fw-bolder game-title text-white" data-bs-toggle="modal" data-bs-target="#gameTrailerModal" th:text="${gameMain.gameName}"></h1>
+                <h1 class="display-5 fw-bolder game-title text-white"
+                    data-bs-toggle="modal" data-bs-target="#gameTrailerModal"
+                    th:text="${gameMain.gameName}"></h1>
                 <div class="fs-5 mb-5 text-white">
                     <span class="text-decoration-line-through" th:text="${gameMain.price}"></span>
                     <span>$999.00</span>
                 </div>
-                <p class="lead text-white" th:text="${gameMain.getDeceptions()[0]}"></p>
+                <p class="lead text-white" th:text="${gameMain.deceptions[0]}"></p>
 
                 <div class="game-stats d-flex align-items-center mb-3 text-white">
                     <div class="stat-item text-center text-white">
-                        <strong th:text="${gameMain.getDeceptions()[3]}+'*'"></strong>
+                        <strong th:text="${gameMain.deceptions[3]}+'*'"></strong>
                         <div class="small text-muted">6,5 Tr đánh giá</div>
                     </div>
                     <div class="stat-item text-center">
-                        <strong th:text="${gameMain.getDeceptions()[1]}"></strong>
+                        <strong th:text="${gameMain.deceptions[1]}"></strong>
                         <div class="small text-muted">Dung lượng</div>
                     </div>
                     <div class="stat-item text-center">
-                        <strong th:text="${gameMain.getDeceptions()[2]}"></strong>
+                        <strong th:text="${gameMain.deceptions[2]}"></strong>
                         <div class="small text-muted">Lượt tải</div>
                     </div>
                     <div class="stat-item text-center">
-                        <span class="age-box" th:text="${gameMain.getDeceptions()[4]}"></span>
-                        <div class="small text-muted" th:text="${#strings.replace(gameMain.getDeceptions()[4], '+', '')+' tuổi trở lên'}"></div>
+                        <span class="age-box" th:text="${gameMain.deceptions[4]}"></span>
+                        <div class="small text-muted"
+                             th:text="${#strings.replace(gameMain.deceptions[4], '+', '')+' tuổi trở lên'}"></div>
                     </div>
                 </div>
 
                 <div class="d-flex">
                     <!-- Form Mua -->
                     <form th:action="@{/welcome/buy}" method="post" class="me-2 login-check-form">
-
                         <input type="hidden" name="selectedIds" th:value="${gameMain.gameId}"/>
-
-
-
                         <button type="submit" class="btn btn-success">Mua</button>
                     </form>
 
-
                     <!-- Form Add to Cart -->
-                    <form th:action="@{/welcome/addGameToCard/{game_id}(game_id=${gameMain.getGameId()})}" method="post" class="login-check-form">
+                    <form th:action="@{/welcome/addGameToCard/{game_id}(game_id=${gameMain.gameId})}"
+                          method="post" class="login-check-form">
                         <input type="hidden" name="gameId" th:value="${gameMain.gameId}">
                         <button class="btn btn-outline-light flex-shrink-0 bg-primary" type="submit">
                             <i class="bi-cart-fill me-1"></i> Add to cart
@@ -797,7 +809,6 @@
 
             </div>
         </div>
-
 
         <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', function () {
@@ -820,7 +831,6 @@
                 });
             });
         </script>
-
 
         <!-- JS media -->
         <script>
@@ -911,21 +921,21 @@
     <div class="container px-4 px-lg-5 mt-5">
         <h2 class="fw-bolder mb-4 text-white">Related games</h2>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <th:block th:each="game : ${listGame}">
+            <th:block th:each="game : ${listGame}"
+                      th:with="img=${gameCore.imageLinkGame(game)}">
+
                 <div class="col mb-5">
-                    <a th:href="@{'/welcome/gamedetail/' + ${game.getGameId()}}" style="text-decoration:none; color:inherit;">
-                        <div class="card h-100" th:id="'game-' + ${game.getGameId()}">
+                    <a th:href="@{'/welcome/gamedetail/' + ${game.gameId}}"
+                       style="text-decoration:none; color:inherit;">
+                        <div class="card h-100" th:id="'game-' + ${game.gameId}">
+                            <!-- Ảnh chính từ ImageGame, có fallback -->
                             <img class="card-img-top"
-                                 th:if="${#lists.size(game.linkImage) > 4}"
-                                 th:src="@{${game.linkImage[4]}}"
+                                 th:src="${'/'+ img.mainImage}"
                                  th:alt="${game.gameName}" />
-                            <img class="card-img-top"
-                                 th:if="${#lists.size(game.linkImage) <= 4}"
-                                 th:src="@{/img/default.jpg}"
-                                 th:alt="${game.gameName}" />
+
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <h5 class="fw-bolder text-light" th:text="${game.getGameName()}"></h5>
+                                    <h5 class="fw-bolder text-light" th:text="${game.gameName}"></h5>
                                     <div class="d-flex justify-content-center small text-warning mb-2">
                                         <div class="bi-star-fill"></div>
                                     </div>
@@ -937,16 +947,17 @@
                                         <div class="small text-light">7,5 Tr đánh giá</div>
                                     </div>
                                     <div class="stat-item text-center">
-                                        <strong th:text="|${game.getDeceptions()[1]}|"></strong>
+                                        <strong th:text="${game.deceptions[1]}"></strong>
                                         <div class="small text-light">Dung lượng</div>
                                     </div>
                                     <div class="stat-item text-center">
-                                        <strong th:text="${game.getDeceptions()[2]}"></strong>
+                                        <strong th:text="${game.deceptions[2]}"></strong>
                                         <div class="small text-light">Lượt tải</div>
                                     </div>
                                     <div class="stat-item text-center">
-                                        <span class="age-box text-light" th:text="${game.getDeceptions()[4]}"></span>
-                                        <div class="small text-light" th:text="${game.getDeceptions()[4]} + ' tuổi trở lên'"></div>
+                                        <span class="age-box text-light" th:text="${game.deceptions[4]}"></span>
+                                        <div class="small text-light"
+                                             th:text="${game.deceptions[4]} + ' tuổi trở lên'"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1097,7 +1108,7 @@
     /*]]>*/
 </script>
 
-<script th:src="@{/Accest/JS/code.js}"></script>
+<!--<script th:src="@{/Accest/JS/code.js}"></script>-->
 
 </body>
 </html>

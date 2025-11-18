@@ -53,8 +53,8 @@
                 </td>
                 <td>
                     <div class="thumb-wrap"
-                         th:with="imgs=${'/'+ @gameCore.imageLinkGame(@gameSevice.findGameById(item.getGameId()).imageLinks)[4]},
-                        path=${'/'+@gameCore.imageLinkGame(@gameSevice.findGameById(item.getGameId()).imageLinks)[4]}">
+                         th:with="imgs=${'/'+ @gameCore.imageLinkGame(@gameSevice.findGameById(item.getGameId())).getMainImage()},
+                        path=${'/'+@gameCore.imageLinkGame(@gameSevice.findGameById(item.getGameId())).getMainImage()}">
                         <img th:src="@{${path}}" alt="thumb">
                     </div>
                 </td>

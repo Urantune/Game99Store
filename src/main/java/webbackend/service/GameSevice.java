@@ -1,0 +1,84 @@
+package webbackend.service;
+
+import webbackend.entity.Game;
+import webbackend.repository.GameRepository;
+import webbackend.repository.UserGameRepository;
+import webbackend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+
+@Service
+public class GameSevice {
+
+
+    @Autowired
+    private GameRepository gameRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
+    @Autowired
+    private UserGameRepository userGameRepository;
+
+
+
+    public Game findGameByStatus(String status){
+        return gameRepository.findGameByStatus(status);
+    }
+
+
+    public List<Game> list20GameIntoGame(){
+        Pageable top20 = PageRequest.of(0, 20);
+//        List<Game> topGames = userGameRepository.findTopDownloadedGames(top20);
+        List<Game> list = gameRepository.show20GameRandom();
+
+    return list;
+    }
+
+    public List<Game> findAllGame(){
+        return gameRepository.findAll();
+    }
+
+    public Game saveGame(Game game){
+        return gameRepository.save(game);
+    }
+
+    public void deleteGame(UUID id){
+        gameRepository.deleteById(id);
+    }
+
+    public Game findGameById(UUID gameId){
+        return gameRepository.findByGameId(gameId)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Game not found: " + gameId));
+    }
+
+    public List<Game> findGamesByCetagory(String cetagory){
+        return gameRepository.findByGameCategoryIgnoreCase(cetagory);
+
+
+    }
+
+
+    public Game findById(UUID id) {
+        return gameRepository.findGameByGameId(id);
+
+    }
+
+    public void save(Game game) {
+        gameRepository.save(game);
+    }
+
+
+    public void delete(UUID id) {
+        gameRepository.deleteByGameId(id);
+    }
+
+
+}
