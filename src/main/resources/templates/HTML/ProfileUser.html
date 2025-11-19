@@ -63,14 +63,26 @@
     <div class="card" style="flex:2;">
         <h2>🎮 Thư viện game</h2>
         <div class="games" id="gameLibrary">
-            <div class="game-card" th:each="a : ${listGame}" th:with="imgs=${a.linkImage}">
+            <div class="game-card"
+                 th:each="a : ${listGame}"
+                 th:with="img=${gameCore.imageLinkGame(a)}">
+
                 <div style="width:140px; height:84px; overflow:hidden;">
-                    <img th:src="${#arrays.length(imgs) > 4 ? '/' + imgs[4] : '/img/notfound.png'}"
+                    <!-- Có ảnh chính thì dùng -->
+                    <img th:if="${img != null and img.mainImage != null}"
+                         th:src="${'/' + img.mainImage}"
+                         style="width:100%; height:100%; object-fit:cover;">
+
+                    <!-- Không có thì fallback -->
+                    <img th:if="${img == null or img.mainImage == null}"
+                         th:src="@{/img/notfound.png}"
                          style="width:100%; height:100%; object-fit:cover;">
                 </div>
+
                 <p th:text="${a.gameName}">CS:GO</p>
             </div>
         </div>
+
 
         <h2 style="margin-top:20px;">🏆 Thành tích</h2>
         <div class="achievements">

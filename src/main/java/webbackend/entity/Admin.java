@@ -11,9 +11,9 @@ import java.util.UUID;
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "admin_id")
-    private UUID admin_id;
-    @Column(name = "adminName")
+    @Column(name = "id")
+    private UUID adminid;
+    @Column(name = "username")
     private String adminName;
     @Column(name = "password")
     private String password;
@@ -23,8 +23,8 @@ public class Admin {
     @Column(name = "imageLinks")
     private String imageLinks;
 
-    public Admin(UUID admin_id, String adminName, String password, LocalDateTime dateCreateAcc, String role, String status, String imageLinks) {
-        this.admin_id = admin_id;
+    public Admin(UUID adminid, String adminName, String password, LocalDateTime dateCreateAcc, String role, String status, String imageLinks) {
+        this.adminid = adminid;
         this.adminName = adminName;
         this.password = password;
         this.dateCreateAcc = dateCreateAcc;
@@ -37,12 +37,12 @@ public class Admin {
 
     }
 
-    public UUID getAdmin_id() {
-        return admin_id;
+    public UUID getAdminid() {
+        return adminid;
     }
 
-    public void setAdmin_id(UUID admin_id) {
-        this.admin_id = admin_id;
+    public void setAdminid(UUID admin_id) {
+        this.adminid = admin_id;
     }
 
     public String getPassword() {

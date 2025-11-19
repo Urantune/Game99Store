@@ -63,6 +63,7 @@ public class UserProfileController {
         model.addAttribute("user", user);
         model.addAttribute("id", id);
         model.addAttribute("listGame", game);
+        model.addAttribute("gameCore", gameCore);
         return "HTML/ProfileUser";
     }
 

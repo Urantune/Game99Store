@@ -23,7 +23,6 @@
 <body>
 <div class="container py-4">
 
-    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <h3 class="mb-1">Bill Manager</h3>
@@ -34,7 +33,6 @@
         </a>
     </div>
 
-    <!-- Bộ lọc đơn giản (optional, chỉ UI) -->
     <div class="cardx mb-3">
         <form class="row g-2 align-items-end">
             <div class="col-md-3">
@@ -57,14 +55,13 @@
                 <button type="submit" class="btn btn-primary w-100">
                     <i class="bi bi-search"></i> Lọc
                 </button>
-                <a th:href="@{/welcomeStaff/bill-manager}" class="btn btn-outline-light">
+                <a th:href="@{/welcomeStaff/billManagement}" class="btn btn-outline-light">
                     <i class="bi bi-arrow-clockwise"></i>
                 </a>
             </div>
         </form>
     </div>
 
-    <!-- Danh sách bill -->
     <div class="cardx">
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h5 class="mb-0">Danh sách hoá đơn</h5>
@@ -80,68 +77,65 @@
                     <th style="width:90px;">Bill ID</th>
                     <th>User</th>
                     <th>Game(s)</th>
-                    <th style="width:220px;">Số tiền</th>
+                    <th style="width:220px;">Amount</th>
                     <th style="width:150px;">Voucher</th>
-                    <th style="width:160px;">Ngày thanh toán</th>
+                    <th style="width:160px;">Payment date</th>
+                    <th style="width:150px;">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <!-- Nếu không có bill -->
                 <tr th:if="${bills == null or #lists.isEmpty(bills)}">
-                    <td colspan="6" class="text-center text-muted py-4">
-                        Chưa có hoá đơn nào.
+                    <td colspan="7" class="text-center text-muted py-4">
+                        No pending bills.
                     </td>
                 </tr>
 
-                <!-- Mỗi bill một dòng -->
                 <tr th:each="bill : ${bills}">
-                    <!-- ID -->
+                    <!-- Bill ID + status -->
                     <td>
                         <span class="fw-semibold" th:text="${bill.id}">BILL-001</span>
                         <div class="small text-muted" th:if="${bill.status != null}" th:text="${bill.status}">
-                            COMPLETED
+                            WAIT
                         </div>
                     </td>
 
-                    <!-- User -->
+                    <!-- User info -->
                     <td>
-                        <div class="fw-semibold" th:text="${bill.userName}">khangbo</div>
-                        <div class="small text-muted" th:text="${bill.userId}">USER-001</div>
+                        <div class="fw-semibold" th:text="${bill.userName}">username</div>
+                        <div class="small text-muted" th:text="${bill.userEmail}">user@email.com</div>
+                        <div class="small text-muted" th:text="${bill.userId}">USER-ID</div>
                     </td>
 
-                    <!-- Games (1 hoặc list) -->
+                    <!-- Games -->
                     <td>
                         <ul class="mb-0 ps-3">
-                            <li th:each="item,iter : ${bill.games}">
-                                <span th:text="${item.gameName}">Elden Ring</span>
+                            <li th:each="item : ${bill.games}">
+                                <span th:text="${item.gameName}">Game name</span>
                                 <span class="small text-muted ms-1">
-                    (<span th:text="${item.quantity}">1</span>x)
-                </span>
-                                <!-- Giá từng game -->
-                                <span class="small ms-2 amount" th:text="${item.price}">
-                    1200000
-                </span>
+                        (<span th:text="${item.quantity}">1</span>x)
+                    </span>
+                                <span class="small ms-2 amount" th:text="${item.price}">1200000</span>
                                 <span class="small"> đ</span>
                             </li>
                         </ul>
                     </td>
 
-                    <!-- Tiền: tạm tính, giảm, tổng -->
+                    <!-- Money -->
                     <td>
-                        <div class="small text-muted">Tạm tính:</div>
+                        <div class="small text-muted">Subtotal:</div>
                         <div class="amount" th:text="${bill.subTotal}">1550000</div>
                         <span> đ</span>
 
                         <div class="small text-muted mt-1"
                              th:if="${bill.discountAmount != null and bill.discountAmount > 0}">
-                            Giảm (voucher):
+                            Discount (voucher):
                             <span class="amount" th:text="${bill.discountAmount}">155000</span>
                             <span> đ</span>
                         </div>
 
                         <hr class="my-2 border-secondary"/>
 
-                        <div class="small text-muted">Tổng thanh toán:</div>
+                        <div class="small text-muted">Total:</div>
                         <div class="amount-total" th:text="${bill.totalAmount}">1395000</div>
                         <span> đ</span>
                     </td>
@@ -149,159 +143,56 @@
                     <!-- Voucher -->
                     <td>
                         <div th:if="${bill.voucherCode != null}">
-            <span class="badge badge-voucher">
-                <i class="bi bi-ticket-perforated me-1"></i>
-                <span th:text="${bill.voucherCode}">SALE10</span>
-            </span>
+                <span class="badge badge-voucher">
+                    <i class="bi bi-ticket-perforated me-1"></i>
+                    <span th:text="${bill.voucherCode}">SALE10</span>
+                </span>
                             <div class="small text-muted mt-1"
                                  th:if="${bill.voucherDescription != null}"
                                  th:text="${bill.voucherDescription}">
-                                Giảm 10% đơn hàng
+                                Voucher applied for some games
                             </div>
                         </div>
                         <div th:if="${bill.voucherCode == null}">
-                            <span class="badge badge-novoucher">Không dùng voucher</span>
+                            <span class="badge badge-novoucher">No voucher</span>
                         </div>
                     </td>
 
-                    <!-- Ngày thanh toán -->
+                    <!-- Date -->
                     <td>
                         <div class="small fw-semibold"
                              th:text="${#temporals.format(bill.purchaseDate, 'dd/MM/yyyy HH:mm')}">
                             17/11/2025 14:22
                         </div>
                     </td>
+
+                    <!-- Actions -->
+                    <td>
+                        <form th:action="@{/welcomeStaff/billManagement/approve}" method="post" class="mb-1">
+                            <input type="hidden" name="userId" th:value="${bill.userId}"/>
+                            <input type="hidden" name="billDate"
+                                   th:value="${#temporals.format(bill.purchaseDate, 'yyyy-MM-dd')}"/>
+                            <button type="submit" class="btn btn-success btn-sm w-100">
+                                Approve
+                            </button>
+                        </form>
+
+                        <form th:action="@{/welcomeStaff/billManagement/reject}" method="post">
+                            <input type="hidden" name="userId" th:value="${bill.userId}"/>
+                            <input type="hidden" name="billDate"
+                                   th:value="${#temporals.format(bill.purchaseDate, 'yyyy-MM-dd')}"/>
+                            <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                Reject
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
-
             </table>
+
         </div>
     </div>
 </div>
-
-<script>
-    // ========================== MOCK DATA SAMPLE ============================= //
-    const mockBills = [
-        {
-            id: "BILL-001",
-            userName: "khangbo",
-            userEmail: "khangbo@gmail.com",
-            games: [
-                { gameName: "Elden Ring", price: 1200000, quantity: 1 },
-                { gameName: "Hades 2", price: 350000, quantity: 1 }
-            ],
-            subTotal: 1550000,
-            discountAmount: 155000,
-            totalAmount: 1395000,
-            voucherCode: "SALE10",
-            voucherDescription: "Giảm 10% toàn bộ đơn hàng",
-            purchaseDate: "2025-11-17T14:22:00",
-            status: "COMPLETED"
-        },
-        {
-            id: "BILL-002",
-            userName: "thanh",
-            userEmail: "thanh@gmail.com",
-            games: [
-                { gameName: "FIFA 24", price: 900000, quantity: 1 }
-            ],
-            subTotal: 900000,
-            discountAmount: 0,
-            totalAmount: 900000,
-            voucherCode: null,
-            purchaseDate: "2025-11-16T10:05:00",
-            status: "COMPLETED"
-        },
-        {
-            id: "BILL-003",
-            userName: "phongdg",
-            userEmail: "phongdg@gmail.com",
-            games: [
-                { gameName: "Valorant Battle Pass", price: 180000, quantity: 1 },
-                { gameName: "CS2 Prime Status", price: 470000, quantity: 1 },
-                { gameName: "PUBG UC Pack", price: 230000, quantity: 2 }
-            ],
-            subTotal: 1110000,
-            discountAmount: 0,
-            totalAmount: 1110000,
-            voucherCode: null,
-            purchaseDate: "2025-11-15T21:40:00",
-            status: "PENDING"
-        }
-    ];
-
-    // ========================== RENDER FUNCTION ============================= //
-    function formatMoney(v) {
-        return v.toLocaleString("vi-VN") + " đ";
-    }
-
-    function formatDate(str) {
-        const d = new Date(str);
-        return d.toLocaleDateString("vi-VN") + "<br><span class='text-muted small'>" + d.toLocaleTimeString("vi-VN", {hour:"2-digit", minute:"2-digit"}) + "</span>";
-    }
-
-    function renderBills() {
-        const tbody = document.getElementById("bill-table-body");
-        tbody.innerHTML = "";
-
-        mockBills.forEach(bill => {
-
-            let gamesListHTML = bill.games.map(g =>
-                `<li>${g.gameName}
-              <span class="text-muted small">(${g.quantity}x)</span>
-              <span class="ms-2 amount">${formatMoney(g.price)}</span>
-            </li>`
-            ).join("");
-
-            const voucherHTML = bill.voucherCode
-                ? `<span class="badge badge-voucher">
-                    <i class="bi bi-ticket-perforated me-1"></i> ${bill.voucherCode}
-               </span>
-               <div class="small text-muted mt-1">${bill.voucherDescription}</div>`
-                : `<span class="badge badge-novoucher">Không dùng voucher</span>`;
-
-            const rowHTML = `
-            <tr>
-                <td>
-                    <span class="fw-semibold">${bill.id}</span>
-                    <div class="small text-muted">${bill.status}</div>
-                </td>
-                <td>
-                    <div class="fw-semibold">${bill.userName}</div>
-                    <div class="small text-muted">${bill.userEmail}</div>
-                </td>
-                <td><ul class="mb-0 ps-3">${gamesListHTML}</ul></td>
-
-                <td>
-                    <div class="small text-muted">Tạm tính:</div>
-                    <div class="amount">${formatMoney(bill.subTotal)}</div>
-
-                    ${bill.discountAmount > 0 ?
-                `<div class="small text-muted mt-1">
-                            Giảm voucher:
-                            <span class="amount">- ${formatMoney(bill.discountAmount)}</span>
-                        </div>`
-                : ""}
-
-                    <hr class="my-2 border-secondary">
-
-                    <div class="small text-muted">Tổng thanh toán:</div>
-                    <div class="amount-total">${formatMoney(bill.totalAmount)}</div>
-                </td>
-
-                <td>${voucherHTML}</td>
-                <td>${formatDate(bill.purchaseDate)}</td>
-            </tr>
-        `;
-
-            tbody.innerHTML += rowHTML;
-        });
-    }
-
-    // chạy khi load trang
-    renderBills();
-</script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

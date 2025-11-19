@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 @Repository
@@ -74,5 +76,18 @@ public interface UserGameRepository extends JpaRepository<UserGame, UUID> {
     @Modifying
     @Transactional
     void deleteByUserAndGame(User user, Game game);
+
+    List<UserGame> findByUserAndPurchaseDateAndStatus(
+            User user,
+            LocalDateTime purchaseDate,
+            String status
+    );
+
+
+    List<UserGame> findByUserAndStatusIn(User user, Collection<String> status);
+
+
+    List<UserGame> findByStatusOrderByPurchaseDateDesc(String status);
+
 
 }

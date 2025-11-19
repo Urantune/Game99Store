@@ -25,4 +25,8 @@ public class UserTransactionService {
     public List<UserTransaction> getRefunds(User user) {
         return repo.findByUserAndType(user, "REFUND");
     }
+
+    public void save(UserTransaction userTransaction) {
+        repo.save(userTransaction);
+    }
 }

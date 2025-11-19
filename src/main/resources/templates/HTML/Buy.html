@@ -6,8 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background:#123965; font-family: Arial, sans-serif; }
-        .checkout { max-width:1050px; margin:40px auto; background:rgba(0,60,100,0.6);
-            padding:22px; border-radius:16px; color:#fff; }
+        .checkout { max-width:1050px; margin:40px auto; background:rgba(0,60,100,0.6); padding:22px; border-radius:16px; color:#fff; }
         .title{font-size:28px;font-weight:800;color:#FFD700;text-align:center;margin-bottom:16px;}
         .summary-card{background:rgba(0,0,0,.25);border-radius:14px;padding:16px;}
         .money-badge{font-size:24px;font-weight:800;color:#00E676;}
@@ -32,7 +31,6 @@
 
     <div class="row g-3">
 
-        <!-- LEFT: danh sách game -->
         <div class="col-lg-7">
             <table class="table table-hover align-middle">
                 <thead class="table-dark">
@@ -50,20 +48,23 @@
                 <tr th:each="item: ${listGame}">
                     <td>
                         <div class="thumb">
-                            <!-- bạn xử lý lấy ảnh cover sao cho đúng trong backend -->
                             <img th:src="${'/' + @gameCore.imageLinkGame(item).getMainImage()}" alt="thumb">
                         </div>
                     </td>
 
                     <td>
-                        <div th:text="${item.gameName}">Tên game</div>
-                        <!-- chuyển danh sách id đã chọn sang form thanh toán -->
+                        <div th:text="${item.gameName}"></div>
                         <input type="hidden" name="selectedIds" th:value="${item.gameId}" form="checkoutForm">
                     </td>
 
-                    <td class="text-end">
-                        <span th:text="${#numbers.formatDecimal(item.price,0,'COMMA',0,'POINT')}">0</span>
-                        <span> ₫</span>
+                    <td class="text-end" th:with="d=${perGameDiscount != null ? perGameDiscount[item.gameId] : null}">
+                        <div>
+                            <span th:text="${#numbers.formatDecimal(item.price,0,'COMMA',0,'POINT')}"></span>
+                            <span> ₫</span>
+                        </div>
+                        <div th:if="${d != null and d > 0}" class="price-neg small">
+                            − <span th:text="${#numbers.formatDecimal(d,0,'COMMA',0,'POINT')}"></span> ₫
+                        </div>
                     </td>
                 </tr>
                 </tbody>
@@ -72,103 +73,74 @@
             <a th:href="@{/welcome}" class="btn btn-primary">← Tiếp tục mua sắm</a>
         </div>
 
-        <!-- RIGHT: tóm tắt + voucher + nút thanh toán -->
         <div class="col-lg-5">
             <div class="summary-card">
 
-                <!-- Số dư ví -->
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="subtle">Số dư ví của bạn</div>
                     <div class="fw-bold">
-                        <span th:text="${#numbers.formatDecimal(user.price,0,'COMMA',0,'POINT')}">0</span>
-                        <span> ₫</span>
+                        <span th:text="${#numbers.formatDecimal(user.price,0,'COMMA',0,'POINT')}"></span> ₫
                     </div>
                 </div>
 
                 <div class="divider"></div>
 
-                <!-- form thanh toán (bao gồm voucher) -->
-                <!-- action mặc định: nút Payment dùng -->
                 <form id="checkoutForm"
-                      th:action="@{/welcome/succestpayment}"
+                      th:action="@{/welcome/waitCheckPay}"
                       method="post"
                       class="mt-2">
 
                     <input type="hidden" name="userId" th:value="${user.id}">
-                    <input type="hidden"
-                           th:if="${_csrf!=null}"
-                           th:name="${_csrf.parameterName}"
-                           th:value="${_csrf.token}">
+                    <input th:if="${appliedVoucherId != null}" type="hidden" name="voucherId" th:value="${appliedVoucherId}">
+                    <input th:if="${_csrf!=null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
-                    <!-- ô nhập voucher -->
                     <div class="mb-2">
                         <label for="voucherInput" class="form-label mb-1">Mã voucher</label>
                         <div class="d-flex gap-2">
-                            <input id="voucherInput"
-                                   type="text"
-                                   class="form-control"
-                                   name="voucherCode"
-                                   th:value="${appliedVoucherCode}"
-                                   placeholder="Nhập mã giảm giá">
+                            <input id="voucherInput" type="text" class="form-control" name="voucherCode"
+                                   th:value="${appliedVoucherCode}" placeholder="Nhập mã giảm giá">
 
-                            <!-- NÚT ÁP DỤNG: submit form lên /welcome/buy/voucher -->
-                            <button type="submit"
-                                    class="btn btn-primary"
-                                    th:formaction="@{/welcome/buy/voucher}">
+                            <button type="submit" class="btn btn-primary" th:formaction="@{/welcome/buy/voucher}">
                                 Áp dụng
                             </button>
                         </div>
                         <div class="d-flex align-items-center gap-2 mt-1">
-                            <span class="hint"
-                                  th:text="${voucherMessage != null ? voucherMessage : 'Nhập mã và bấm “Áp dụng”.'}">
-                                Nhập mã và bấm “Áp dụng”.
-                            </span>
-                            <span th:if="${appliedVoucherCode != null}"
-                                  class="badge-ok"
-                                  th:text="${appliedVoucherCode}">
-                                SALE10
-                            </span>
+                            <span class="hint" th:text="${voucherMessage}"></span>
+                            <span th:if="${appliedVoucherCode != null}" class="badge-ok" th:text="${appliedVoucherCode}"></span>
                         </div>
                     </div>
 
                     <div class="divider"></div>
 
-                    <!-- bảng tổng: tất cả số liệu do backend tính -->
                     <div class="table-responsive">
                         <table class="table table-sm text-white align-middle mb-2">
                             <tbody>
                             <tr>
                                 <td class="subtle">Tạm tính</td>
                                 <td class="text-end">
-                                    <span th:text="${#numbers.formatDecimal(subtotal,0,'COMMA',0,'POINT')}">0</span>
-                                    <span> ₫</span>
+                                    <span th:text="${#numbers.formatDecimal(subtotal,0,'COMMA',0,'POINT')}"></span> ₫
                                 </td>
                             </tr>
                             <tr>
                                 <td class="subtle">Giảm giá (voucher)</td>
                                 <td class="text-end price-neg">
-                                    −
-                                    <span th:text="${#numbers.formatDecimal(discount,0,'COMMA',0,'POINT')}">0</span>
-                                    <span> ₫</span>
+                                    − <span th:text="${#numbers.formatDecimal(discount,0,'COMMA',0,'POINT')}"></span> ₫
                                 </td>
                             </tr>
                             <tr class="total-row">
                                 <td>Thành tiền</td>
                                 <td class="text-end price-pos">
-                                    <span th:text="${#numbers.formatDecimal(grandTotal,0,'COMMA',0,'POINT')}">0</span>
-                                    <span> ₫</span>
+                                    <span th:text="${#numbers.formatDecimal(grandTotal,0,'COMMA',0,'POINT')}"></span> ₫
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- headline tổng -->
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div class="subtle">Thành tiền (ước tính)</div>
                         <div class="money-badge">
-                            <span th:text="${#numbers.formatDecimal(grandTotal,0,'COMMA',0,'POINT')}">0</span>
-                            <span> ₫</span>
+                            <span th:text="${#numbers.formatDecimal(grandTotal,0,'COMMA',0,'POINT')}"></span> ₫
                         </div>
                     </div>
 
@@ -176,12 +148,8 @@
                         Số dư không đủ. Vui lòng nạp thêm hoặc bỏ bớt sản phẩm.
                     </div>
 
-                    <!-- nút thanh toán: dùng action mặc định /welcome/succestpayment -->
                     <div class="d-flex gap-2 mt-2">
-                        <button type="submit"
-                                class="btn btn-success w-100"
-                                name="action"
-                                value="pay">
+                        <button type="submit" class="btn btn-success w-100" name="action" value="pay">
                             Payment Request
                         </button>
                     </div>
@@ -190,6 +158,7 @@
 
             </div>
         </div>
+
     </div>
 </div>
 

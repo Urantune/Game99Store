@@ -1,233 +1,66 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Yêu cầu Hoàn tiền & Đổi game - GameStore</title>
+    <title>Request Refund - GameStore</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
-            background: radial-gradient(circle at top, #19002b 0%, #0a0a0a 100%);
-            color: #f0f0f0;
-            font-family: "Segoe UI", "Roboto", sans-serif;
-            min-height: 100vh;
-            padding: 80px 0;
+            background: #0b0b17;
+            color:#eee;
+            padding:60px 0;
+            font-family: Arial, sans-serif;
         }
-
-        .container {
-            max-width: 800px;
+        .container{max-width:700px;}
+        .box{
+            background:#1a1a2e;
+            padding:25px;
+            border-radius:12px;
+            border:1px solid rgba(255,255,255,.1);
+            box-shadow:0 0 12px rgba(0,0,0,.5);
         }
-
-        h2 {
-            font-weight: 600;
-            font-size: 1.9rem;
-            color: #c68cff;
-            text-shadow: 0 0 10px rgba(140, 45, 226, 0.7);
-            margin-bottom: 25px;
+        label{font-weight:600;margin-top:10px;}
+        .btn-submit{
+            margin-top:20px;
+            padding:10px 30px;
+            background:#6d28d9;
+            border:none;
+            color:white;
+            border-radius:10px;
+            font-weight:600;
         }
-
-        .rules {
-            background: rgba(60, 40, 90, 0.2);
-            border: 1px solid rgba(160, 90, 255, 0.4);
-            border-left: 5px solid #a35aff;
-            padding: 15px 20px;
-            margin-bottom: 35px;
-            border-radius: 10px;
-            box-shadow: inset 0 0 10px rgba(140, 45, 226, 0.2);
-        }
-
-        .rules h5 {
-            color: #d7b0ff;
-            margin-bottom: 8px;
-        }
-
-        .rules ul {
-            margin: 0;
-            padding-left: 18px;
-            color: #ccc;
-        }
-
-        label {
-            font-weight: 500;
-            color: #ddd;
-        }
-
-        select, textarea, input[type="file"] {
-            background: rgba(35, 35, 55, 0.9);
-            color: #fff;
-            border: 1px solid rgba(150, 80, 255, 0.4);
-            border-radius: 8px;
-        }
-
-        select:focus, textarea:focus, input[type="file"]:focus {
-            border-color: #b96fff;
-            box-shadow: 0 0 10px rgba(160, 90, 255, 0.4);
-            outline: none;
-        }
-
-        textarea {
-            resize: none;
-        }
-
-        .preview {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .preview img {
-            width: 120px;
-            height: 120px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 1px solid rgba(160, 90, 255, 0.4);
-            box-shadow: 0 0 8px rgba(140, 45, 226, 0.3);
-        }
-
-        .btn-submit {
-            background: linear-gradient(90deg, #8E2DE2, #4A00E0);
-            border: none;
-            color: white;
-            font-weight: 600;
-            border-radius: 10px;
-            padding: 12px 35px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-submit:hover {
-            background: linear-gradient(90deg, #a85ff0, #6b2ae2);
-            box-shadow: 0 0 20px rgba(142, 45, 226, 0.6);
-            transform: scale(1.02);
-        }
-
-        a.back {
-            color: #b59aff;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        a.back:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
+        .btn-submit:hover{opacity:.8;}
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 class="mt-3">💸 Yêu cầu Hoàn tiền & Đổi game</h2>
+    <h2 class="text-center mb-4">Refund Request</h2>
 
-    <div class="rules">
-        <h5>📌 Điều kiện được hoàn tiền:</h5>
-        <ul>
-            <li>Yêu cầu được gửi trong vòng <b>24h</b> kể từ thời điểm thanh toán.</li>
-            <li>Thời gian chơi của game chưa vượt quá <b>2 giờ</b>.</li>
-            <li>Không áp dụng cho game bị khóa do vi phạm điều khoản dịch vụ.</li>
-            <li>Số tiền sẽ được hoàn lại trực tiếp vào ví GamePay.</li>
-            <li>Trường hợp đổi game, chỉ áp dụng khi giá trị game mới <b>nhỏ hơn hoặc bằng</b> game cũ.</li>
-        </ul>
+    <div class="box">
+        <form method="post" th:action="@{/welcome/refundGame}">
+
+            <input type="hidden" name="gameId" th:value="${game.gameId}" />
+
+            <div class="mb-3">
+                <label>Game</label>
+                <input class="form-control" th:value="${game.gameName}" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label>Refund Reason</label>
+                <select class="form-select" name="reason" required>
+                    <option value="">-- Select a reason --</option>
+                    <option value="Missing advertised content">Missing advertised content</option>
+                    <option value="Unplayable / cannot run the game">Unplayable / cannot run the game</option>
+                </select>
+            </div>
+
+            <button class="btn-submit" type="submit">Submit refund</button>
+        </form>
     </div>
-
-    <form id="refundForm" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="game" class="form-label">Chọn game muốn hoàn tiền / đổi</label>
-            <select class="form-select" id="game" name="game" required>
-                <option value="">-- Chọn game --</option>
-                <option value="GTA V">GTA V</option>
-                <option value="CS:GO">CS:GO</option>
-                <option value="Dota 2 Plus">Dota 2 Plus</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label for="reason" class="form-label">Lý do yêu cầu</label>
-            <select class="form-select" id="reason" name="reason" required>
-                <option value="">-- Chọn lý do --</option>
-                <option value="Game bị lỗi hoặc không cài đặt được">Game bị lỗi hoặc không cài đặt được</option>
-                <option value="Không hài lòng với sản phẩm">Không hài lòng với sản phẩm</option>
-                <option value="Đã mua nhầm game">Đã mua nhầm game</option>
-                <option value="Khác">Khác</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label for="details" class="form-label">Mô tả chi tiết (nếu có)</label>
-            <textarea id="details" name="details" class="form-control" rows="4"
-                      placeholder="Hãy mô tả thêm về vấn đề bạn gặp phải..."></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label for="imageUpload" class="form-label">Ảnh mô tả (nếu có)</label>
-            <input type="file" id="imageUpload" name="images" class="form-control" multiple accept="image/*">
-            <div id="preview" class="preview"></div>
-        </div>
-
-        <div class="mb-3">
-            <label for="handleType" class="form-label">Hình thức xử lý</label>
-            <select class="form-select" id="handleType" onchange="toggleSwapForm()">
-                <option value="">-- Chọn hình thức --</option>
-                <option value="refund">Hoàn tiền</option>
-                <option value="exchange">Đổi game khác</option>
-            </select>
-        </div>
-
-        <div id="swapGameForm" style="display: none;">
-            <label>Chọn game muốn đổi</label>
-            <select class="form-select" id="swapGame">
-                <option>-- Chọn game muốn đổi --</option>
-                <option>Valorant</option>
-                <option>PUBG</option>
-                <option>Rainbow Six Siege</option>
-                <option>Among Us</option>
-            </select>
-        </div>
-
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-submit">Gửi</button>
-        </div>
-    </form>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Hiển thị ảnh xem trước
-    const imageInput = document.getElementById('imageUpload');
-    const previewDiv = document.getElementById('preview');
-
-    imageInput.addEventListener('change', function () {
-        previewDiv.innerHTML = '';
-        const files = this.files;
-
-        if (files.length > 0) {
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    previewDiv.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    });
-
-    // Toggle hiển thị form đổi game
-    function toggleSwapForm() {
-        const handleType = document.getElementById("handleType").value;
-        const swapForm = document.getElementById("swapGameForm");
-        swapForm.style.display = (handleType === "exchange") ? "block" : "none";
-    }
-
-    // Giả lập gửi form
-    document.getElementById("refundForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        alert("✅ Gửi yêu cầu thành công! Chúng tôi sẽ phản hồi trong vòng 24h.");
-        this.reset();
-        document.getElementById("swapGameForm").style.display = "none";
-        previewDiv.innerHTML = "";
-    });
-</script>
-<script th:src="@{/Accest/JS/code.js}"></script>
 </body>
 </html>

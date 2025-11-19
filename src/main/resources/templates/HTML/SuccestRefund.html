@@ -1,106 +1,72 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <meta name="description" content=""/>
-    <meta name="author" content=""/>
-    <title>Game-Store | Thanh toán thành công</title>
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
-    <link th:href="@{/Accest/css/styles1.css}" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <title>Refund Successful - GameStore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #0f1c2e !important;
+        body {
+            background: #0b0b17;
+            color:#eee;
+            padding:60px 0;
+            font-family: Arial, sans-serif;
         }
-        .success-wrap {
-            min-height: 100vh;
-            display: grid;
-            place-items: center;
-            padding: 24px;
+        .container{max-width:700px;}
+        .box{
+            background:#1a1a2e;
+            padding:25px;
+            border-radius:12px;
+            border:1px solid rgba(255,255,255,.1);
+            box-shadow:0 0 12px rgba(0,0,0,.5);
+            text-align:center;
         }
-        .success-card {
-            max-width: 620px;
-            width: 100%;
-            background: rgba(0,60,100,0.6);
-            color: #fff;
-            border-radius: 16px;
-            padding: 28px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-            text-align: center;
+        .game-name{
+            font-size:1.4rem;
+            font-weight:700;
+            margin-top:10px;
+            color:#fbbf24;
         }
-        .success-icon {
-            width: 86px;
-            height: 86px;
-            border-radius: 50%;
-            display: inline-grid;
-            place-items: center;
-            margin-bottom: 14px;
-            background: radial-gradient(closest-side, rgba(40,167,69,.25), rgba(40,167,69,.08));
-            border: 2px solid rgba(40,167,69,.55);
+        .info-line{margin-top:10px;font-size:0.95rem;}
+        .btn-back{
+            margin-top:20px;
+            padding:10px 30px;
+            background:#10b981;
+            border:none;
+            color:white;
+            border-radius:10px;
+            font-weight:600;
+            text-decoration:none;
+            display:inline-block;
         }
-        .success-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: #FFD700;
-            margin-bottom: 8px;
-        }
-        .success-sub {
-            color: #cfd8dc;
-            margin-bottom: 18px;
-        }
-        .divider {
-            height: 1px;
-            background: rgba(255,255,255,.12);
-            margin: 18px 0;
-        }
-        .btn-back {
-            background: linear-gradient(135deg,#28a745,#006400);
-            border: none;
-            border-radius: 10px;
-            padding: 12px 22px;
-            font-weight: 700;
-            color: #fff;
-            transition: transform .2s ease, box-shadow .2s ease;
-        }
-        .btn-back:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(40,167,69,.35);
-            color: #fff;
-        }
-        .hint {
-            font-size: 12px; color: #B0BEC5; margin-top: 10px;
-        }
+        .btn-back:hover{opacity:.85;}
     </style>
 </head>
 <body>
 
-<div class="success-wrap">
-    <div class="success-card">
-        <div class="success-icon">
-            <i class="bi bi-check2-circle" style="font-size: 48px; color: #00E676;"></i>
+<div class="container">
+    <h2 class="text-center mb-4">Refund Successful</h2>
+
+    <div class="box">
+        <div>✅ Your refund has been processed.</div>
+
+        <div class="game-name" th:text="${game.gameName}">Game name</div>
+
+        <div class="info-line">
+            Refunded amount:
+            <span class="text-info" th:text="${refundAmount}">0</span>
         </div>
-        <div class="success-title">Hoàn tiền thành công</div>
-        <div class="success-sub">Tiền của bạn đã được chuyển vào ví</div>
 
-        <div class="divider"></div>
+        <div class="info-line">
+            Refund reason:
+            <span class="text-warning" th:text="${reason}">reason</span>
+        </div>
 
-
-        <a
-           th:href="@{/welcome/gamedetail/{id}(id=${gameid})}"
-           class="btn btn-back">
-            ← Quay lại game
+        <a th:href="@{/welcome}" class="btn-back">
+            Back to My Games
         </a>
-
     </div>
-
 </div>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/Accest/JS/code.js}"></script>
 </body>
 </html>

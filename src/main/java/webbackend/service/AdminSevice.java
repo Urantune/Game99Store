@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AdminSevice {
@@ -21,5 +22,10 @@ public class AdminSevice {
     public Admin findByUsername(String username) {
         return adminRepository.findByAdminName(username);
     }
+
+    public Admin findByAdminid(UUID adminid) {
+        return  adminRepository.findById(adminid).orElse(null);
+    }
+
 
 }

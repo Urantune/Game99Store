@@ -56,6 +56,10 @@ public class UserGameService {
         return userGameRepository.findByUserAndStatus(user, "cart");
     }
 
+    public List<UserGame> findAll(){
+        return userGameRepository.findAll();
+    }
+
     public UserGame findByGameAndUser(Game game, User user){
         return userGameRepository.findByGameAndUser(game,user);
     }

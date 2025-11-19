@@ -101,7 +101,9 @@ public class BuyController {
         model.addAttribute("grandTotal", grandTotal);
 
         model.addAttribute("appliedVoucherCode", null);
+        model.addAttribute("appliedVoucherId", null);     // NEW
         model.addAttribute("voucherMessage", "Nhập mã và bấm “Áp dụng”.");
+        model.addAttribute("perGameDiscount", null);      // NEW
 
         return "HTML/Buy";
     }
@@ -135,19 +137,20 @@ public class BuyController {
 
         double discount = 0;
         String appliedVoucherCode = null;
+        UUID appliedVoucherId = null;                              // NEW
         String voucherMessage;
+
+        java.util.Map<UUID, Double> perGameDiscount = new java.util.HashMap<>();
 
         if (voucherCode == null || voucherCode.isBlank()) {
             voucherMessage = "Vui lòng nhập mã voucher.";
         } else {
             String code = voucherCode.trim();
 
-            // 1) Tìm voucher theo name (mã)
             Vouncher voucher = vouncherService.findByName(code);
             if (voucher == null) {
                 voucherMessage = "Mã voucher không tồn tại.";
             } else {
-                // 2) Check user có sở hữu voucher này không
                 VoucherUser voucherUser = vouncherUserService
                         .getVoucherUserByVouncherAndUser(
                                 voucher,
@@ -157,7 +160,6 @@ public class BuyController {
                 if (voucherUser == null) {
                     voucherMessage = "Bạn không sở hữu voucher này.";
                 } else {
-                    // 3) Chỉ giảm cho những game có mapping trong VoucherGame với voucher này
                     for (Game game : list) {
                         List<VoucherGame> voucherGames =
                                 voucherGameService.getVoucherGamesByGame(game);
@@ -168,19 +170,21 @@ public class BuyController {
                                         vg.getVouncher().getVoucherid()
                                                 .equals(voucher.getVoucherid())) {
 
-                                    // game này dùng được mã -> giảm giá cho nó
-                                    discount += game.getPrice() * voucher.getSale() / 100.0;
-                                    break; // tránh cộng double nếu có nhiều record mapping
+                                    double gameDiscount = game.getPrice() * voucher.getSale() / 100.0;
+                                    perGameDiscount.put(game.getGameId(), gameDiscount);
+                                    discount += gameDiscount;
+                                    break;
                                 }
                             }
                         }
                     }
 
-                    if (discount > 0) {
-                        appliedVoucherCode = code;
-                        voucherMessage = "Đã áp dụng voucher: " + code;
+                    if (perGameDiscount.isEmpty()) {
+                        voucherMessage = "This voucher is not valid for any selected games.";
                     } else {
-                        voucherMessage = "Mã này không áp dụng cho game trong giỏ.";
+                        appliedVoucherCode = code;
+                        appliedVoucherId = voucher.getVoucherid();         // NEW
+                        voucherMessage = "Đã áp dụng voucher: " + code;
                     }
                 }
             }
@@ -190,7 +194,6 @@ public class BuyController {
         double grandTotal = subtotal - discount;
         if (grandTotal < 0) grandTotal = 0;
 
-        // set dữ liệu cho view
         model.addAttribute("subtotal", subtotal);
         model.addAttribute("discount", discount);
         model.addAttribute("grandTotal", grandTotal);
@@ -200,10 +203,13 @@ public class BuyController {
         model.addAttribute("vouchers", vouncherService.findAll());
 
         model.addAttribute("appliedVoucherCode", appliedVoucherCode);
+        model.addAttribute("appliedVoucherId", appliedVoucherId);          // NEW
         model.addAttribute("voucherMessage", voucherMessage);
+        model.addAttribute("perGameDiscount", perGameDiscount);            // NEW
 
         return "HTML/Buy";
     }
+
 
 
 

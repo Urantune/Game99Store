@@ -90,21 +90,17 @@ public class HomeController {
             Map<String, Object> g = new HashMap<>();
             g.put("id", game.getGameId());
             g.put("name", game.getGameName());
+
             ImageGame imageGame = imageGameService.findByGameId(game.getGameId());
             String mainImage = "/img/notfound.png";
-            if (imageGame != null) {
 
-                if (mainImage.equals("/img/notfound.png")) {
-
-                        if (imageGame.getVideo().endsWith(".mp4")) {
-                            mainImage = "/" + imageGame.getVideo();
-
-                        }
-
-                }
+            if (imageGame != null && imageGame.getMainImage() != null && !imageGame.getMainImage().isBlank()) {
+                mainImage = "/" + imageGame.getMainImage();
             }
+
             g.put("image", mainImage);
             return g;
         }).toList();
     }
+
 }

@@ -72,7 +72,7 @@
         </a>
         <ul class="navbar-nav mx-auto">
             <li class="nav-item"><a class="nav-link text-white fw-bold" href="#">STAFF</a></li>
-            <li class="nav-item"><a class="nav-link text-white fw-bold" href="#bill-manager">Bill Manager</a></li>
+            <li class="nav-item"><a class="nav-link text-white fw-bold" th:href="@{/welcomeStaff/billManagement}">Bill Manager</a></li>
             <li class="nav-item"><a class="nav-link text-white fw-bold" href="#history-bill">History Bill</a></li>
         </ul>
         <div class="d-flex align-items-center">
@@ -134,7 +134,7 @@
                         <div class="icon-big" aria-hidden="true">🧾</div>
                         <h5 class="fw-bolder mb-1 text-center">Bill Manager</h5>
                         <p class="text-muted small text-center m-0">Quản lý hóa đơn hiện tại</p>
-                        <form th:action="@{/welcomeStaff/bill-manager}" method="get" class="w-100 mt-2">
+                        <form th:action="@{/welcomeStaff/billManagement}" method="get" class="w-100 mt-2">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="bi bi-receipt-cutoff me-1"></i> Mở Bill Manager
                             </button>
@@ -150,7 +150,7 @@
                         <div class="icon-big" aria-hidden="true">📜</div>
                         <h5 class="fw-bolder mb-1 text-center">History Bill</h5>
                         <p class="text-muted small text-center m-0">Xem lịch sử hóa đơn / giao dịch</p>
-                        <form th:action="@{/welcomeStaff/history-bill}" method="get" class="w-100 mt-2">
+                        <form th:action="@{/welcomeStaff/bill-history}" method="get" class="w-100 mt-2">
                             <button type="submit" class="btn btn-info w-100 text-white">
                                 <i class="bi bi-clock-history me-1"></i> Xem History Bill
                             </button>

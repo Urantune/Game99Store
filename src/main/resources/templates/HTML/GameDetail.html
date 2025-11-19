@@ -586,13 +586,16 @@
                     </a>
 
                     <div th:if="${!refund}">
-                        <form th:action="@{/welcome/refundGame}" method="post">
+                        <form th:action="@{/welcome/refundGame}" method="get">
                             <input type="hidden" name="gameId" th:value="${game.gameId}"/>
                             <button type="submit" class="btn btn-danger w-100">
-                                💸 Hoàn tiền
+                                💸 Request refund
                             </button>
                         </form>
                     </div>
+
+
+
                 </div>
 
 

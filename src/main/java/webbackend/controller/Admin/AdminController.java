@@ -452,7 +452,7 @@ public class AdminController {
         }
 
         session.setAttribute("id"
-                , admin.getAdmin_id());
+                , admin.getAdminid());
         session.setAttribute("adminName"
                 , admin.getAdminName());
         return ResponseEntity.ok(Map.of("success"

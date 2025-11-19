@@ -8,4 +8,6 @@ import java.util.UUID;
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, UUID> {
         Admin findByAdminName(String adminName);
+
+    Admin findByAdminid(UUID adminid);
 }

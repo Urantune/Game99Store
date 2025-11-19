@@ -22,11 +22,13 @@ public class UserTransaction {
     @JoinColumn(name = "game_id", nullable = false, columnDefinition = "uniqueidentifier")
     private Game game;
 
+
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "voucherid", nullable = false, columnDefinition = "uniqueidentifier")
+    @JoinColumn(name = "voucher_id", nullable = false, columnDefinition = "uniqueidentifier")
     private Vouncher vouncher;
 
-    private BigDecimal amount;
+    private double amount;
 
     private String type;
     private String description;
@@ -36,12 +38,43 @@ public class UserTransaction {
 
     private String status;
 
+    @Column(name = "status_detail")
+    private String statucDetail;
+
     public UserTransaction() {
         this.transactionDate = LocalDateTime.now();
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+
+
+    public Vouncher getVouncher() {
+        return vouncher;
+    }
+
+
+
+    public void setVouncher(Vouncher vouncher) {
+        this.vouncher = vouncher;
+    }
+
+    public String getStatucDetail() {
+        return statucDetail;
+    }
+
+    public void setStatucDetail(String statucDetail) {
+        this.statucDetail = statucDetail;
     }
 
     public void setId(UUID id) {
@@ -80,11 +113,11 @@ public class UserTransaction {
         this.type = type;
     }
 
-    public BigDecimal getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 

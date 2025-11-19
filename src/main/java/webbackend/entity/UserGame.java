@@ -22,6 +22,15 @@ public class UserGame {
     @JoinColumn(name = "game_id", columnDefinition = "uniqueidentifier")
     private Game game;
 
+    @ManyToOne(fetch =  FetchType.LAZY)
+    @JoinColumn(name = "voucher_id")
+    private Vouncher vouncher;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "staff_id")
+    private Admin staff;
+
+
     @Column(name = "purchase_date")
     private LocalDateTime purchaseDate;
 
@@ -42,6 +51,13 @@ public class UserGame {
     }
 
 
+    public Admin getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Admin staff) {
+        this.staff = staff;
+    }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
@@ -71,6 +87,14 @@ public class UserGame {
 
     public void setPurchasePrice(double purchasePrice) {
         this.purchasePrice = purchasePrice;
+    }
+
+    public Vouncher getVouncher() {
+        return vouncher;
+    }
+
+    public void setVouncher(Vouncher vouncher) {
+        this.vouncher = vouncher;
     }
 
     @Override

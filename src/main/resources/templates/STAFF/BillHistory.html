@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Game-Store | Staff - Bill History</title>
+
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link th:href="@{/assets/css/styles1.css}" rel="stylesheet"/>
+
+    <style>
+        :root{--bg-dark:#0f1c2e;--card-bg:#16273f;--text-soft:#b0bec5;--accent:#4f9eff}
+        html,body{height:100%;background-color:var(--bg-dark);margin:0;padding:0;color:#fff;font-family:Poppins,Arial,sans-serif}
+        .page-title{color:#fff;text-shadow:0 0 10px rgba(79,158,255,.35)}
+        .search-wrap{background:linear-gradient(135deg,#0b1b2f,#122544);border:1px solid #1e3a8a;border-radius:14px;padding:14px}
+        .search-wrap .form-control,.search-wrap .form-select{background:#1b2c45;border:1px solid rgba(255,255,255,.08);color:#fff}
+        .search-wrap .form-control::placeholder{color:#98a6ad}
+        .result-count{color:var(--text-soft)}
+        .bill-row{background:var(--card-bg);border:1px solid rgba(255,255,255,.08);border-radius:14px;color:#e7eef6;transition:transform .15s ease,box-shadow .15s ease,border-color .2s ease}
+        .bill-row:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.35);border-color:rgba(79,158,255,.35)}
+        .bill-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:rgba(79,158,255,.16);border:1px solid rgba(79,158,255,.4)}
+        .bill-main{font-weight:700;color:#fff}
+        .bill-meta{color:var(--text-soft);font-size:.9rem}
+        .badge-soft{background:rgba(79,158,255,.12);color:var(--accent);border:1px solid rgba(79,158,255,.35)}
+        .label-soft{color:var(--text-soft);font-size:.8rem}
+        .price{font-weight:700;color:#9be37f}
+        .badge-status-owned{background:rgba(34,197,94,.16);color:#4ade80;border:1px solid rgba(34,197,94,.5)}
+        .badge-status-wait{background:rgba(234,179,8,.16);color:#facc15;border:1px solid rgba(234,179,8,.5)}
+        .badge-status-refuse{background:rgba(248,113,113,.16);color:#fecaca;border:1px solid rgba(248,113,113,.5)}
+        .collapse-inner{background:#102037;border-top:1px dashed rgba(255,255,255,.14);border-bottom-left-radius:14px;border-bottom-right-radius:14px}
+    </style>
+</head>
+<body>
+
+<div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="page-title mb-0">🧾 Bill / Purchase History</h2>
+        <a th:href="@{/staff/home}" href="/staff/home" class="btn btn-outline-light">
+            <i class="bi bi-arrow-left me-1"></i> về trang staff
+        </a>
+    </div>
+
+    <!-- Search / Filters -->
+    <div class="search-wrap mb-3">
+        <div class="row g-2">
+            <div class="col-12 col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-secondary text-white-50">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input id="searchInput" type="text" class="form-control"
+                           placeholder="tìm theo user, game, id bill...">
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <select id="statusFilter" class="form-select">
+                    <option value="">— tất cả trạng thái —</option>
+                    <option value="owned">owned</option>
+                    <option value="waitpay">waitPay</option>
+                    <option value="wait">wait</option>
+                    <option value="refuse">refuse</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-4">
+                <select id="staffFilter" class="form-select">
+                    <option value="">— tất cả staff —</option>
+                    <option th:each="ug : ${userGames}"
+                            th:if="${ug.staff != null}"
+                            th:value="${#strings.toLowerCase(ug.staff.adminName)}"
+                            th:text="${ug.staff.adminName}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-2 d-flex justify-content-between align-items-center">
+            <small class="result-count" id="resultCount"
+                   th:text="'tổng: ' + ${#lists.size(userGames)} + ' bill'">đang tải...</small>
+            <div class="d-flex gap-2">
+                <button id="btnClear" class="btn btn-sm btn-outline-light">
+                    <i class="bi bi-x-circle"></i> xóa lọc
+                </button>
+                <button id="btnReload" class="btn btn-sm btn-outline-info" onclick="location.reload()">
+                    <i class="bi bi-arrow-clockwise"></i> tải lại
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIST USERGAME (BILL) -->
+    <div id="billList" class="vstack gap-3">
+        <div class="bill-row"
+             th:each="ug,st : ${userGames}"
+             th:with="stl=${#strings.toLowerCase(ug.status)}"
+             th:attr="data-user=${ug.user != null ? ug.user.username : 'unknown'},
+                      data-game=${ug.game != null ? ug.game.gameName : 'unknown'},
+                      data-st=${stl},
+                      data-staff=${ug.staff != null ? #strings.toLowerCase(ug.staff.adminName) : 'none'}">
+
+            <div class="p-3">
+                <div class="d-flex align-items-center gap-3">
+
+                    <!-- Icon -->
+                    <div class="bill-icon">
+                        <i class="bi bi-controller"></i>
+                    </div>
+
+                    <!-- Main info -->
+                    <div class="flex-grow-1">
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="bill-main">
+                                <span th:text="${ug.user != null ? ug.user.username : 'Unknown user'}">username</span>
+                                <span class="text-white-50"> · </span>
+                                <span th:text="${ug.game != null ? ug.game.gameName : 'Unknown game'}">game name</span>
+                            </span>
+
+                            <span class="badge badge-soft rounded-pill small">
+                                <i class="bi bi-hash me-1"></i>
+                                <span th:text="${ug.id}">bill-id</span>
+                            </span>
+
+                            <!-- STATUS badge -->
+                            <span class="badge rounded-pill small badge-status-owned"
+                                  th:if="${stl == 'owned'}"
+                                  th:text="${stl}">owned</span>
+
+                            <span class="badge rounded-pill small badge-status-wait"
+                                  th:if="${stl == 'wait' or stl == 'waitpay'}"
+                                  th:text="${stl}">wait</span>
+
+                            <span class="badge rounded-pill small badge-status-refuse"
+                                  th:if="${stl == 'refuse'}"
+                                  th:text="${stl}">refuse</span>
+
+                            <span class="badge rounded-pill small bg-secondary"
+                                  th:if="${stl != 'owned' and stl != 'wait' and stl != 'waitpay' and stl != 'refuse'}"
+                                  th:text="${stl}">other</span>
+
+                            <!-- voucher -->
+                            <span class="badge rounded-pill small bg-info text-dark"
+                                  th:if="${ug.vouncher != null}">
+                                <i class="bi bi-ticket-perforated me-1"></i>
+                                <span th:text="${ug.vouncher.name}">voucher</span>
+                            </span>
+                        </div>
+
+                        <div class="bill-meta mt-1">
+                            <span class="me-3">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                lúc:
+                                <span th:if="${ug.purchaseDate != null}"
+                                      th:text="${#temporals.format(ug.purchaseDate,'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</span>
+                                <span th:if="${ug.purchaseDate == null}">—</span>
+                            </span>
+
+                            <span class="me-3" th:if="${ug.staff != null}">
+                                <i class="bi bi-person-badge me-1"></i>
+                                staff:
+                                <span th:text="${ug.staff.adminName}">staff</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="text-end me-2">
+                        <div class="price">
+                            <span th:text="${#numbers.formatDecimal(ug.purchasePrice,0,'COMMA',0,'POINT')}">0</span> ₫
+                        </div>
+                        <small class="text-white-50">purchase price</small>
+                    </div>
+
+                    <!-- Toggle detail -->
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-outline-light"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                th:attr="data-bs-target='#bc_'+${st.index}"
+                                th:attrappend=" aria-controls='bc_'+${st.index}">
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detail -->
+            <div class="collapse collapse-inner" th:id="'bc_'+${st.index}">
+                <div class="p-3">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="label-soft">bill id</div>
+                            <div class="fw-semibold text-white small" th:text="${ug.id}">uuid</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">user</div>
+                            <div class="fw-semibold text-white small"
+                                 th:text="${ug.user != null ? ug.user.username : 'Unknown user'}">user</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">game</div>
+                            <div class="fw-semibold text-white small"
+                                 th:text="${ug.game != null ? ug.game.gameName : 'Unknown game'}">game</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">status</div>
+                            <div class="fw-semibold text-white small" th:text="${ug.status}">owned</div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="label-soft">purchase price</div>
+                            <div class="fw-semibold text-white small">
+                                <span th:text="${#numbers.formatDecimal(ug.purchasePrice,0,'COMMA',0,'POINT')}">0</span> ₫
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">purchase date</div>
+                            <div class="fw-semibold text-white small"
+                                 th:if="${ug.purchaseDate != null}"
+                                 th:text="${#temporals.format(ug.purchaseDate,'dd/MM/yyyy HH:mm:ss')}">time</div>
+                            <div class="fw-semibold text-white small" th:if="${ug.purchaseDate == null}">—</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">voucher</div>
+                            <div class="fw-semibold text-white small"
+                                 th:text="${ug.vouncher != null ? ug.vouncher.name : '—'}">voucher</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="label-soft">staff</div>
+                            <div class="fw-semibold text-white small"
+                                 th:text="${ug.staff != null ? ug.staff.adminName : '—'}">staff</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /bill-row -->
+    </div><!-- /#billList -->
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const staffFilter = document.getElementById('staffFilter');
+    const btnClear = document.getElementById('btnClear');
+
+    const norm = v => (v||'').toString().toLowerCase().trim();
+
+    function applyFilter(){
+        const q = norm(searchInput.value);
+        const st = norm(statusFilter.value);
+        const staff = norm(staffFilter.value);
+
+        const rows = document.querySelectorAll('.bill-row');
+        let visible = 0;
+
+        rows.forEach(row=>{
+            const user = norm(row.getAttribute('data-user'));
+            const game = norm(row.getAttribute('data-game'));
+            const dst = norm(row.getAttribute('data-st'));
+            const dstaff = norm(row.getAttribute('data-staff'));
+
+            const matchQ = !q || user.includes(q) || game.includes(q);
+            const matchSt = !st || dst === st;
+            const matchStaff = !staff || dstaff === staff;
+
+            const show = matchQ && matchSt && matchStaff;
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+
+        const rc = document.getElementById('resultCount');
+        if (rc) rc.textContent = 'tổng: ' + visible + ' bill';
+    }
+
+    searchInput.addEventListener('input', applyFilter);
+    statusFilter.addEventListener('change', applyFilter);
+    staffFilter.addEventListener('change', applyFilter);
+    btnClear.addEventListener('click', ()=>{
+        searchInput.value='';
+        statusFilter.value='';
+        staffFilter.value='';
+        applyFilter();
+    });
+
+    applyFilter();
+</script>
+<script th:src="@{/Accest/JS/code.js}"></script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Game-Store | My Bills</title>
+
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link th:href="@{/Accest/css/styles1.css}" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --bg-dark: #0f1c2e;
+            --card-bg: #16273f;
+            --text-soft: #b0bec5;
+            --accent: #4f9eff;
+        }
+
+        html, body {
+            height: 100%;
+            background-color: var(--bg-dark);
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            font-family: Poppins, Arial, sans-serif;
+        }
+
+        .page-title {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(79, 158, 255, .35);
+        }
+
+        .bill-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, .08);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        }
+
+        .bill-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, .5);
+            border-color: rgba(79, 158, 255, .35);
+        }
+
+        .game-thumb {
+            width: 82px;
+            height: 52px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .game-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge-status {
+            font-size: .75rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .badge-wait {
+            background: rgba(245, 158, 11, .12);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, .5);
+        }
+
+        .badge-waitPay {
+            background: rgba(14, 165, 233, .15);
+            color: #7dd3fc;
+            border: 1px solid rgba(56, 189, 248, .6);
+        }
+
+        .badge-owned {
+            background: rgba(34, 197, 94, .12);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, .6);
+        }
+
+        .badge-refuse {
+            background: rgba(239, 68, 68, .12);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, .6);
+        }
+
+        .price-main {
+            font-weight: 700;
+            color: #fbbf24;
+        }
+
+        .price-muted {
+            color: var(--text-soft);
+            font-size: .9rem;
+        }
+
+        .price-neg {
+            color: #FF7043;
+            font-weight: 600;
+        }
+
+        .voucher-tag {
+            background: rgba(79, 158, 255, .12);
+            color: var(--accent);
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-size: .75rem;
+            border: 1px solid rgba(79, 158, 255, .4);
+        }
+
+        .btn-pay {
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 6px 14px;
+            font-size: .9rem;
+            font-weight: 600;
+        }
+
+        .btn-pay:hover {
+            color: #fff;
+            box-shadow: 0 0 12px rgba(34, 197, 94, .7);
+            transform: translateY(-1px);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 6px 14px;
+            font-size: .9rem;
+            font-weight: 600;
+        }
+
+        .btn-delete:hover {
+            color: #fff;
+            box-shadow: 0 0 12px rgba(239, 68, 68, .7);
+            transform: translateY(-1px);
+        }
+
+        .navbar-custom {
+            background-color: #020617;
+            border-bottom: 1px solid rgba(148, 163, 184, .3);
+        }
+
+        .neon-text {
+            color: #4f9eff;
+            text-shadow: 0 0 5px #4f9eff, 0 0 15px #4f9eff, 0 0 25px #007bff;
+        }
+
+        .footerx {
+            background: #020617;
+            border-top: 1px solid rgba(148, 163, 184, .3);
+            color: #9ca3af;
+            font-size: .85rem;
+        }
+
+        .empty-box {
+            background: #020617;
+            border-radius: 16px;
+            padding: 32px 20px;
+            text-align: center;
+            border: 1px dashed rgba(148, 163, 184, .45);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+    <div class="container-fluid px-4">
+        <a th:href="@{/welcome}" class="navbar-brand d-flex align-items-center gap-2">
+            <span class="fw-bolder neon-text">🎮 GameStore</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navMain" class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a th:href="@{/welcome}" class="nav-link">Home</a></li>
+                <li class="nav-item"><a th:href="@{/welcome/cart}" class="nav-link">Cart</a></li>
+                <!-- Link này map với @GetMapping("/user-bill") -->
+                <li class="nav-item"><a th:href="@{/welcome/user-bill}" class="nav-link active">My Bills</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2">
+                <div class="text-end me-2" th:if="${user != null}">
+                    <div class="text-white-50 small">Signed in as</div>
+                    <div class="text-white fw-semibold" th:text="${user.username}">username</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="page-title mb-0">My Bills</h2>
+        <a th:href="@{/welcome}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Home
+        </a>
+    </div>
+
+    <p class="text-muted mb-3">
+        Here you can see your purchase requests, approved payments and refused bills.
+    </p>
+
+    <div th:if="${groupedUserGames == null or #lists.isEmpty(groupedUserGames)}" class="empty-box mt-3">
+        <div class="mb-2" style="font-size:2rem;">🧾</div>
+        <div class="fw-semibold text-white mb-1">No bills found</div>
+        <div class="text-muted mb-3">You don't have any purchase records yet.</div>
+        <a th:href="@{/welcome}" class="btn btn-primary btn-sm">Go shopping</a>
+    </div>
+
+    <div class="vstack gap-3" th:if="${groupedUserGames != null and !#lists.isEmpty(groupedUserGames)}">
+
+        <div class="bill-card p-3" th:each="group, stat : ${groupedUserGames}">
+
+            <div class="d-flex align-items-center justify-content-between mb-2">
+
+                <div class="d-flex align-items-center gap-2">
+                    <!-- CHỈ còn 3 trạng thái: wait, waitPay, refuse -->
+                    <span class="badge-status badge-wait"
+                          th:if="${group[0].status == 'wait'}"
+                          th:text="${group[0].status}">wait</span>
+
+                    <span class="badge-status badge-waitPay"
+                          th:if="${group[0].status == 'waitPay'}"
+                          th:text="${group[0].status}">waitPay</span>
+
+                    <span class="badge-status badge-refuse"
+                          th:if="${group[0].status == 'refuse'}"
+                          th:text="${group[0].status}">refuse</span>
+
+                    <span class="price-muted ms-3">
+                        Created:
+                        <span th:if="${group[0].purchaseDate != null}"
+                              th:text="${#temporals.format(group[0].purchaseDate,'dd/MM/yyyy HH:mm')}"></span>
+                        <span th:if="${group[0].purchaseDate == null}">—</span>
+                    </span>
+
+                    <span class="price-muted ms-2">
+                        (<span th:text="${#lists.size(group)}">1</span> items)
+                    </span>
+                </div>
+
+                <div class="text-end">
+                    <div class="price-muted small">
+                        Subtotal:
+                        <span th:text="${#numbers.formatDecimal(billTotals[stat.index]['totalOriginal'],0,'COMMA',0,'POINT')}">0</span>
+                        ₫
+                    </div>
+                    <div class="price-muted small" th:if="${billTotals[stat.index]['totalDiscount'] > 0}">
+                        Discount:
+                        <span class="price-neg">
+                            − <span
+                                th:text="${#numbers.formatDecimal(billTotals[stat.index]['totalDiscount'],0,'COMMA',0,'POINT')}">0</span> ₫
+                        </span>
+                    </div>
+                    <div class="price-main">
+                        Total:
+                        <span th:text="${#numbers.formatDecimal(billTotals[stat.index]['totalPayable'],0,'COMMA',0,'POINT')}">0</span>
+                        ₫
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3"
+                     th:each="ug, idx : ${group}">
+
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="game-thumb">
+                            <img th:src="${'/' + @gameCore.imageLinkGame(ug.game).getMainImage()}" alt="Game cover">
+                        </div>
+                        <div>
+                            <h5 class="mb-1" th:text="${ug.game.gameName}">Game name</h5>
+
+                            <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                                <span th:if="${ug.vouncher != null}" class="voucher-tag">
+                                    <i class="bi bi-ticket-perforated me-1"></i>
+                                    <span th:text="${ug.vouncher.name}">SALE10</span>
+                                </span>
+                            </div>
+
+                            <div th:with="
+                                    price=${ug.game.price},
+                                    sale=${ug.vouncher != null ? ug.vouncher.sale : 0},
+                                    discount=${price * sale / 100},
+                                    finalPrice=${price - discount}">
+                                <div class="price-main">
+                                    <span th:text="${#numbers.formatDecimal(finalPrice,0,'COMMA',0,'POINT')}">0</span> ₫
+                                </div>
+                                <div class="price-muted small" th:if="${sale > 0}">
+                                    <span style="text-decoration: line-through; opacity:.7;"
+                                          th:text="${#numbers.formatDecimal(price,0,'COMMA',0,'POINT')}">0</span> ₫
+                                    <span class="ms-1 text-success" th:text="${'-' + sale + '%'}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end d-none d-md-block">
+                        <div class="mb-1 text-muted small">
+                            Bill item ID:
+                            <span th:text="${ug.id}">id</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-3">
+                <a th:if="${group[0].status == 'waitPay'}"
+                   th:href="@{/welcome/succestpayment(
+                        billTime=${#temporals.format(group[0].purchaseDate,'yyyy-MM-dd''T''HH:mm:ss')}
+                   )}"
+                   class="btn btn-pay btn-sm">
+                    <i class="bi bi-cash-coin me-1"></i> Pay this bill
+                </a>
+                <button th:if="${group[0].status == 'waitPay'}"
+                        type="button"
+                        class="btn btn-outline-info btn-sm btn-open-qr"
+                        data-bs-toggle="modal"
+                        data-bs-target="#qrModal"
+                        th:data-bill-time="${#temporals.format(group[0].purchaseDate,'yyyy-MM-dd''T''HH:mm:ss')}">
+                    <i class="bi bi-qr-code-scan me-1"></i> Pay with QR
+                </button>
+
+
+                <a th:if="${group[0].status == 'refuse'}"
+                   th:href="@{/welcome/deleteUserGame/{id}(id=${group[0].id})}"
+                   class="btn btn-delete">
+                    <i class="bi bi-trash3 me-1"></i> Delete this bill
+                </a>
+
+                <a th:if="${group[0].status == 'wait'}"
+                   th:href="@{/welcome/cancel-bill(
+            billTime=${#temporals.format(group[0].purchaseDate,'yyyy-MM-dd''T''HH:mm:ss')}
+       )}"
+                   class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-x-circle me-1"></i> Cancel request
+                </a>
+
+                <!-- Bill đã bị staff từ chối -->
+                <a th:if="${group[0].status == 'refuse'}"
+                   th:href="@{/welcome/deleteUserGame/{id}(id=${group[0].id})}"
+                   class="btn btn-delete">
+                    <i class="bi bi-trash3 me-1"></i> Delete this bill
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<!-- QR Payment Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:#0f1c2e;color:#fff;border-radius:18px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title"><i class="bi bi-qr-code me-1"></i> QR Payment</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <p class="text-muted mb-2">Scan QR để thanh toán</p>
+
+                <img id="qrImage"
+                     src=""
+                     style="width:270px;height:270px;border-radius:14px;border:1px solid #3b82f6;padding:8px;background:#020617"/>
+
+                <div class="mt-3">
+                    <a id="qrDownloadLink" class="btn btn-outline-light btn-sm" download="qr.png">
+                        <i class="bi bi-download me-1"></i> Download QR
+                    </a>
+                </div>
+
+                <button id="qrDoneBtn" class="btn btn-success btn-sm">
+                    <i class="bi bi-check2-circle me-1"></i> Done
+                </button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer class="footerx py-3 mt-auto">
+    <div class="container text-center">
+        <span class="text-white-50">© 2025 GameStore. All rights reserved.</span>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        document.querySelectorAll(".btn-open-qr").forEach(btn => {
+            btn.addEventListener("click", function () {
+
+                const billTime = btn.getAttribute("data-bill-time");
+
+                const encodedUrl =
+                    "http://localhost:8080/welcome/succestpayment?billTime="
+                    + encodeURIComponent(billTime);
+
+                const qrUrl =
+                    "/qr?idpayment=" + encodeURIComponent(encodedUrl) + "&size=260";
+
+                document.getElementById("qrImage").src = qrUrl;
+
+                document.getElementById("qrDownloadLink").href =
+                    "/qr/download?idpayment=" + encodeURIComponent(encodedUrl);
+            });
+        });
+
+
+        document.getElementById("qrDoneBtn").addEventListener("click", function () {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('qrModal'));
+            modal.hide();
+            location.reload();
+        });
+
+    });
+</script>
+
+
+</body>
+</html>
