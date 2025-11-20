@@ -4,8 +4,10 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Edit Game | GameStore Admin</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
+
     <style>
         body{background:#0f1c2e;color:#fff;font-family:Poppins,sans-serif}
         .cardx{background:#1a2742;border:none;border-radius:14px;padding:20px;box-shadow:0 0 15px rgba(0,150,255,.15)}
@@ -19,59 +21,48 @@
 </head>
 <body>
 <div class="container py-4">
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="mb-0">Edit Game</h3>
-        <a th:href="@{/welcomeAdmin/listgame}" class="btn btn-outline-light"><i class="bi bi-arrow-left"></i> Quay lại</a>
+        <a th:href="@{/welcomeAdmin/listgame}" class="btn btn-outline-light">
+            <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
     </div>
 
-    <div class="cardx mb-4"
-         th:if="${game != null and game.imageLinks != null and !#strings.isEmpty(game.imageLinks)}"
-         th:with="
-         arr=${@gameCore.imageLinkGame(game.imageLinks)},
-         vid=${arr.length>0?arr[0]:null},
-         i1=${arr.length>1?arr[1]:null},
-         i2=${arr.length>2?arr[2]:null},
-         i3=${arr.length>3?arr[3]:null},
-         cover=${arr.length>4?arr[4]:null}
-       ">
+    <!-- PREVIEW ẢNH + VIDEO (DÙNG ImageGame) -->
+    <div class="cardx mb-4">
         <div class="row g-3">
             <div class="col-lg-7">
                 <img class="media-big"
-                     th:src="${(cover!=null and !#strings.isEmpty(cover))? '/' + cover : '/img/placeholder.jpg'}"
-                     alt="cover">
+                     th:src="${imageGame != null and imageGame.mainImage != null and !#strings.isEmpty(imageGame.mainImage)
+                              ? '/' + imageGame.mainImage
+                              : '/img/placeholder.jpg'}"
+                     src="/img/placeholder.jpg" alt="cover">
             </div>
             <div class="col-lg-5">
-                <video th:if="${vid!=null and !#strings.isEmpty(vid)}" class="media-big" controls th:src="${'/' + vid}"></video>
-                <div class="row g-2 mt-0" th:classappend="${vid==null or #strings.isEmpty(vid)}? 'mt-lg-0' : 'mt-3'">
-                    <div class="col-4" th:if="${i1!=null and !#strings.isEmpty(i1)}">
-                        <img class="media-thumb" th:src="${'/' + i1}" alt="img1">
+                <video th:if="${imageGame != null and imageGame.video != null and !#strings.isEmpty(imageGame.video)}"
+                       class="media-big" controls
+                       th:src="${'/' + imageGame.video}"></video>
+
+                <div class="row g-2 mt-3">
+                    <div class="col-4"
+                         th:if="${imageGame != null and imageGame.imageOne != null and !#strings.isEmpty(imageGame.imageOne)}">
+                        <img class="media-thumb" th:src="${'/' + imageGame.imageOne}" alt="img1">
                     </div>
-                    <div class="col-4" th:if="${i2!=null and !#strings.isEmpty(i2)}">
-                        <img class="media-thumb" th:src="${'/' + i2}" alt="img2">
+                    <div class="col-4"
+                         th:if="${imageGame != null and imageGame.imageTwo != null and !#strings.isEmpty(imageGame.imageTwo)}">
+                        <img class="media-thumb" th:src="${'/' + imageGame.imageTwo}" alt="img2">
                     </div>
-                    <div class="col-4" th:if="${i3!=null and !#strings.isEmpty(i3)}">
-                        <img class="media-thumb" th:src="${'/' + i3}" alt="img3">
+                    <div class="col-4"
+                         th:if="${imageGame != null and imageGame.imageThree != null && !#strings.isEmpty(imageGame.imageThree)}">
+                        <img class="media-thumb" th:src="${'/' + imageGame.imageThree}" alt="img3">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="cardx mb-4" th:if="${game == null or game.imageLinks == null or #strings.isEmpty(game.imageLinks)}">
-        <div class="row g-3">
-            <div class="col-lg-7">
-                <img class="media-big" src="/img/placeholder.jpg" alt="cover">
-            </div>
-            <div class="col-lg-5">
-                <div class="row g-2">
-                    <div class="col-4"><img class="media-thumb" src="/img/placeholder.jpg" alt=""></div>
-                    <div class="col-4"><img class="media-thumb" src="/img/placeholder.jpg" alt=""></div>
-                    <div class="col-4"><img class="media-thumb" src="/img/placeholder.jpg" alt=""></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- FORM EDIT GAME -->
     <form th:action="@{/welcomeAdmin/editgame/{id}(id=${game.gameId})}" method="post" class="cardx mb-4">
         <input type="hidden" name="id" th:value="${game != null ? game.gameId : null}"/>
         <input type="hidden" name="locate_game" th:value="${game!=null?game.locate_game:''}"/>
@@ -79,94 +70,124 @@
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Tên game</label>
-                <input class="form-control" name="gameName" th:value="${game!=null?game.gameName:''}"/>
+                <input class="form-control" name="gameName"
+                       th:value="${game!=null?game.gameName:''}"/>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Giá</label>
-                <input class="form-control" name="price" th:value="${game!=null?game.price:''}"/>
+                <input class="form-control" name="price"
+                       th:value="${game!=null?game.price:''}"/>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Phiên bản</label>
-                <input class="form-control" name="version" th:value="${game!=null?game.game_version:''}"/>
+                <input class="form-control" name="version"
+                       th:value="${game!=null?game.game_version:''}"/>
             </div>
+
             <div class="col-md-6">
                 <label class="form-label">Thể loại</label>
                 <select class="form-control form-select" name="category">
                     <option value="" disabled th:selected="${game == null}">-- Chọn thể loại --</option>
-                    <option value="Action" th:selected="${game != null and game.gameCategory == 'Action'}">Action</option>
+                    <option value="Action"    th:selected="${game != null and game.gameCategory == 'Action'}">Action</option>
                     <option value="Adventure" th:selected="${game != null and game.gameCategory == 'Adventure'}">Adventure</option>
-                    <option value="RPG" th:selected="${game != null and game.gameCategory == 'Horror'}">Horror</option>
-                    <option value="Strategy" th:selected="${game != null and game.gameCategory == 'Puzzle'}">Puzzle</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Trạng thái</label>
-                <select name="status" class="form-select">
-                    <option th:selected="${game != null and game.status=='ACTIVE'}" value="ACTIVE">ACTIVE</option>
-                    <option th:selected="${game != null and game.status=='COMING_SOON'}" value="COMING_SOON">COMING_SOON</option>
-                    <option th:selected="${game != null and game.status=='DELISTED'}" value="DELISTED">DELISTED</option>
+                    <option value="Horror"    th:selected="${game != null and game.gameCategory == 'Horror'}">Horror</option>
+                    <option value="Puzzle"    th:selected="${game != null and game.gameCategory == 'Puzzle'}">Puzzle</option>
                 </select>
             </div>
 
+            <div class="col-md-6">
+                <label class="form-label">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option th:selected="${game != null and game.status=='ACTIVE'}"       value="ACTIVE">ACTIVE</option>
+                    <option th:selected="${game != null and game.status=='COMING_SOON'}"  value="COMING_SOON">COMING_SOON</option>
+                    <option th:selected="${game != null and game.status=='DELISTED'}"     value="DELISTED">DELISTED</option>
+                </select>
+            </div>
+
+            <!-- MÔ TẢ TỪNG PHẦN -->
             <div class="col-12">
                 <label class="form-label">Mô tả từng phần</label>
                 <div class="row g-2"
-                     th:with="dec=${game!=null && game.deception!=null && !#strings.isEmpty(game.deception) ? @gameCore.deceptionGame(game.deception) : null}">
+                     th:with="dec=${game!=null && game.deception!=null && !#strings.isEmpty(game.deception)
+                                      ? @gameCore.deceptionGame(game.deception)
+                                      : null}">
                     <div class="col-12">
                         <textarea class="form-control" name="dec_1" rows="5"
                                   th:text="${dec!=null && dec.length>0 ? dec[0] : ''}"
                                   placeholder="Mô tả chính"></textarea>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-control" name="dec_2" th:value="${dec!=null && dec.length>1 ? dec[1] : ''}" placeholder="Ý phụ 1"/>
+                        <input class="form-control" name="dec_2"
+                               th:value="${dec!=null && dec.length>1 ? dec[1] : ''}"
+                               placeholder="Ý phụ 1"/>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-control" name="dec_3" th:value="${dec!=null && dec.length>2 ? dec[2] : ''}" placeholder="Ý phụ 2"/>
+                        <input class="form-control" name="dec_3"
+                               th:value="${dec!=null && dec.length>2 ? dec[2] : ''}"
+                               placeholder="Ý phụ 2"/>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-control" name="dec_4" th:value="${dec!=null && dec.length>3 ? dec[3] : ''}"/>
+                        <input class="form-control" name="dec_4"
+                               th:value="${dec!=null && dec.length>3 ? dec[3] : ''}"
+                               placeholder="Ý phụ 3"/>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-control" name="dec_5" th:value="${dec!=null && dec.length>4 ? dec[4] : ''}" placeholder="Ý phụ 3"/>
+                        <input class="form-control" name="dec_5"
+                               th:value="${dec!=null && dec.length>4 ? dec[4] : ''}"
+                               placeholder="Ý phụ 4"/>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- INPUT LINK MEDIA (DÙNG ImageGame) -->
         <div class="mt-4">
-            <div class="row g-3"
-                 th:with="
-             arr=${game!=null && game.imageLinks!=null && !#strings.isEmpty(game.imageLinks) ? @gameCore.imageLinkGame(game.imageLinks) : null},
-             vid=${arr!=null && arr.length>0 ? arr[0] : ''},
-             i1=${arr!=null && arr.length>1 ? arr[1] : ''},
-             i2=${arr!=null && arr.length>2 ? arr[2] : ''},
-             i3=${arr!=null && arr.length>3 ? arr[3] : ''},
-             cover=${arr!=null && arr.length>4 ? arr[4] : ''}">
+            <div class="row g-3">
                 <div class="col-12">
                     <label class="form-label">Video (.mp4)</label>
-                    <input class="form-control" name="img_video" th:value="${vid!='' ? '/' + vid : ''}" placeholder="/videos/freefire.mp4"/>
+                    <input class="form-control" name="img_video"
+                           th:value="${imageGame != null and imageGame.video != null and !#strings.isEmpty(imageGame.video)
+                                     ? '/' + imageGame.video
+                                     : ''}"
+                           placeholder="/videos/freefire.mp4"/>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Ảnh phụ 1</label>
-                    <input class="form-control" name="img_1" th:value="${i1!='' ? '/' + i1 : ''}" placeholder="/img/demo4.jpg"/>
+                    <input class="form-control" name="img_1"
+                           th:value="${imageGame != null and imageGame.imageOne != null and !#strings.isEmpty(imageGame.imageOne)
+                                     ? '/' + imageGame.imageOne
+                                     : ''}"
+                           placeholder="/img/demo4.jpg"/>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Ảnh phụ 2</label>
-                    <input class="form-control" name="img_2" th:value="${i2!='' ? '/' + i2 : ''}" placeholder="/img/demo5.jpg"/>
+                    <input class="form-control" name="img_2"
+                           th:value="${imageGame != null and imageGame.imageTwo != null and !#strings.isEmpty(imageGame.imageTwo)
+                                     ? '/' + imageGame.imageTwo
+                                     : ''}"
+                           placeholder="/img/demo5.jpg"/>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Ảnh phụ 3</label>
-                    <input class="form-control" name="img_3" th:value="${i3!='' ? '/' + i3 : ''}" placeholder="/img/demo6.jpg"/>
+                    <input class="form-control" name="img_3"
+                           th:value="${imageGame != null and imageGame.imageThree != null and !#strings.isEmpty(imageGame.imageThree)
+                                     ? '/' + imageGame.imageThree
+                                     : ''}"
+                           placeholder="/img/demo6.jpg"/>
                 </div>
                 <div class="col-12">
                     <label class="form-label">Ảnh đại diện (cover)</label>
-                    <input class="form-control" name="img_cover" th:value="${cover!='' ? '/' + cover : ''}" placeholder="/img/game2.jpg"/>
+                    <input class="form-control" name="img_cover"
+                           th:value="${imageGame != null and imageGame.mainImage != null and !#strings.isEmpty(imageGame.mainImage)
+                                     ? '/' + imageGame.mainImage
+                                     : ''}"
+                           placeholder="/img/game2.jpg"/>
                 </div>
             </div>
         </div>
 
+        <!-- BUTTONS -->
         <div class="d-flex gap-3 mt-4">
-
             <button type="submit"
                     class="btn btn-danger w-100 py-2"
                     formaction="/welcomeAdmin/deletegame"
@@ -175,7 +196,6 @@
                 <i class="bi bi-trash-fill me-1"></i> Delete Game
             </button>
 
-
             <button type="submit" class="btn btn-save w-100 py-2">
                 <i class="bi bi-check2-circle me-1"></i> Lưu thay đổi
             </button>
@@ -183,8 +203,8 @@
 
     </form>
 </div>
+
 <script th:src="@{/Accest/JS/code.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

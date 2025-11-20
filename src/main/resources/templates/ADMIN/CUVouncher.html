@@ -26,7 +26,7 @@
 
     <form th:action="@{/welcomeAdmin/voucher/save}" method="post" class="cardx">
 
-        <input type="hidden" name="voucherId" th:value="${voucher.voucherId}"/>
+        <input type="hidden" name="voucherId" th:value="${voucher.voucherid}"/>
 
         <div class="row g-3">
 
@@ -46,6 +46,7 @@
                 <select class="form-select" name="type">
                     <option value="percent" th:selected="${voucher.type=='percent'}">Giảm %</option>
                     <option value="fixed" th:selected="${voucher.type=='fixed'}">Giảm tiền</option>
+                    <option value="shipping" th:selected="${voucher.type=='shipping'}">Giảm ship</option>
                 </select>
             </div>
 
@@ -63,6 +64,54 @@
                        required>
             </div>
 
+
+            <div class="col-12 mt-3">
+                <label class="form-label">Người dùng được sử dụng voucher này</label>
+
+                <div class="border rounded p-2" style="max-height:220px; overflow-y:auto; background:#243447;">
+                    <div class="form-check mb-1"
+                         th:each="u : ${allUsers}">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:id="${'user-' + u.id}"
+                               name="userIds"
+                               th:value="${u.id}"
+                               th:checked="${selectedUserIds != null and selectedUserIds.contains(u.id)}">
+                        <label class="form-check-label" th:for="${'user-' + u.id}"
+                               th:text="${u.username + ' (' + u.email + ')'}"></label>
+                    </div>
+                </div>
+
+                <small class="text-muted">
+                    Tick để cho phép user dùng voucher này.
+                </small>
+            </div>
+
+
+
+            <div class="col-12 mt-3">
+                <label class="form-label">Game được áp dụng voucher này</label>
+
+                <div class="border rounded p-2" style="max-height:220px; overflow-y:auto; background:#243447;">
+                    <div class="form-check mb-1"
+                         th:each="g : ${allGames}">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:id="${'game-' + g.gameId}"
+                               name="gameIds"
+                               th:value="${g.gameId}"
+                               th:checked="${selectedGameIds != null and selectedGameIds.contains(g.gameId)}">
+                        <label class="form-check-label" th:for="${'game-' + g.gameId}"
+                               th:text="${g.gameName}"></label>
+                    </div>
+                </div>
+
+                <small class="text-muted">
+                    Tick các game được phép dùng voucher này.
+                </small>
+            </div>
+
+
         </div>
 
         <button class="btn btn-save mt-4 w-100">
@@ -70,6 +119,7 @@
         </button>
 
     </form>
+
 </div>
 <script th:src="@{/Accest/JS/code.js}"></script>
 </body>

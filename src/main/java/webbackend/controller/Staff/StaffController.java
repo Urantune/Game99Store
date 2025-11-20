@@ -1,13 +1,11 @@
 package webbackend.controller.Staff;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import webbackend.entity.Game;
-import webbackend.entity.User;
-import webbackend.entity.UserGame;
-import webbackend.entity.Vouncher;
+import webbackend.entity.*;
 import webbackend.SucDat.GameCore;
 import webbackend.SucDat.SendMailTest;
 import webbackend.repository.UserGameRepository;
@@ -17,8 +15,6 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,13 +54,68 @@ public class StaffController {
     @Autowired
     private ImageGameService imageGameService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+
+    private Admin getLoggedStaff(HttpSession session) {
+
+        UUID adminId = (UUID) session.getAttribute("id");
+        if (adminId == null) return null;
+
+
+        return adminSevice.findByAdminid(adminId);
+    }
+
+
+    @PostMapping("/login")
+    @ResponseBody
+    public ResponseEntity<?> loginStaff(@RequestParam("username") String username,
+                                        @RequestParam("password") String password,
+                                        HttpSession session) {
+
+        Admin admin = adminSevice.findByUsername(username);
+        if (admin == null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Tài khoản không tồn tại!"));
+        }
+
+
+        if (admin.getRole() == null ||
+                !(admin.getRole().equalsIgnoreCase("STAFF")
+                        || admin.getRole().equalsIgnoreCase("ADMIN"))) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Tài khoản này không có quyền STAFF/ADMIN!"));
+        }
+
+        if (!passwordEncoder.matches(password, admin.getPassword())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Sai mật khẩu!"));
+        }
+
+
+        session.setAttribute("id", admin.getAdminid());
+        session.setAttribute("adminName", admin.getAdminName());
+        session.setAttribute("avatar", admin.getImageLinks());
+        session.setAttribute("adminRole", admin.getRole());
+
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
     @GetMapping({"", "/"})
-    public String homeAdmin(Model model, HttpSession session) {
+    public String homeStaff(Model model, HttpSession session) {
+
+        Admin staff = getLoggedStaff(session);
+        model.addAttribute("staff", staff);
         return "STAFF/IndexStaff";
     }
 
     @GetMapping("/billManagement")
-    public String billManagement(Model model, HttpSession session) {
+    public String billManagement(Model model, HttpSession session,
+                                 RedirectAttributes ra) {
+
+
 
         List<UserGame> allUserGames = userGameService.findAll();
 
@@ -110,7 +161,7 @@ public class StaffController {
             }
 
             double originalPrice = game.getPrice();
-            double paidPrice = originalPrice;
+            double paidPrice = originalPrice; // nếu có logic voucher từng game thì sửa chỗ này
 
             if (existingItem == null) {
                 BillGameItem item = new BillGameItem();
@@ -141,11 +192,19 @@ public class StaffController {
     }
 
 
+
     @PostMapping("/billManagement/approve")
     public String approveBill(@RequestParam("userId") UUID userId,
                               @RequestParam("billDate")
                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate billDate,
+                              HttpSession session,
                               RedirectAttributes ra) {
+
+        Admin staff = getLoggedStaff(session);
+        if (staff == null) {
+            ra.addFlashAttribute("error", "Bạn cần đăng nhập STAFF trước khi xác nhận thanh toán.");
+            return "redirect:/welcomeStaff/billManagement";
+        }
 
         List<UserGame> allUserGames = userGameService.findAll();
         int count = 0;
@@ -159,6 +218,7 @@ public class StaffController {
                     && ug.getStatus().equalsIgnoreCase("wait")) {
 
                 ug.setStatus("waitPay");
+                ug.setStaff(staff);
                 userGameService.saveUserGame(ug);
                 count++;
             }
@@ -168,11 +228,19 @@ public class StaffController {
         return "redirect:/welcomeStaff/billManagement";
     }
 
+
     @PostMapping("/billManagement/reject")
     public String rejectBill(@RequestParam("userId") UUID userId,
                              @RequestParam("billDate")
                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate billDate,
+                             HttpSession session,
                              RedirectAttributes ra) {
+
+        Admin staff = getLoggedStaff(session);
+        if (staff == null) {
+            ra.addFlashAttribute("error", "Bạn cần đăng nhập STAFF trước khi từ chối.");
+            return "redirect:/welcomeStaff/billManagement";
+        }
 
         List<UserGame> allUserGames = userGameService.findAll();
         int count = 0;
@@ -186,6 +254,7 @@ public class StaffController {
                     && ug.getStatus().equalsIgnoreCase("wait")) {
 
                 ug.setStatus("refuse");
+                ug.setStaff(staff);
                 userGameService.saveUserGame(ug);
                 count++;
             }
@@ -194,6 +263,7 @@ public class StaffController {
         ra.addFlashAttribute("message", "Rejected " + count + " item(s).");
         return "redirect:/welcomeStaff/billManagement";
     }
+
 
     @GetMapping("/bill-history")
     public String billHistory(Model model) {

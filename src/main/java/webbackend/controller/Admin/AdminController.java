@@ -20,7 +20,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -65,6 +68,12 @@ public class AdminController {
 
     @Autowired
     private ImageGameService imageGameService;
+
+    @Autowired
+    private VoucherUserService voucherUserService;
+
+    @Autowired
+    private VoucherGameService voucherGameService;
 
 
     @GetMapping({"", "/"})
@@ -191,22 +200,36 @@ public class AdminController {
 
     @GetMapping("/listgame")
     public String editGame(Model model) {
-        model
-                .addAttribute("listGame"
-                        , gameSevice
-                                .findAllGame());
+
+        List<Game> games = gameSevice.findAllGame();
+
+
+        Map<UUID, ImageGame> imageMap = games.stream()
+                .map(g -> imageGameService.findByGameId(g.getGameId()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(
+                        img -> img.getGame().getGameId(),
+                        Function.identity()
+                ));
+
+        model.addAttribute("listGame", games);
+        model.addAttribute("imageMap", imageMap);
+
         return "ADMIN/ListGame";
     }
 
     @GetMapping("/editgame/{id}")
-    public String editGame(@PathVariable UUID id
-            , Model model) {
+    public String editGame(@PathVariable UUID id, Model model) {
         Game game = gameSevice.findById(id);
-        model
-                .addAttribute("game"
-                        , game);
+        ImageGame imageGame = imageGameService.findByGameId(id);
+
+        model.addAttribute("game", game);
+        model.addAttribute("imageGame", imageGame);
+
         return "ADMIN/EditGame";
     }
+
+
 
     @PostMapping("/game/{id}/set-main")
     public String setMainGame(@PathVariable
@@ -407,15 +430,22 @@ public class AdminController {
             g.setStatus("coming soon");
             g.setLocate_game(packagePath);
             g.setDeception(deception.toString());
-            ImageGame imageGame = imageGameService.findByGameId(g.getGameId());
+
+
+            gameSevice.save(g);
+
+
+            ImageGame imageGame = new ImageGame();
+            imageGame.setGame(g);
             imageGame.setVideo(video);
             imageGame.setImageOne(i1);
             imageGame.setImageTwo(i2);
             imageGame.setImageThree(i3);
             imageGame.setMainImage(cover);
+
             imageGameService.save(imageGame);
 
-            gameSevice.save(g);
+
             return ResponseEntity
                     .ok("Upload thành công!");
         } catch (Exception e) {
@@ -462,38 +492,203 @@ public class AdminController {
 
     @GetMapping("/listvoucher")
     public String listVoucher(Model model) {
-        model.addAttribute("vouncherList"
-                , vouncherService.findAll());
+        model.addAttribute("vouncherList", vouncherService.findAll());
+        model.addAttribute("now", LocalDateTime.now());
         return "ADMIN/listVoucher";
     }
+
+
+    @GetMapping("/staff/list")
+    public String listStaff(Model model) {
+       List<Admin> staffList = adminSevice.findByRole("STAFF");
+        model.addAttribute("staffList", staffList);
+        return "ADMIN/ListStaff";
+    }
+
+    @GetMapping("/staff/form")
+    public String staffForm(@RequestParam(required = false) UUID id,
+                            Model model) {
+
+        Admin staff;
+        String mode;
+
+        if (id != null) {
+            staff = adminSevice.findByAdminid(id);
+            if (staff == null) {
+                return "redirect:/welcomeAdmin/staff/list";
+            }
+            mode = "edit";
+        } else {
+            staff = new Admin();
+            mode = "create";
+        }
+
+        model.addAttribute("staff", staff);
+        model.addAttribute("mode", mode);
+        return "ADMIN/EditStaff";
+    }
+
+
+    @PostMapping("/staff/save")
+    public String saveStaff(@RequestParam(required = false) UUID id,
+                            @RequestParam("username") String username,
+                            @RequestParam(required = false, name = "rawPassword") String rawPassword,
+                            @RequestParam(required = false, name = "status") String status,
+                            RedirectAttributes ra) {
+
+        Admin staff = (id != null) ? adminSevice.findByAdminid(id) : new Admin();
+        if (staff == null) staff = new Admin();
+
+        staff.setAdminName(username.trim());
+        staff.setRole("STAFF");
+
+        if (staff.getDateCreateAcc() == null) {
+            staff.setDateCreateAcc(LocalDateTime.now());
+        }
+
+        String st = (status == null || status.isBlank()) ? "ACTIVE" : status.trim().toUpperCase();
+        staff.setStatus(st);
+
+        if (rawPassword != null && !rawPassword.isBlank()) {
+            staff.setPassword(passwordEncoder.encode(rawPassword.trim()));
+        }
+
+        adminSevice.save(staff);
+
+        ra.addFlashAttribute("ok",
+                (id == null) ? "Tạo staff thành công" : "Cập nhật staff thành công");
+
+        return "redirect:/welcomeAdmin/staff/list";
+    }
+
+
+    @PostMapping("/staff/toggle-status")
+    public String toggleStaffStatus(@RequestParam UUID id,
+                                    RedirectAttributes ra) {
+        Admin staff = adminSevice.findByAdminid(id);
+        if (staff != null && "STAFF".equalsIgnoreCase(staff.getRole())) {
+            String current = staff.getStatus() == null ? "" : staff.getStatus().toUpperCase();
+            if ("DISABLED".equals(current)) {
+                staff.setStatus("ACTIVE");
+                ra.addFlashAttribute("ok", "Đã kích hoạt lại tài khoản staff.");
+            } else {
+                staff.setStatus("DISABLED");
+                ra.addFlashAttribute("ok", "Đã vô hiệu hóa tài khoản staff.");
+            }
+            adminSevice.save(staff);
+        }
+        return "redirect:/welcomeAdmin/staff/form?id=" + id;
+    }
+
+    @PostMapping("/staff/reset-password")
+    public String resetStaffPassword(@RequestParam UUID id,
+                                     @RequestParam String newPassword,
+                                     RedirectAttributes ra) {
+        Admin staff = adminSevice.findByAdminid(id);
+        if (staff == null || !"STAFF".equalsIgnoreCase(staff.getRole())) {
+            ra.addFlashAttribute("error", "Không tìm thấy staff.");
+            return "redirect:/welcomeAdmin/staff/list";
+        }
+
+        if (newPassword == null || newPassword.isBlank()) {
+            ra.addFlashAttribute("error", "Mật khẩu trống. Hãy bấm Shuffle trước khi Apply.");
+            return "redirect:/welcomeAdmin/staff/form?id=" + id;
+        }
+
+        staff.setPassword(passwordEncoder.encode(newPassword.trim()));
+        adminSevice.save(staff);
+
+
+        ra.addFlashAttribute("ok", "Đã đặt lại mật khẩu cho staff. Hãy gửi mật khẩu mới cho nhân viên.");
+        return "redirect:/welcomeAdmin/staff/form?id=" + id;
+    }
+
+
+
+
+
+
 
     @GetMapping("/voucher/form")
     public String form(@RequestParam(required = false) UUID id,
                        Model model) {
+        Vouncher v;
+        String mode;
+
         if (id != null) {
-            Vouncher v = vouncherService.findByUuid(id);
+            v = vouncherService.findByUuid(id);
             if (v == null) return "redirect:/welcomeAdmin/listvoucher";
-            model.addAttribute("voucher"
-                    , v);
-            model.addAttribute("mode"
-                    , "edit");
+            mode = "edit";
         } else {
-            model.addAttribute("voucher"
-                    , new Vouncher());
-            model.addAttribute("mode"
-                    , "create");
+            v = new Vouncher();
+            mode = "create";
         }
+
+
+        List<User> allUsers = userService.findAll();
+        List<Game> allGames = gameSevice.findAllGame();
+
+
+        List<UUID> selectedUserIds = voucherUserService
+                .getVoucherUserByVouncher(v)
+                .stream()
+                .map(vu -> vu.getUser().getId())
+                .toList();
+
+
+        List<UUID> selectedGameIds = voucherGameService
+                .getVoucherGameByVouncher(v)
+                .stream()
+                .map(vg -> vg.getGame().getGameId())
+                .toList();
+
+        model.addAttribute("voucher", v);
+        model.addAttribute("mode", mode);
+        model.addAttribute("allUsers", allUsers);
+        model.addAttribute("allGames", allGames);
+        model.addAttribute("selectedUserIds", selectedUserIds);
+        model.addAttribute("selectedGameIds", selectedGameIds);
+
         return "ADMIN/CUVouncher";
     }
 
+
+
+    @GetMapping("/voucher/info")
+    public String voucherInfo(@RequestParam UUID id, Model model,
+                              RedirectAttributes ra) {
+
+        Vouncher v = vouncherService.findByUuid(id);
+        if (v == null) {
+            ra.addFlashAttribute("error", "Không tìm thấy voucher");
+            return "redirect:/welcomeAdmin/listvoucher";
+        }
+
+        List<VoucherUser> vu = voucherUserService.getVoucherUserByVouncher(v);
+        List<VoucherGame> vg = voucherGameService.getVoucherGameByVouncher(v);
+
+        model.addAttribute("voucher", v);
+        model.addAttribute("users", vu);
+        model.addAttribute("games", vg);
+
+        return "ADMIN/VoucherInfo";
+    }
+
+
     @GetMapping("/voucher/delete")
-    public String delete(@RequestParam UUID id
-            , RedirectAttributes ra) {
-        vouncherService.deleteById(id);
-        ra.addFlashAttribute("ok"
-                , "Xóa thành công");
+    public String delete(@RequestParam UUID id, RedirectAttributes ra) {
+        Vouncher v = vouncherService.findByUuid(id);
+        if (v != null) {
+
+            v.setDate_end(LocalDateTime.now().minusSeconds(1));
+            vouncherService.save(v);
+            ra.addFlashAttribute("ok", "Đã vô hiệu hóa voucher (hết hạn)");
+        } else {
+            ra.addFlashAttribute("error", "Không tìm thấy voucher");
+        }
         return "redirect:/welcomeAdmin/listvoucher";
     }
+
 
     @PostMapping("/voucher/save")
     public String save(@RequestParam(required = false) UUID voucherId,
@@ -504,6 +699,11 @@ public class AdminController {
                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateStart,
                        @RequestParam("date_end")
                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEnd,
+
+                       // NEW: list user + game
+                       @RequestParam(required = false, name = "userIds") List<UUID> userIds,
+                       @RequestParam(required = false, name = "gameIds") List<UUID> gameIds,
+
                        RedirectAttributes ra) {
 
         Vouncher v = (voucherId != null)
@@ -513,21 +713,26 @@ public class AdminController {
 
         v.setName(name);
         v.setSale(sale);
-        v.setDate_start(LocalDateTime.of(dateStart
-                , LocalTime.MIN));
-        v.setDate_end(LocalDateTime.of(dateEnd
-                , LocalTime.of(23
-                        , 59
-                        , 59)));
+        v.setType(type);
+        v.setDate_start(LocalDateTime.of(dateStart, LocalTime.MIN));
+        v.setDate_end(LocalDateTime.of(dateEnd, LocalTime.of(23, 59, 59)));
+
 
         vouncherService.save(v);
 
-        ra.addFlashAttribute("ok"
-                , voucherId == null
-                        ? "Tạo thành công"
-                        : "Cập nhật thành công");
+
+        voucherUserService.updateUsersForVoucher(v, userIds);
+
+
+        voucherGameService.updateGamesForVoucher(v, gameIds);
+
+        ra.addFlashAttribute("ok",
+                voucherId == null ? "Tạo thành công" : "Cập nhật thành công");
         return "redirect:/welcomeAdmin/listvoucher";
     }
+
+
+
 
 
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Game-Store | Admin - List User</title>
+    <title>Game-Store | Admin - List Staff</title>
 
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
@@ -18,11 +18,11 @@
         .search-wrap .form-control{background:#1b2c45;border:1px solid rgba(255,255,255,.08);color:#fff}
         .search-wrap .form-control::placeholder{color:#98a6ad}
         .result-count{color:var(--text-soft)}
-        .user-row{background:var(--card-bg);border:1px solid rgba(255,255,255,.08);border-radius:14px;color:#e7eef6;transition:transform .15s ease,box-shadow .15s ease,border-color .2s ease}
-        .user-row:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.35);border-color:rgba(79,158,255,.35)}
-        .user-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.15)}
-        .user-name{font-weight:700;color:#fff}
-        .user-meta{color:var(--text-soft);font-size:.925rem}
+        .staff-row{background:var(--card-bg);border:1px solid rgba(255,255,255,.08);border-radius:14px;color:#e7eef6;transition:transform .15s ease,box-shadow .15s ease,border-color .2s ease}
+        .staff-row:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.35);border-color:rgba(79,158,255,.35)}
+        .staff-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.15)}
+        .staff-name{font-weight:700;color:#fff}
+        .staff-meta{color:var(--text-soft);font-size:.925rem}
         .badge-soft{background:rgba(79,158,255,.12);color:var(--accent);border:1px solid rgba(79,158,255,.35)}
         .row-actions .btn{border-radius:10px}
         .collapse-inner{background:#102037;border-top:1px dashed rgba(255,255,255,.14);border-bottom-left-radius:14px;border-bottom-right-radius:14px}
@@ -35,10 +35,15 @@
 
 <div class="container py-4">
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <h2 class="page-title mb-0">👥 Danh sách người dùng</h2>
-        <a th:href="@{/welcomeAdmin}" href="/welcomeAdmin" class="btn btn-outline-light">
-            <i class="bi bi-arrow-left me-1"></i> Về Admin
-        </a>
+        <h2 class="page-title mb-0">🧑‍💼 Danh sách Staff</h2>
+        <div class="d-flex gap-2">
+            <a th:href="@{/welcomeAdmin}" class="btn btn-outline-light">
+                <i class="bi bi-arrow-left me-1"></i> Về Admin
+            </a>
+            <a th:href="@{/welcomeAdmin/staff/form}" class="btn btn-success">
+                <i class="bi bi-person-plus-fill me-1"></i> Thêm Staff
+            </a>
+        </div>
     </div>
 
     <div class="search-wrap mb-3">
@@ -48,28 +53,20 @@
                     <span class="input-group-text bg-transparent border-secondary text-white-50">
                         <i class="bi bi-search"></i>
                     </span>
-                    <input id="searchInput" type="text" class="form-control" placeholder="Tìm theo username, email...">
+                    <input id="searchInput" type="text" class="form-control" placeholder="Tìm theo username...">
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <select id="statusFilter" class="form-select">
                     <option value="">— Tất cả trạng thái —</option>
                     <option value="ACTIVE">ACTIVE</option>
-                    <option value="LOCKED">LOCKED</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="WAIT">WAIT</option>
-                    <option value="wait">wait</option>
-                </select>
-            </div>
-            <div class="col-6 col-md-3">
-                <select id="roleFilter" class="form-select" disabled>
-                    <option value="">— Vai trò —</option>
+                    <option value="DISABLED">DISABLED</option>
                 </select>
             </div>
         </div>
         <div class="mt-2 d-flex justify-content-between align-items-center">
             <small class="result-count" id="resultCount"
-                   th:text="'Tổng: ' + ${#lists.size(listUser)} + ' người dùng'">Đang tải...</small>
+                   th:text="'Tổng: ' + ${#lists.size(staffList)} + ' staff'">Đang tải...</small>
             <div class="d-flex gap-2">
                 <button id="btnClear" class="btn btn-sm btn-outline-light"><i class="bi bi-x-circle"></i> Xóa lọc</button>
                 <button id="btnReload" class="btn btn-sm btn-outline-info" onclick="location.reload()">
@@ -79,48 +76,35 @@
         </div>
     </div>
 
-    <div id="userList" class="vstack gap-3">
-        <!-- ROW: render từng user -->
-        <div class="user-row"
-             th:each="u, iStat : ${listUser}"
-             th:with="created=${u.dateCreateAccount}"
-             th:attr="data-username=${u.username},
-                      data-email=${u.email},
-                      data-status=${u.status}">
+    <div id="staffList" class="vstack gap-3">
+        <div class="staff-row"
+             th:each="s, iStat : ${staffList}"
+             th:with="created=${s.dateCreateAcc}"
+             th:attr="data-username=${s.adminName},
+                      data-status=${s.status}">
             <div class="p-3">
                 <div class="d-flex align-items-center gap-3">
-                    <img class="user-avatar"
-                         th:src="${u.imageLinks != null && !#strings.isEmpty(u.imageLinks)} ? ${u.imageLinks} : '/img/a.png'"
+                    <img class="staff-avatar"
+                         th:src="${s.imageLinks != null && !#strings.isEmpty(s.imageLinks)} ? ${s.imageLinks} : '/img/a.png'"
                          src="/img/a.png" alt="avatar">
 
                     <div class="flex-grow-1">
                         <div class="d-flex flex-wrap align-items-center gap-2">
-                            <span class="user-name" th:text="${u.username}">username</span>
+                            <span class="staff-name" th:text="${s.adminName}">staffname</span>
 
                             <span class="badge badge-soft rounded-pill small"
-                                  th:text="${u.status != null ? u.status : 'UNKNOWN'}">STATUS</span>
+                                  th:text="${s.role != null ? s.role : 'STAFF'}">STAFF</span>
 
                             <span class="badge rounded-pill small"
-                                  th:classappend="${u.status} == 'ACTIVE' ? ' bg-success' :
-                                                  (${u.status} == 'LOCKED' ? ' bg-danger' :
-                                                  (${u.status} == 'PENDING' ? ' bg-warning text-dark' : ' bg-secondary'))"
-                                  th:text="${u.status != null ? u.status : 'UNKNOWN'}">STATUS</span>
+                                  th:classappend="${s.status} == 'ACTIVE' ? ' bg-success' :
+                                                  (${s.status} == 'DISABLED' ? ' bg-danger' : ' bg-secondary')"
+                                  th:text="${s.status != null ? s.status : 'UNKNOWN'}">STATUS</span>
                         </div>
 
-                        <div class="user-meta mt-1">
-                            <span class="me-3">
-                                <i class="bi bi-envelope me-1"></i>
-                                <span th:text="${u.email}">email@example.com</span>
-                            </span>
-                            <span class="me-3">
-    <i class="bi bi-cash-coin me-1"></i>
-    Balance:
-    <span th:text="${#numbers.formatDecimal(u.balance, 1, 0)}">0</span>
-</span>
-
+                        <div class="staff-meta mt-1">
                             <span>
                                 <i class="bi bi-clock me-1"></i>
-                                ĐK:
+                                Tạo:
                                 <span th:text="${created != null ? #temporals.format(created, 'yyyy-MM-dd HH:mm') : '—'}">—</span>
                             </span>
                         </div>
@@ -128,8 +112,7 @@
 
                     <div class="row-actions d-flex gap-2">
                         <a class="btn btn-edit btn-sm"
-                           th:href="@{/welcomeAdmin/edituser/{id}(id=${u.id})}" href="#"
-                           target="_self">
+                           th:href="@{/welcomeAdmin/staff/form(id=${s.adminid})}">
                             <i class="bi bi-pencil-square me-1"></i> Edit
                         </a>
                         <button class="btn btn-infox btn-sm btn-toggle" type="button"
@@ -144,55 +127,35 @@
             <div class="collapse collapse-inner" th:id="'c_'+${iStat.index}">
                 <div class="p-3">
                     <div class="row g-3">
-                        <div class="col-md-3">
-                            <div class="label-soft">User ID</div>
-                            <div class="fw-semibold text-white small" th:text="${u.id}">uuid</div>
+                        <div class="col-md-4">
+                            <div class="label-soft">Admin ID</div>
+                            <div class="fw-semibold text-white small" th:text="${s.adminid}">uuid</div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="label-soft">Username</div>
-                            <div class="fw-semibold text-white small" th:text="${u.username}">username</div>
+                            <div class="fw-semibold text-white small" th:text="${s.adminName}">username</div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="label-soft">Email</div>
-                            <div class="fw-semibold text-white small" th:text="${u.email}">email</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="label-soft">Trạng thái</div>
-                            <div class="fw-semibold text-white small" th:text="${u.status}">status</div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="label-soft">Balance</div>
-                            <div class="fw-semibold text-white small"
-                                 th:text="${#numbers.formatDecimal(u.balance, 1, 0)}">0</div>
+                        <div class="col-md-4">
+                            <div class="label-soft">Status</div>
+                            <div class="fw-semibold text-white small" th:text="${s.status}">status</div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="label-soft">Avatar Link</div>
-                            <div class="text-white-50 small text-truncate" th:text="${u.imageLinks}">/img/default-avatar.png</div>
+                            <div class="text-white-50 small text-truncate" th:text="${s.imageLinks}">/img/default-avatar.png</div>
                         </div>
 
                         <div class="col-12">
                             <div class="label-soft">Ngày tạo</div>
                             <div class="text-white-50 small"
-                                 th:text="${u.dateCreateAccount != null ? #temporals.format(u.dateCreateAccount, 'yyyy-MM-dd HH:mm:ss') : '—'}">—</div>
+                                 th:text="${s.dateCreateAcc != null ? #temporals.format(s.dateCreateAcc, 'yyyy-MM-dd HH:mm:ss') : '—'}">—</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-        </div><!-- /user-row -->
-    </div><!-- /#userList -->
-
-    <nav class="mt-4 d-none" id="pagerNav">
-        <ul class="pagination justify-content-center">
-            <li class="page-item disabled"><span class="page-link">Prev</span></li>
-            <li class="page-item active"><span class="page-link">1</span></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-        </ul>
-    </nav>
+        </div><!-- /staff-row -->
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -207,14 +170,13 @@
         const q = normalize(searchInput.value);
         const st = normalize(statusFilter.value);
 
-        const rows = document.querySelectorAll('.user-row');
+        const rows = document.querySelectorAll('.staff-row');
         let visible = 0;
 
         rows.forEach(row => {
             const username = normalize(row.getAttribute('data-username'));
-            const email = normalize(row.getAttribute('data-email'));
             const status = normalize(row.getAttribute('data-status'));
-            const matchesQ = !q || username.includes(q) || email.includes(q);
+            const matchesQ = !q || username.includes(q);
             const matchesStatus = !st || status === st;
             const show = matchesQ && matchesStatus;
             row.style.display = show ? '' : 'none';
@@ -222,7 +184,7 @@
         });
 
         const rc = document.getElementById('resultCount');
-        if (rc) rc.textContent = 'Tổng: ' + visible + ' người dùng';
+        if (rc) rc.textContent = 'Tổng: ' + visible + ' staff';
     }
 
     searchInput.addEventListener('input', applyFilter);

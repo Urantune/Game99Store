@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Lịch sử giao dịch | GameStore</title>
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <!-- Bootstrap Icons + FontAwesome -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 
     <style>
         body {
@@ -58,7 +58,9 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
-        .fw-bold { font-weight: 600 !important; }
+        .fw-bold {
+            font-weight: 600 !important;
+        }
 
         .badge {
             padding: 6px 10px;
@@ -66,11 +68,19 @@
             border-radius: 8px;
         }
 
-        .tab-pane { animation: fadeIn .4s ease; }
+        .tab-pane {
+            animation: fadeIn .4s ease;
+        }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -78,22 +88,31 @@
 
 <div class="container mt-5 mb-5">
     <div class="card p-4 shadow-sm">
-        <h4 class="mb-3"><i class="bi bi-clock-history me-2"></i>Lịch sử giao dịch</h4>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">
+                <i class="bi bi-clock-history me-2"></i>Lịch sử giao dịch
+            </h4>
+            <div class="text-end small" th:if="${user != null}">
+                <div>Tài khoản:</div>
+                <div class="fw-bold" th:text="${user.username}">username</div>
+            </div>
+        </div>
 
         <!-- Tabs -->
         <ul class="nav nav-pills mb-3" id="transactionTabs" role="tablist">
             <li class="nav-item">
-                <button class="nav-link active" id="nap-tab" data-bs-toggle="pill" data-bs-target="#nap" type="button">
+                <button class="nav-link active" id="nap-tab" data-bs-toggle="pill" data-bs-target="#nap" type="button" role="tab">
                     <i class="bi bi-cash-stack me-1"></i> Nạp tiền
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="game-tab" data-bs-toggle="pill" data-bs-target="#game" type="button">
+                <button class="nav-link" id="game-tab" data-bs-toggle="pill" data-bs-target="#game" type="button" role="tab">
                     <i class="bi bi-controller me-1"></i> Mua game
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="other-tab" data-bs-toggle="pill" data-bs-target="#other" type="button">
+                <button class="nav-link" id="other-tab" data-bs-toggle="pill" data-bs-target="#other" type="button" role="tab">
                     <i class="bi bi-receipt-cutoff me-1"></i> Thanh toán khác
                 </button>
             </li>
@@ -103,29 +122,40 @@
         <div class="tab-content">
 
             <!-- Lịch sử nạp -->
-            <div class="tab-pane fade show active" id="nap" role="tabpanel">
+            <div class="tab-pane fade show active" id="nap" role="tabpanel" aria-labelledby="nap-tab">
                 <table class="table table-dark table-hover align-middle">
                     <thead>
                     <tr>
                         <th>#</th>
                         <th>Ngày</th>
                         <th>Số tiền</th>
-                        <th>Phương thức</th>
+                        <th>Hình thức</th>
                         <th>Trạng thái</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="item, iStat : ${topups}">
-                        <td th:text="${iStat.index + 1}"></td>
-                        <td th:text="${#dates.format(item.date, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td class="text-success fw-bold"
-                            th:text="'+' + ${#numbers.formatDecimal(item.amount, 0, 'POINT', 0, 'COMMA')} + '₫'"></td>
-                        <td th:text="${item.method}"></td>
+                        <td th:text="${iStat.index + 1}">1</td>
+
+                        <!-- LocalDateTime -> #temporals -->
+                        <td th:text="${#temporals.format(item.transactionDate, 'dd/MM/yyyy HH:mm')}">20/11/2025 20:00</td>
+
+                        <td th:text="${item.amount > 0
+              ? '+' + #numbers.formatDecimal(item.amount, 0, 'POINT', 0, 'COMMA') + '₫'
+              : #numbers.formatDecimal(item.amount, 0, 'POINT', 0, 'COMMA') + '₫'}"
+                            th:classappend="${item.amount > 0 ? 'text-success fw-bold' : 'text-danger fw-bold'}">
+                        </td>
+
+
+                        <!-- Loại giao dịch / phương thức -->
+                        <td th:text="${item.type}">VNPay</td>
+
+                        <!-- Status: SUCCESS / PENDING / FAILED (ví dụ) -->
                         <td>
-                            <span th:classappend="${item.status == 'Thành công'} ? 'badge bg-success' :
-                                                 (item.status == 'Đang xử lý' ? 'badge bg-warning text-dark' :
-                                                 'badge bg-secondary')"
-                                  th:text="${item.status}"></span>
+                            <span th:classappend="${item.status == 'SUCCESS' ? 'badge bg-success' : (item.status == 'PENDING' ? 'badge bg-warning text-dark' : 'badge bg-secondary')}"
+                                  th:text="${item.status}">
+                                SUCCESS
+                            </span>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(topups)}">
@@ -136,7 +166,7 @@
             </div>
 
             <!-- Lịch sử mua game -->
-            <div class="tab-pane fade" id="game" role="tabpanel">
+            <div class="tab-pane fade" id="game" role="tabpanel" aria-labelledby="game-tab">
                 <table class="table table-dark table-hover align-middle">
                     <thead>
                     <tr>
@@ -149,16 +179,35 @@
                     </thead>
                     <tbody>
                     <tr th:each="item, iStat : ${purchases}">
-                        <td th:text="${iStat.index + 1}"></td>
-                        <td th:text="${item.game.gameName}"></td>
-                        <td th:text="${#temporals.format(item.purchaseDate, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${iStat.index + 1}">1</td>
+
+                        <td th:text="${item.game.gameName}">Game name</td>
+
+                        <!-- UserGame.purchaseDate (LocalDateTime) -->
+                        <td th:text="${#temporals.format(item.purchaseDate, 'dd/MM/yyyy HH:mm')}">20/11/2025 21:00</td>
+
                         <td class="text-danger fw-bold"
-                            th:text="'-' + ${#numbers.formatDecimal(item.game.price, 0, 'POINT', 0, 'COMMA')} + '₫'"></td>
-                        <td>
-                            <span th:classappend="${item.status == 1} ? 'badge bg-success' :
-                                                 (${item.status == 0} ? 'badge bg-warning text-dark' : 'badge bg-secondary')"
-                                  th:text="${item.status == 1 ? 'Hoàn tất' : (item.status == 0 ? 'Đang xử lý' : 'Hủy')}"></span>
+                            th:text="${'-' + #numbers.formatDecimal(item.purchasePrice, 0, 'POINT', 0, 'COMMA') + '₫'}">
+                            -150.000₫
                         </td>
+
+                        <td>
+    <span th:if="${item.status == 'owned'}"
+          class="badge bg-success"
+          th:text="'Hoàn tất'">
+    </span>
+
+                            <span th:if="${item.status == 'wait' or item.status == 'waitPay'}"
+                                  class="badge bg-warning text-dark"
+                                  th:text="'Đang xử lý'">
+    </span>
+
+                            <span th:if="${item.status != 'owned' and item.status != 'wait' and item.status != 'waitPay'}"
+                                  class="badge bg-secondary"
+                                  th:text="'Hủy'">
+    </span>
+                        </td>
+
                     </tr>
                     <tr th:if="${#lists.isEmpty(purchases)}">
                         <td colspan="5" class="text-center text-light">Chưa có giao dịch mua game nào</td>
@@ -167,8 +216,8 @@
                 </table>
             </div>
 
-            <!-- Lịch sử thanh toán khác -->
-            <div class="tab-pane fade" id="other" role="tabpanel">
+            <!-- Lịch sử thanh toán khác / hoàn tiền -->
+            <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
                 <table class="table table-dark table-hover align-middle">
                     <thead>
                     <tr>
@@ -181,15 +230,26 @@
                     </thead>
                     <tbody>
                     <tr th:each="item, iStat : ${refunds}">
-                        <td th:text="${iStat.index + 1}"></td>
-                        <td th:text="${#dates.format(item.date, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td th:text="${item.description}"></td>
-                        <td th:text="${item.amount > 0 ? '+' + #numbers.formatDecimal(item.amount, 0, 'POINT', 0, 'COMMA') + '₫' :
-                                           #numbers.formatDecimal(item.amount, 0, 'POINT', 0, 'COMMA') + '₫'}"
-                            th:classappend="${item.amount > 0 ? 'text-success fw-bold' : 'text-danger fw-bold'}"></td>
+                        <td th:text="${iStat.index + 1}">1</td>
+
+                        <!-- Ngày giao dịch -->
+                        <td th:text="${#temporals.format(item.transactionDate, 'dd/MM/yyyy HH:mm')}">21/11/2025 09:30</td>
+
+                        <!-- Mô tả -->
+                        <td th:text="${item.description}">Hoàn tiền giao dịch #123</td>
+
+                        <!-- Số tiền: >0 là + (xanh), <=0 là - (đỏ) -->
+                        <td th:text="${item.amount > 0 ? '+' + #numbers.formatDecimal(item.amount, 0, 'POINT', 0, 'COMMA') + '₫' : #numbers.formatDecimal(item.amount, 0, 'POINT', 0, 'COMMA') + '₫'}"
+                            th:classappend="${item.amount > 0 ? 'text-success fw-bold' : 'text-danger fw-bold'}">
+                            +50.000₫
+                        </td>
+
+                        <!-- FIXED: dùng 'or' thay vì '||' -->
                         <td>
-                            <span th:classappend="${item.status == 'Đã hoàn'} ? 'badge bg-info text-dark' : 'badge bg-secondary'"
-                                  th:text="${item.status}"></span>
+                            <span th:classappend="${item.status == 'Đã hoàn' or item.status == 'SUCCESS' ? 'badge bg-info text-dark' : 'badge bg-secondary'}"
+                                  th:text="${item.status}">
+                                Đã hoàn
+                            </span>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(refunds)}">

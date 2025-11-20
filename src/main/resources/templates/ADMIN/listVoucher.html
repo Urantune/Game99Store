@@ -8,14 +8,37 @@
     <style>
         :root{--bg-dark:#0f1c2e;--card-bg:#16273f;--text-soft:#b0bec5}
         body{background:var(--bg-dark);}
-        .voucher-row{background:var(--card-bg);border-radius:14px;padding:15px;color:#fff}
+        .voucher-row{background:var(--card-bg);border-radius:14px;padding:15px;color:#fff;transition:all .2s ease-out}
+        .voucher-row.fade-out{opacity:0;transform:translateY(4px) scale(.97)}
         .btn-create{background:linear-gradient(90deg,#22c55e,#16a34a);color:#fff;border:none}
         .search-wrap{background:#122544;padding:12px;border-radius:12px}
         .form-control,.form-select{background:#1b2c45;color:#fff;border:none}
+        .badge-soft{background:rgba(255,255,255,.08);border-radius:999px;padding:4px 10px;font-size:12px}
+        .badge-active{background:rgba(34,197,94,.18);color:#bbf7d0}
+        .badge-expired{background:rgba(248,113,113,.2);color:#fecaca}
+        .badge-coming{background:rgba(56,189,248,.2);color:#bae6fd}
+
+        /* Toast */
+        .toast-alert{
+            position:fixed;
+            top:16px;
+            right:16px;
+            z-index:9999;
+            min-width:260px;
+            animation:toastIn .3s ease-out;
+        }
+        @keyframes toastIn{
+            from{opacity:0;transform:translateY(-10px);}
+            to{opacity:1;transform:translateY(0);}
+        }
     </style>
 </head>
 <body>
 <div class="container py-4">
+
+    <!-- Toast message -->
+    <div th:if="${ok}" class="alert alert-success toast-alert" th:text="${ok}"></div>
+    <div th:if="${error}" class="alert alert-danger toast-alert" th:text="${error}"></div>
 
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h2 class="text-white mb-0">Voucher Manager</h2>
@@ -44,12 +67,38 @@
     <div id="voucherList" class="vstack gap-3">
         <div class="voucher-row"
              th:each="v : ${vouncherList}"
-             th:attr="data-name=${v.name},data-id=${v.voucherId},data-type=${v.type}">
+             th:attr="data-name=${v.name},data-id=${v.voucherid},data-type=${v.type}">
 
             <div class="d-flex justify-content-between">
                 <div>
-                    <h5 th:text="${v.name}"></h5>
-                    <div>
+                    <h5 class="mb-1" th:text="${v.name}"></h5>
+
+                    <span class="badge-soft badge-active"
+                          th:if="${v.date_start != null
+              and now != null
+              and v.date_start.isBefore(now)
+              and v.date_end != null
+              and v.date_end.isAfter(now)}">
+    Đang hiệu lực
+</span>
+
+                    <span class="badge-soft badge-coming"
+                          th:if="${v.date_start != null
+              and now != null
+              and v.date_start.isAfter(now)}">
+    Chưa bắt đầu
+</span>
+
+                    <span class="badge-soft badge-expired"
+                          th:if="${v.date_end != null
+              and now != null
+              and v.date_end.isBefore(now)}">
+    Hết hạn
+</span>
+
+                    </div>
+
+                    <div class="small" style="color:var(--text-soft);">
                         <span th:text="'Loại: ' + ${v.type}"></span><br>
                         <span th:text="'Giảm: ' + ${v.sale}"></span><br>
                         <span th:text="'Start: ' + ${#temporals.format(v.date_start,'yyyy-MM-dd HH:mm')}"></span><br>
@@ -58,16 +107,27 @@
                 </div>
 
                 <div class="text-end">
-                    <div>ID</div>
-                    <div th:text="${v.voucherId}"></div>
+                    <div class="small text-secondary">ID</div>
+                    <div class="small" th:text="${v.voucherid}"></div>
 
-                    <div class="mt-3 d-flex gap-2 justify-content-end">
-                        <a th:href="@{/welcomeAdmin/voucher/form(id=${v.voucherId})}"
+                    <div class="mt-3 d-flex flex-column gap-2 align-items-end">
+                        <!-- Nút xem info -->
+                        <a th:href="@{/welcomeAdmin/voucher/info(id=${v.voucherid})}"
+                           class="btn btn-info btn-sm">
+                            Info
+                        </a>
+
+                        <!-- Sửa -->
+                        <a th:href="@{/welcomeAdmin/voucher/form(id=${v.voucherid})}"
                            class="btn btn-warning btn-sm">sửa</a>
 
-                        <a th:href="@{/welcomeAdmin/voucher/delete(id=${v.voucherId})}"
-                           onclick="return confirm('Xóa voucher này?')"
-                           class="btn btn-danger btn-sm">xóa</a>
+                        <!-- Xóa with effect -->
+                        <a href="#"
+                           class="btn btn-danger btn-sm"
+                           th:attr="data-delete-url=@{/welcomeAdmin/voucher/delete(id=${v.voucherid})}"
+                           onclick="return handleDelete(this)">
+                            xóa
+                        </a>
                     </div>
                 </div>
             </div>
@@ -96,6 +156,24 @@
 
     searchInput.addEventListener('input',applyFilter);
     typeFilter.addEventListener('change',applyFilter);
+
+    // hiệu ứng xóa: fade-out rồi mới redirect
+    function handleDelete(btn){
+        if(!confirm('Xóa voucher này?')) return false;
+        const row = btn.closest('.voucher-row');
+        row.classList.add('fade-out');
+        const url = btn.getAttribute('data-delete-url');
+        setTimeout(()=>{ window.location.href = url; }, 200);
+        return false; // chặn link mặc định
+    }
+
+    // auto hide toast sau 3s
+    window.addEventListener('load',()=>{
+        const toast=document.querySelector('.toast-alert');
+        if(toast){
+            setTimeout(()=>{ toast.style.display='none'; },3000);
+        }
+    });
 </script>
 <script th:src="@{/Accest/JS/code.js}"></script>
 </body>

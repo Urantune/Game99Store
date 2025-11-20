@@ -77,6 +77,11 @@ public class UserTransaction {
         this.statucDetail = statucDetail;
     }
 
+    public LocalDateTime getDate() {
+        return transactionDate;
+    }
+
+
     public void setId(UUID id) {
         this.id = id;
     }

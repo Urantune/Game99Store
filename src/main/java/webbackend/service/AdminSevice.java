@@ -28,4 +28,12 @@ public class AdminSevice {
     }
 
 
+    public List<Admin> findByRole(String role) {
+        return adminRepository.findByRole(role);
+    }
+
+    public void save(Admin admin) {
+        adminRepository.save(admin);
+    }
+
 }

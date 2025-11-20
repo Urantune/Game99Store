@@ -14,4 +14,9 @@ public interface VoucherGameRepository extends JpaRepository<VoucherGame, UUID> 
 
     List<VoucherGame> findByGame(Game game);
 
+    List<VoucherGame> findByVouncher(Vouncher vouncher);
+
+
+    void deleteByVouncher(Vouncher vouncher);
+
 }

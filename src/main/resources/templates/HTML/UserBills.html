@@ -319,13 +319,15 @@
             </div>
 
             <div class="d-flex justify-content-end gap-2 mt-3">
+                <!-- Bill đã được staff duyệt thanh toán -->
                 <a th:if="${group[0].status == 'waitPay'}"
                    th:href="@{/welcome/succestpayment(
-                        billTime=${#temporals.format(group[0].purchaseDate,'yyyy-MM-dd''T''HH:mm:ss')}
-                   )}"
+            billTime=${#temporals.format(group[0].purchaseDate,'yyyy-MM-dd''T''HH:mm:ss')}
+       )}"
                    class="btn btn-pay btn-sm">
                     <i class="bi bi-cash-coin me-1"></i> Pay this bill
                 </a>
+
                 <button th:if="${group[0].status == 'waitPay'}"
                         type="button"
                         class="btn btn-outline-info btn-sm btn-open-qr"
@@ -335,13 +337,7 @@
                     <i class="bi bi-qr-code-scan me-1"></i> Pay with QR
                 </button>
 
-
-                <a th:if="${group[0].status == 'refuse'}"
-                   th:href="@{/welcome/deleteUserGame/{id}(id=${group[0].id})}"
-                   class="btn btn-delete">
-                    <i class="bi bi-trash3 me-1"></i> Delete this bill
-                </a>
-
+                <!-- Bill user đang chờ duyệt, cho phép user tự hủy -->
                 <a th:if="${group[0].status == 'wait'}"
                    th:href="@{/welcome/cancel-bill(
             billTime=${#temporals.format(group[0].purchaseDate,'yyyy-MM-dd''T''HH:mm:ss')}
@@ -350,13 +346,14 @@
                     <i class="bi bi-x-circle me-1"></i> Cancel request
                 </a>
 
-                <!-- Bill đã bị staff từ chối -->
+                <!-- Bill đã bị staff từ chối, cho phép user xóa khỏi danh sách -->
                 <a th:if="${group[0].status == 'refuse'}"
                    th:href="@{/welcome/deleteUserGame/{id}(id=${group[0].id})}"
-                   class="btn btn-delete">
+                   class="btn btn-delete btn-sm">
                     <i class="bi bi-trash3 me-1"></i> Delete this bill
                 </a>
             </div>
+
 
         </div>
     </div>

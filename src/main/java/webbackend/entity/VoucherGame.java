@@ -17,7 +17,7 @@ public class VoucherGame {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voucher_id")
     private Vouncher vouncher;
     @Column(name = "date_received")
