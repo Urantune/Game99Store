@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.MessageDigest;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -103,5 +105,80 @@ public class UserProfileController {
 
         return ResponseEntity.ok(Map.of("success", true, "avatar", "/" + user.getImageLinks()));
     }
+
+    @PostMapping("/profile/{id}/delete")
+    @ResponseBody
+    public ResponseEntity<?> requestDeleteProfile(@PathVariable UUID id,
+                                                  HttpSession session) {
+        User sessionUser = (User) session.getAttribute("user");
+        if (sessionUser == null) {
+            return ResponseEntity.status(401).body(Map.of(
+                    "success", false,
+                    "error", "Bạn chưa đăng nhập"
+            ));
+        }
+
+        if (!sessionUser.getId().equals(id)) {
+            return ResponseEntity.status(403).body(Map.of(
+                    "success", false,
+                    "error", "Không thể xóa tài khoản của người khác"
+            ));
+        }
+
+        User user = userService.findById(id);
+        if (user == null) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "success", false,
+                    "error", "Tài khoản không tồn tại"
+            ));
+        }
+
+        user.setStatus("deleting");
+        user.setExpirationDate(LocalDateTime.now().plusMinutes(2));
+        userService.save(user);
+
+        String input = "deleting" + id;
+        String code;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(input.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) sb.append(String.format("%02x", b));
+            code = sb.toString();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "error", "Lỗi tạo mã xác thực xóa tài khoản"
+            ));
+        }
+
+        String link = "http://localhost:8080/veryAccount/doneDelete/" + id + "/" + code;
+        String subject = "Xác nhận xoá tài khoản – GameStore";
+        String content =
+                "<p>Bạn đã yêu cầu xoá tài khoản GameStore.</p>" +
+                        "<p>Nhấn vào link dưới đây để xác nhận (hạn sử dụng 2 phút):</p>" +
+                        "<p><a href=\"" + link + "\">Xác nhận xoá tài khoản</a></p>" +
+                        "<p>Nếu không phải bạn thực hiện, hãy bỏ qua email này.</p>";
+
+        try {
+            sendMailTest.testSend(user.getEmail(), subject, content);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "error", "Gửi email xác nhận thất bại, thử lại sau"
+            ));
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Đã gửi email xác nhận xoá tài khoản. Vui lòng kiểm tra hộp thư.",
+                "redirectUrl", "/logout"
+        ));
+    }
+
+
+
+
+
 
 }

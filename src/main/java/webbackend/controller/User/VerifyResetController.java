@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.MessageDigest;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -46,28 +48,95 @@ public class VerifyResetController {
 
     @PostMapping("/verify-reset")
     @ResponseBody
-    public ResponseEntity<?> verifyEmailForReset(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<?> verifyEmailForReset(
+            @RequestParam("id") UUID id,
+            @RequestParam("email") String email
+    ) {
         try {
-            String idStr = payload.get("id");
-            String email = payload.get("email");
 
-            if (idStr == null || email == null || email.isBlank()) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Thiếu tham số id/email"));
+            if (email == null || email.isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "error", "Email không được để trống"
+                ));
             }
 
-            UUID id = UUID.fromString(idStr);
+
             User user = userService.findById(id);
             if (user == null) {
-                return ResponseEntity.status(404).body(Map.of("error", "Không tìm thấy người dùng"));
+                return ResponseEntity.status(404).body(Map.of(
+                        "success", false,
+                        "error", "Không tìm thấy người dùng"
+                ));
             }
 
-            if (!user.getEmail().equalsIgnoreCase(email)) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Email không trùng với email tài khoản"));
+
+            if (!user.getEmail().equalsIgnoreCase(email.trim())) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "error", "Email không trùng với email tài khoản"
+                ));
             }
 
-            return ResponseEntity.ok(Map.of("message", "Xác thực email thành công"));
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Yêu cầu không hợp lệ"));
+
+            String input = "wait" + id;
+            String code;
+            try {
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                byte[] digest = md.digest(input.getBytes());
+                StringBuilder sb = new StringBuilder();
+                for (byte b : digest) {
+                    sb.append(String.format("%02x", b));
+                }
+                code = sb.toString();
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "error", "Lỗi tạo mã xác thực reset mật khẩu"
+                ));
+            }
+
+
+            user.setStatus("changePass");
+            user.setExpirationDate(LocalDateTime.now().plusMinutes(2));
+            userService.save(user);
+
+
+            String resetLink = "http://localhost:8080/veryAccount/donePass/"
+                    + id.toString() + "/" + code;
+
+
+            String subject = "GameStore - Đổi mật khẩu tài khoản";
+            String body = "Xin chào " + user.getUsername() + ",\n\n"
+                    + "Bạn vừa yêu cầu đổi mật khẩu cho tài khoản GameStore.\n"
+                    + "Vui lòng nhấn vào link bên dưới để tiếp tục đổi mật khẩu (hạn sử dụng 2 phút):\n\n"
+                    + resetLink + "\n\n"
+                    + "Nếu bạn không yêu cầu, hãy bỏ qua email này.\n\n"
+                    + "Trân trọng,\nGameStore Team";
+
+            try {
+
+                sendMailTest.testSend(email.trim(), subject, body);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "error", "Xác thực OK nhưng gửi email thất bại. Thử lại sau."
+                ));
+            }
+
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Xác thực email thành công. Vui lòng kiểm tra hộp thư để đổi mật khẩu."
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "error", "Lỗi xử lý yêu cầu reset mật khẩu"
+            ));
         }
     }
+
+
 }

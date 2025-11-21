@@ -11,11 +11,38 @@
     <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <style>
-        body{background:#0b1220;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center}
-        .card-box{width:460px;background:rgba(255,255,255,.06);padding:28px;border-radius:18px;backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12)}
-        .form-control{background:#152337;border:none;color:#fff}
-        .form-control:focus{background:#1b324d;border:1px solid #4da3ff;color:#fff;box-shadow:none}
-        .btn-primary{background:#4da3ff;border:none;font-weight:600}
+        body{
+            background:#0b1220;
+            color:#fff;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center
+        }
+        .card-box{
+            width:460px;
+            background:rgba(255,255,255,.06);
+            padding:28px;
+            border-radius:18px;
+            backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,.12)
+        }
+        .form-control{
+            background:#152337;
+            border:none;
+            color:#fff
+        }
+        .form-control:focus{
+            background:#1b324d;
+            border:1px solid #4da3ff;
+            color:#fff;
+            box-shadow:none
+        }
+        .btn-primary{
+            background:#4da3ff;
+            border:none;
+            font-weight:600
+        }
         .btn-primary:hover{background:#63b1ff}
         .muted{color:#9bb4d1}
     </style>
@@ -23,8 +50,15 @@
 <body>
 
 <div class="card-box">
-    <h3 class="mb-2 text-center">Xác nhận email để đổi mật khẩu</h3>
-    <p class="text-center muted mb-4">Vui lòng nhập lại email trùng với email tài khoản để tiếp tục.</p>
+    <!-- dùng title từ backend nếu có, fallback text cứng -->
+    <h3 class="mb-2 text-center"
+        th:text="${title} ?: 'Xác nhận email để đổi mật khẩu'">
+        Xác nhận email để đổi mật khẩu
+    </h3>
+
+    <p class="text-center muted mb-4">
+        Vui lòng nhập lại email trùng với email tài khoản để tiếp tục.
+    </p>
 
     <!-- Thông tin lấy từ server -->
     <div class="mb-3">
@@ -32,28 +66,44 @@
             <span class="muted">Tài khoản</span>
             <strong th:text="${user.username}">username</strong>
         </div>
-
     </div>
 
-    <!-- Giữ userId & email server trong data-attr để dùng JS -->
-    <div id="serverData"
-         th:data-user-id="${user.id}"
-         th:data-user-email="${user.email}"></div>
+    <!-- Giữ userId để gửi cho backend -->
+    <input type="hidden" id="userId" th:value="${user.id}"/>
 
     <form id="confirmEmailForm" novalidate>
         <label class="form-label">Nhập email của bạn</label>
-        <input type="email" id="emailInput" class="form-control" placeholder="nhập lại email của bạn" required>
+        <input type="email"
+               id="emailInput"
+               class="form-control"
+               placeholder="nhập lại email của bạn"
+               required>
         <div class="invalid-feedback">Email không hợp lệ.</div>
 
-        <button class="btn btn-primary w-100 mt-3" type="submit" id="submitBtn">
-            Xác nhận & tiếp tục
+        <button class="btn btn-primary w-100 mt-3"
+                type="submit"
+                id="submitBtn">
+            Xác nhận &amp; tiếp tục
         </button>
 
         <div id="msgBox" class="form-text mt-3"></div>
 
         <div class="text-center mt-3">
-            <a th:href="@{/welcome/profile/{id}(id=${user.id})}" class="text-decoration-none muted">← Quay lại hồ sơ</a>
+            <!-- nếu đang flow reset mật khẩu -->
+            <a th:if="${status == 'resetpassword'}"
+               th:href="@{/welcome/profile/{id}(id=${user.id})}"
+               class="text-decoration-none muted">
+                ← Quay lại hồ sơ
+            </a>
+
+            <!-- còn lại (ví dụ flow xóa tài khoản) -->
+            <a th:unless="${status == 'resetpassword'}"
+               th:href="@{/welcome/deleteprofile}"
+               class="text-decoration-none muted">
+                ← Quay lại hồ sơ
+            </a>
         </div>
+
     </form>
 </div>
 
@@ -62,12 +112,12 @@
     const emailInput = document.getElementById('emailInput');
     const msgBox = document.getElementById('msgBox');
     const submitBtn = document.getElementById('submitBtn');
-    const serverData = document.getElementById('serverData');
-    const userId = serverData.dataset.userId;
-    const serverEmail = serverData.dataset.userEmail;
+    const userId = document.getElementById('userId').value;
 
-    // bạn muốn chỉ cần có @ là hợp lệ:
-    function isValidEmailLoose(v){ return /^[^@\s]+@[^@\s]+$/.test(v); }
+    // chỉ cần có @ là hợp lệ (như bạn muốn)
+    function isValidEmailLoose(v){
+        return /^[^@\s]+@[^@\s]+$/.test(v);
+    }
 
     function showMsg(t, ok=false){
         msgBox.style.color = ok ? '#6aff8a' : '#ff6b6b';
@@ -95,43 +145,44 @@
 
         submitBtn.disabled = true;
 
-        // (1) Check nhanh trên client (so sánh với email server đã render)
-        if (inputEmail.toLowerCase() !== serverEmail.toLowerCase()){
-            showMsg('❌ Email không trùng với email tài khoản.');
-            submitBtn.disabled = false;
-            return;
-        }
-
-        // (2) Gọi API xác thực server (an toàn hơn)
         try{
             const csrf = getCsrf();
-            const headers = {"Content-Type":"application/json"};
-            if(csrf.token && csrf.header) headers[csrf.header] = csrf.token;
+            const headers = {
+                "Content-Type": "application/x-www-form-urlencoded"
+            };
+            if (csrf.token && csrf.header){
+                headers[csrf.header] = csrf.token;
+            }
 
-            const res = await fetch('/welcome/verify-reset', {
-                method: 'POST',
+            const body = new URLSearchParams();
+            body.append("id", userId);
+            body.append("email", inputEmail);
+
+            const res = await fetch("/welcome/verify-reset", {
+                method: "POST",
                 headers,
-                body: JSON.stringify({ id: userId, email: inputEmail })
+                body
             });
 
             const data = await res.json().catch(()=> ({}));
 
-            if (res.ok){
-                showMsg(data.message || '✅ Xác thực thành công!', true);
-
-                setTimeout(()=>{
-                    window.location.href = `/welcome/changepass?email=${encodeURIComponent(inputEmail)}`;
-                }, 500);
+            if (res.ok && data.success){
+                // backend đã verify + gửi email
+                showMsg(data.message || "✅ Đã gửi email đổi mật khẩu. Vui lòng kiểm tra hộp thư.", true);
+                // nếu muốn redirect thẳng sau khi mail gửi:
+                // setTimeout(()=> window.location.href = data.redirectUrl, 800);
             } else {
-                showMsg(data.error || '❌ Email không khớp. Vui lòng thử lại.');
+                showMsg(data.error || "❌ Email không khớp. Vui lòng thử lại.", false);
             }
+
         } catch(err){
-            showMsg('❌ Lỗi mạng, vui lòng thử lại.');
+            showMsg("❌ Lỗi mạng, vui lòng thử lại.", false);
         } finally {
             submitBtn.disabled = false;
         }
     });
 </script>
+
 <script th:src="@{/Accest/JS/code.js}"></script>
 </body>
 </html>

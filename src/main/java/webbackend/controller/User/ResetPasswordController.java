@@ -49,6 +49,8 @@ public class ResetPasswordController {
     public String editProfile(Model model, @PathVariable(value = "id") UUID id, HttpSession session) {
         if (session.getAttribute("user") == null) return "redirect:/welcome/about";
         User user = userService.getUserById(id);
+        model.addAttribute("status","resetpassword");
+        model.addAttribute("title","Xác nhận email để đổi mật khẩu");
         model.addAttribute("user", user);
         return "HTML/EditProfile";
     }

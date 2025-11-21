@@ -1,6 +1,6 @@
 package webbackend.controller.User;
 
-
+import jakarta.servlet.http.HttpSession;
 import webbackend.entity.User;
 import webbackend.entity.UserGame;
 import webbackend.service.*;
@@ -16,7 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.security.MessageDigest;
-
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,8 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Controller
 @RequestMapping("/veryAccount")
 public class VerryController {
-
-
 
     @Autowired
     private UserService userService;
@@ -38,103 +37,112 @@ public class VerryController {
 
     private static final Map<String, Boolean> PAY_STATE = new ConcurrentHashMap<>();
 
-
-
     @GetMapping("/done/{id}/{code}")
-    public String veryAccount(@PathVariable UUID id, @PathVariable String code, Model model)
-    {
+    public String veryAccount(@PathVariable UUID id, @PathVariable String code, Model model) {
 
-        String input = "wait"+ id;
+        String input = "wait" + id;
         String fi;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digest = md.digest(input.getBytes());
-
             StringBuilder sb = new StringBuilder();
             for (byte b : digest) {
                 sb.append(String.format("%02x", b));
             }
-            fi= sb.toString();
+            fi = sb.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        System.out.println(fi);
-
         User user = userService.findById(id);
-
-        String[] w = user.getStatus().split("\\|\\|");
-        if(w[0].equalsIgnoreCase("wait"))
-        {
-            if(user.getId().toString().equalsIgnoreCase(id.toString()))
-            {
-                if(code.equalsIgnoreCase(fi)){
-                    model.addAttribute("user",user);
-                    model.addAttribute("idUser",id);
-                    model.addAttribute("codeUser",fi);
-                    return "HTML/VeryFileSend";
-                }
-            }
-        }
+        if (user == null) {
+            System.out.println("OK");
             return "HTML/About";
-    }
-    @PostMapping("/done/{id}/{code}")
-    public String doneAccount(@PathVariable(value = "id")UUID id, @PathVariable(value = "code")String code,Model model)
-    {
-        User user=userService.findById(id);
-        user.setStatus("active");
-        userService.save(user);
+        }
 
+        if (!"wait".equalsIgnoreCase(user.getStatus())) {
+            System.out.println("OK1");
+            return "HTML/About";
+        }
+
+        if (user.getExpirationDate() == null ||
+                user.getExpirationDate().isBefore(LocalDateTime.now())) {
+            model.addAttribute("error", "Link kích hoạt tài khoản đã hết hạn. Vui lòng đăng ký lại.");
+            System.out.println("OK2");
+            return "HTML/About";
+        }
+
+        if (!code.equalsIgnoreCase(fi)) {
+            System.out.println("OK3");
+            return "HTML/About";
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("idUser", id);
+        model.addAttribute("codeUser", fi);
+        return "HTML/VeryFileSend";
+    }
+
+    @PostMapping("/done/{id}/{code}")
+    public String doneAccount(@PathVariable UUID id,
+                              @PathVariable String code,
+                              Model model) {
+        User user = userService.findById(id);
+        if (user == null) {
+            return "HTML/About";
+        }
+        user.setStatus("active");
+        user.setExpirationDate(null);
+        userService.save(user);
         return "HTML/About";
     }
-
-
-
-
-
-
-
-
-
 
     @GetMapping("/donePass/{id}/{code}")
-    public String veryPassAccount(@PathVariable UUID id, @PathVariable String code, Model model)
-    {
+    public String veryPassAccount(@PathVariable UUID id,
+                                  @PathVariable String code,
+                                  Model model) {
 
-        String input = "wait"+ id;
+        String input = "wait" + id;
         String fi;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digest = md.digest(input.getBytes());
-
             StringBuilder sb = new StringBuilder();
             for (byte b : digest) {
                 sb.append(String.format("%02x", b));
             }
-            fi= sb.toString();
+            fi = sb.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        System.out.println(fi);
-
         User user = userService.findById(id);
-        String[] w = user.getStatus().split("\\|\\|");
-        if(w[0].equalsIgnoreCase("changePass"))
-        {
-            if(user.getId().toString().equalsIgnoreCase(id.toString()))
-            {
-                if(code.equalsIgnoreCase(fi)){
-                    model.addAttribute("user",user);
-                    model.addAttribute("idUser",id);
-                    model.addAttribute("codeUser",fi);
-                    return "HTML/ForgotPasword";
-                }
-            }
+        if (user == null) {
+            return "HTML/About";
         }
-        return "HTML/About";
-    }
 
+        if (!"changePass".equalsIgnoreCase(user.getStatus())) {
+            return "HTML/About";
+        }
+
+        if (user.getExpirationDate() == null ||
+                user.getExpirationDate().isBefore(LocalDateTime.now())) {
+            user.setStatus("active");
+            user.setExpirationDate(null);
+            userService.save(user);
+            model.addAttribute("error", "Link đổi mật khẩu đã hết hạn. Vui lòng yêu cầu lại.");
+            return "HTML/About";
+        }
+
+        if (!code.equalsIgnoreCase(fi)) {
+            return "HTML/About";
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("idUser", id);
+        model.addAttribute("codeUser", fi);
+        return "HTML/ForgotPasword";
+    }
 
     @PostMapping("/donePass")
     public String donePassAccount(@RequestParam UUID id,
@@ -153,23 +161,19 @@ public class VerryController {
         }
 
         User user = userService.findById(id);
-
         if (user == null) {
             ra.addFlashAttribute("error", "Tài khoản không tồn tại");
             return "redirect:/welcome";
         }
 
-
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setStatus("active");
-
+        user.setExpirationDate(null);
         userService.save(user);
 
         ra.addFlashAttribute("success", "Đổi mật khẩu thành công");
         return "redirect:/welcome";
     }
-
-
 
     @PostMapping("/checkaccount")
     @ResponseBody
@@ -181,17 +185,12 @@ public class VerryController {
                 && "active".equalsIgnoreCase(u.getStatus())
                 && passwordEncoder.matches(password, u.getPassword())) {
             UserGame userGame = userGameService.findByGameAndUser(gameSevice.findGameById(gameUuid), u);
-
-            if(userGame != null&&userGame.getStatus().equalsIgnoreCase("owned")){
+            if (userGame != null && userGame.getStatus().equalsIgnoreCase("owned")) {
                 return "OK";
             }
-
-
         }
         return "FAIL";
     }
-
-
 
     @RestController
     @RequestMapping("/qr")
@@ -204,7 +203,6 @@ public class VerryController {
             this.qrService = new QrService();
         }
 
-
         @GetMapping(produces = MediaType.IMAGE_PNG_VALUE)
         public @ResponseBody byte[] qr(
                 @RequestParam String idpayment,
@@ -213,7 +211,6 @@ public class VerryController {
             int s = Math.max(64, Math.min(size, 1024));
             return qrService.generatePng(idpayment, s);
         }
-
 
         @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
         public void download(
@@ -227,23 +224,14 @@ public class VerryController {
         }
     }
 
-
-
-
-
-
-
     @GetMapping("/test")
     public String test() {
         return "HTML/TestVery";
     }
 
-
-
-    // (tuỳ chọn) trang success
     @GetMapping("/success")
     public String success() {
-        return "HTML/Success"; // file bạn đã đưa
+        return "HTML/Success";
     }
 
     @CrossOrigin(origins = "*")
@@ -254,8 +242,6 @@ public class VerryController {
         return Map.of("status", "ok");
     }
 
-
-    // Desktop poll -> hỏi theo pid
     @CrossOrigin(origins = "*")
     @GetMapping("/pay/status")
     @ResponseBody
@@ -264,13 +250,88 @@ public class VerryController {
         return Map.of("paid", paid);
     }
 
-    // Reset trước khi bắt đầu 1 lần quét mới (tránh dính trạng thái cũ)
     @CrossOrigin(origins = "*")
     @GetMapping("/pay/reset")
     @ResponseBody
     public Map<String, Object> reset(@RequestParam String pid) {
         PAY_STATE.remove(pid);
         return Map.of("status", "reset");
+    }
+
+
+    @GetMapping("/doneDelete/{id}/{code}")
+    public String veryDeleteAccount(@PathVariable UUID id,
+                                    @PathVariable String code,
+                                    Model model) {
+
+        String input = "deleting" + id;
+        String fi;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(input.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) sb.append(String.format("%02x", b));
+            fi = sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        User user = userService.findById(id);
+        System.out.println("OK");
+        if (user == null) return "HTML/About";
+
+        if (!"deleting".equalsIgnoreCase(user.getStatus())) {
+            System.out.println("OK2");
+            return "HTML/About";
+        }
+
+        if (user.getExpirationDate() == null ||
+                user.getExpirationDate().isBefore(LocalDateTime.now())) {
+
+            user.setStatus("active");
+            user.setExpirationDate(null);
+            userService.save(user);
+            System.out.println("OK4");
+            model.addAttribute("error", "Link xoá tài khoản đã hết hạn.");
+            return "HTML/About";
+        }
+
+        if (!code.equalsIgnoreCase(fi)) {
+            System.out.println("OK3");
+            return "HTML/About";}
+
+        model.addAttribute("user", user);
+        model.addAttribute("idUser", id);
+        model.addAttribute("codeUser", fi);
+        return "HTML/DeleteProfile";
+    }
+
+
+    @PostMapping("/doneDelete")
+    public String doneDeleteAccount(
+            @RequestParam UUID id,
+            @RequestParam String code,
+            RedirectAttributes ra,
+            HttpSession session) {
+
+        User user = userService.findById(id);
+        if (user == null) return "redirect:/welcome";
+
+        user.setStatus("deleted");
+        user.setExpirationDate(null);
+
+        String deletedUsername = user.getUsername() + "(deleted)";
+        user.setUsername(deletedUsername);
+        user.setEmail(String.format("deleted+%s@gamestore.local", user.getId()));
+
+
+
+
+        userService.save(user);
+
+
+        ra.addFlashAttribute("success", "Tài khoản đã được xoá vĩnh viễn.");
+        return "redirect:/logout";
     }
 
 }

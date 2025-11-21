@@ -4,6 +4,11 @@
     <meta charset="UTF-8"/>
     <title>Profile User</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- CSRF -->
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/Accest/css/ProfileUser.css}">
     <style>
@@ -15,13 +20,11 @@
 <div class="container">
     <div class="card bg-dark text-light p-3 rounded-3 shadow" style="flex:1;">
         <div class="avatar text-center">
-            <!-- DEFAULT 5000.jpg nếu user.imageLinks null/rỗng -->
             <img th:src="${user.imageLinks != null && user.imageLinks != '' ? '/' + user.imageLinks : '/img/5000.jpg'}"
                  alt="Avatar" id="currentAvatar" class="rounded-circle"
                  style="width:120px;height:120px;object-fit:cover;border:2px solid #666;cursor:pointer;">
         </div>
 
-        <!-- cần hidden id để JS gọi API -->
         <input type="hidden" id="userIdHidden" th:value="${user.id}"/>
 
         <div class="d-flex align-items-center justify-content-center mt-2">
@@ -48,10 +51,6 @@
 
         <div class="info mt-3">
             <p>Email: <span id="emailMasked" th:text="${user.email}"></span></p>
-<!--            <p>-->
-<!--                Số điện thoại: <span id="phoneDisplay">&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;</span>-->
-<!--                <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editPhoneModal">⚙️</button>-->
-<!--            </p>-->
             <p>
                 Quốc gia: <span id="countryDisplay">----------</span>
                 <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#editCountryModal">⚙️</button>
@@ -68,12 +67,10 @@
                  th:with="img=${gameCore.imageLinkGame(a)}">
 
                 <div style="width:140px; height:84px; overflow:hidden;">
-                    <!-- Có ảnh chính thì dùng -->
                     <img th:if="${img != null and img.mainImage != null}"
                          th:src="${'/' + img.mainImage}"
                          style="width:100%; height:100%; object-fit:cover;">
 
-                    <!-- Không có thì fallback -->
                     <img th:if="${img == null or img.mainImage == null}"
                          th:src="@{/img/notfound.png}"
                          style="width:100%; height:100%; object-fit:cover;">
@@ -82,7 +79,6 @@
                 <p th:text="${a.gameName}">CS:GO</p>
             </div>
         </div>
-
 
         <h2 style="margin-top:20px;">🏆 Thành tích</h2>
         <div class="achievements">
@@ -115,11 +111,11 @@
                 <button id="btnChangePassword">Đổi mật khẩu</button>
             </a>
             <button id="btnToggle2FA">Bật/Tắt 2FA</button>
+            <button id="btnDeleteAccount" class="btn btn-danger mt-2">Xóa tài khoản</button>
         </div>
     </div>
 </div>
 
-<!-- các modal phone/country giữ nguyên như bạn -->
 <div class="modal fade" id="editPhoneModal" tabindex="-1">
     <div class="modal-dialog"><div class="modal-content">
         <div class="modal-header"><h5 class="modal-title">Nhập số điện thoại</h5>
@@ -148,6 +144,26 @@
     </div></div>
 </div>
 
+<!-- MODAL XÓA USER -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Xóa tài khoản</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn chắc chắn muốn xóa tài khoản này không?</p>
+                <p class="text-warning mb-0">Hành động này không thể hoàn tác.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteUserBtn">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="pinPopup" class="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);justify-content:center;align-items:center;">
     <div style="background:radial-gradient(circle at top,#19002b 0%,#0a0a0a 100%);padding:30px;border-radius:10px;width:350px;text-align:center;">
         <h5 style="color:#ffcd39;">Ví GamePay</h5>
@@ -163,7 +179,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // === CHỈ 6 AVATAR CỐ ĐỊNH ===
     const DEFAULT_AVATARS = [
         '/img/a.png',
         '/img/NataliKhang.jpg',
@@ -178,12 +193,17 @@
         email: 'gs_profile_email',
         phone: 'gs_profile_phone',
         country: 'gs_profile_country',
-        // ⚠️ KHÔNG dùng localStorage cho avatar nữa
         walletPin: 'gs_wallet_pin',
         walletActive: 'gs_wallet_active'
     };
 
     const $ = (sel) => document.querySelector(sel);
+
+    function getCsrf(){
+        const token  = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+        return { token, header };
+    }
 
     function maskEmail(email) {
         if (!email || !email.includes('@')) return email || '';
@@ -198,7 +218,6 @@
         t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 3000);
     }
 
-    // Render options khi mở modal (lấy current từ img hiện tại)
     function renderAvatarOptions(currentSrc) {
         const wrap = document.getElementById('avatarOptions');
         wrap.innerHTML = '';
@@ -220,7 +239,6 @@
         });
     }
 
-    // KHỞI TẠO: không đụng avatar (đã render server). Chỉ name/phone/country demo bằng localStorage
     function initProfile(){
         const name = localStorage.getItem(STORAGE_KEYS.name) || $('#displayName')?.innerText || '';
         const email = localStorage.getItem(STORAGE_KEYS.email) || $('#emailMasked')?.innerText || '';
@@ -228,11 +246,12 @@
         const country = localStorage.getItem(STORAGE_KEYS.country) || '';
         if (name) $('#displayName').innerText = name;
         if (email) $('#emailMasked').innerText = maskEmail(email);
-        $('#phoneDisplay').innerText = phone || '----------';
-        $('#countryDisplay').innerText = country || '----------';
+        if (document.getElementById('phoneDisplay')) {
+            document.getElementById('phoneDisplay').innerText = phone || '----------';
+        }
+        document.getElementById('countryDisplay').innerText = country || '----------';
     }
 
-    // mở modal chọn avatar
     document.getElementById('currentAvatar').addEventListener('click', ()=>{
         const modalEl = document.getElementById('avatarModal');
         const avatarModal = new bootstrap.Modal(modalEl);
@@ -241,14 +260,13 @@
         avatarModal.show();
     });
 
-    // submit cập nhật avatar -> POST server, lưu DB
     document.getElementById('avatarForm').addEventListener('submit', async (e)=>{
         e.preventDefault();
         const chosen = document.querySelector('input[name="avatar"]:checked');
         if (!chosen) return;
 
         const userId = document.getElementById('userIdHidden').value;
-        const avatarPath = chosen.value; // dạng /img/xxx.jpg
+        const avatarPath = chosen.value;
 
         try{
             const fd = new FormData();
@@ -259,7 +277,6 @@
                 showToast(data.error || 'Cập nhật avatar thất bại', true);
                 return;
             }
-            // cập nhật UI theo server trả về
             document.getElementById('currentAvatar').src = data.avatar;
             showToast('✅ Cập nhật avatar thành công!', false);
             bootstrap.Modal.getInstance(document.getElementById('avatarModal')).hide();
@@ -268,11 +285,10 @@
         }
     });
 
-    // phần ví/2FA/phone/country giữ như cũ (demo bằng localStorage)
     function isWalletActivated(){ return localStorage.getItem(STORAGE_KEYS.walletActive) === 'true'; }
     function updateWalletUI(){ document.getElementById('walletStatus').textContent = isWalletActivated() ? 'Đã kích hoạt' : 'Chưa kích hoạt'; }
 
-    document.getElementById('savePhoneBtn').addEventListener('click', ()=>{
+    document.getElementById('savePhoneBtn')?.addEventListener('click', ()=>{
         const v = document.getElementById('newPhone').value.trim();
         if (v){ localStorage.setItem(STORAGE_KEYS.phone, v); document.getElementById('phoneDisplay').innerText = v; showToast('✅ Lưu số điện thoại!', false); }
     });
@@ -285,8 +301,19 @@
         initProfile();
         updateWalletUI();
         const walletCard = document.getElementById('walletCard');
-        const activateModal = new bootstrap.Modal(document.getElementById('activateWalletModal'));
-        walletCard.addEventListener('click', ()=>{ isWalletActivated() ? openPinPopup() : activateModal.show(); });
+        const activateModalEl = document.getElementById('activateWalletModal');
+        let activateModal = null;
+        if (activateModalEl) {
+            activateModal = new bootstrap.Modal(activateModalEl);
+        }
+
+        walletCard.addEventListener('click', ()=>{
+            if (isWalletActivated()) {
+                openPinPopup();
+            } else if (activateModal) {
+                activateModal.show();
+            }
+        });
 
         document.getElementById('activateWalletForm')?.addEventListener('submit', (e)=>{
             e.preventDefault();
@@ -294,11 +321,48 @@
             if(!/^\d{4}$/.test(pin)){ showToast('⚠️ Mật khẩu phải gồm đúng 4 chữ số!', true); return; }
             localStorage.setItem(STORAGE_KEYS.walletPin, pin);
             localStorage.setItem(STORAGE_KEYS.walletActive, 'true');
-            updateWalletUI(); activateModal.hide(); showToast('✅ Ví GamePay đã được kích hoạt!', false);
+            updateWalletUI();
+            if (activateModal) activateModal.hide();
+            showToast('✅ Ví GamePay đã được kích hoạt!', false);
         });
 
         document.getElementById('verifyPinBtn').addEventListener('click', verifyPin);
         document.getElementById('closePinBtn').addEventListener('click', closePinPopup);
+
+        const deleteBtn = document.getElementById('btnDeleteAccount');
+        const deleteModalEl = document.getElementById('deleteUserModal');
+        const deleteModal = new bootstrap.Modal(deleteModalEl);
+        const confirmDeleteBtn = document.getElementById('confirmDeleteUserBtn');
+
+        deleteBtn.addEventListener('click', ()=>{
+            deleteModal.show();
+        });
+
+        confirmDeleteBtn.addEventListener('click', async ()=>{
+            const userId = document.getElementById('userIdHidden').value;
+            try {
+                const csrf = getCsrf();
+                const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+                if (csrf.token && csrf.header) {
+                    headers[csrf.header] = csrf.token;
+                }
+
+                const res = await fetch(`/welcome/profile/${userId}/delete`, {
+                    method: 'POST',
+                    headers
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast('✅ Đã gửi email xác nhận xoá tài khoản. Vui lòng kiểm tra hộp thư!', false);
+                    deleteModal.hide();
+                    window.location.href = data.redirectUrl || '/welcome';
+                } else {
+                    showToast(data.error || 'Xóa tài khoản thất bại!', true);
+                }
+            } catch (e) {
+                showToast('Lỗi mạng khi xóa tài khoản!', true);
+            }
+        });
     });
 
     function openPinPopup(){ document.getElementById('pinPopup').style.display='flex'; document.getElementById('walletPin').value=''; document.getElementById('pinError').textContent=''; }

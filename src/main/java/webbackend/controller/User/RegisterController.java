@@ -15,7 +15,6 @@ import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.*;
 
-
 @Controller
 @RequestMapping("/welcome")
 public class RegisterController {
@@ -49,12 +48,9 @@ public class RegisterController {
     @ResponseBody
     public Map<String, Object> registerAjax(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
-        String username = user
-                .getUsername();
-        String email = user
-                .getEmail();
-        String rawPassword = user
-                .getPassword();
+        String username = user.getUsername();
+        String email = user.getEmail();
+        String rawPassword = user.getPassword();
 
         if (username == null || username.trim().isEmpty()) {
             response.put("status", "error");
@@ -83,7 +79,6 @@ public class RegisterController {
             response.put("message", "Tên tài khoản phải có độ dài từ 3 đến 20 ký tự");
             return response;
         }
-
         if (userRepository.existsByUsername(username)) {
             response.put("status", "error");
             response.put("message", "Tên tài khoản đã tồn tại");
@@ -104,50 +99,36 @@ public class RegisterController {
             response.put("message", "Mật khẩu phải từ 8 kí tự");
             return response;
         }
-
-        if(rawPassword.contains("<script")){
+        if (rawPassword.contains("<script")) {
             response.put("status", "error");
             response.put("message", ";)");
             return response;
         }
 
-
-        LocalDateTime timeEnd = LocalDateTime.now().plusMinutes(1);
-
-        int day   = timeEnd.getDayOfMonth();
-        int hour  = timeEnd.getHour();
-        int minute = timeEnd.getMinute();
-        int second = timeEnd.getSecond();
-
-        String statuss = "wait||" + day + "||" + hour + "||" + minute + "||" + second;
-
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(rawPassword));
-        user.setStatus(statuss);
+        user.setStatus("wait");
         user.setDateCreateAccount(LocalDateTime.now());
+        user.setExpirationDate(LocalDateTime.now().plusMinutes(2));
         userRepository.save(user);
 
         String input = "wait" + user.getId();
         String fi;
         try {
-            MessageDigest md = MessageDigest
-                    .getInstance("MD5");
-            byte[] digest = md
-                    .digest(input.getBytes());
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(input.getBytes());
             StringBuilder sb = new StringBuilder();
-            for (byte b : digest) sb
-                    .append(String.format("%02x", b));
-            fi = sb
-                    .toString();
+            for (byte b : digest) sb.append(String.format("%02x", b));
+            fi = sb.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         String title = "Xác nhận tài khoản của bạn";
-        String link = "localhost:8080/veryAccount/done/" + user.getId() + "/" + fi;
+        String link = "http://localhost:8080/veryAccount/done/" + user.getId() + "/" + fi;
         String content =
-                "<p>Hãy nhấp vào liên kết dưới đây để kích hoạt tài khoản của bạn:</p>"
+                "<p>Hãy nhấp vào liên kết dưới đây để kích hoạt tài khoản của bạn (hạn 2 phút):</p>"
                         + "<p><a href=\"" + link + "\">Nhấn vào đây để kích hoạt</a></p>"
                         + "<p>Nếu không bấm được, copy link sau dán vào trình duyệt:<br>" + link + "</p>";
         sendMailTest.testSend(user.getEmail(), title, content);
@@ -156,6 +137,4 @@ public class RegisterController {
         response.put("message", "Đăng ký thành công! Một đường link xác thực tài khoản đã được gửi vào email của bạn.");
         return response;
     }
-
-
 }
