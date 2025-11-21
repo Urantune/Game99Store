@@ -11,7 +11,8 @@ public class VoucherUser {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
+    @Column(name = "id", columnDefinition = "uniqueidentifier")
     private UUID id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
