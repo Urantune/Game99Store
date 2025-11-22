@@ -10,7 +10,7 @@ import java.util.UUID;
 @Table(name = "AdminAccount")
 public class Admin {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private UUID adminid;
     @Column(name = "username")
