@@ -49,7 +49,7 @@ public class TransactionController {
         if (userIdObj == null) {
             return "redirect:/welcome";
         }
-        User currentUser = userService.findById((java.util.UUID) userIdObj);
+        Users currentUser = userService.findById((java.util.UUID) userIdObj);
         model.addAttribute("user", currentUser);
         model.addAttribute("topups", transactionService.getTopups(currentUser));
         model.addAttribute("purchases", userGameService.getGamesByUser(currentUser));

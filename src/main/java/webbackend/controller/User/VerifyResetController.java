@@ -62,7 +62,7 @@ public class VerifyResetController {
             }
 
 
-            User user = userService.findById(id);
+            Users user = userService.findById(id);
             if (user == null) {
                 return ResponseEntity.status(404).body(Map.of(
                         "success", false,

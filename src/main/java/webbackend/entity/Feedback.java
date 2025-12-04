@@ -6,18 +6,18 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "feedbackGame")
+@Table(name = "Feeback")
 public class Feedback {
-
     @Id
     @GeneratedValue
-    @Column(name = "feedback_id", columnDefinition = "uniqueidentifier")
-    private UUID feedbackId;
+    @Column(name = "id", columnDefinition = "uniqueidentifier",nullable = false)
+    private UUID id;
 
     @Column(name = "game_id", nullable = false, columnDefinition = "uniqueidentifier")
     private UUID gameId;
 
-    @Column(name = "user_id", nullable = false, columnDefinition = "uniqueidentifier")
+    @Column(name = "userId", nullable = false, columnDefinition = "uniqueidentifier")
+    @JoinColumn(name = "Users",referencedColumnName = "id")
     private UUID userId;
 
     @Column(name = "comment", length = 500)
@@ -43,8 +43,8 @@ public class Feedback {
 
 
 
-    public UUID getFeedbackId() { return feedbackId; }
-    public void setFeedbackId(UUID feedbackId) { this.feedbackId = feedbackId; }
+    public UUID getId() { return id; }
+    public void setId(UUID feedbackId) { this.id = feedbackId; }
 
     public UUID getGameId() { return gameId; }
     public void setGameId(UUID gameId) { this.gameId = gameId; }

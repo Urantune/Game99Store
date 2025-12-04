@@ -1,6 +1,6 @@
 package webbackend.service;
 
-import webbackend.entity.User;
+import webbackend.entity.Users;
 import webbackend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +21,16 @@ public class SweepService {
     public void sweep() {
         LocalDateTime now = LocalDateTime.now();
 
-        List<User> waitUsers = userRepository.findByStatusContaining("wait");
-        for (User u : waitUsers) {
+        List<Users> waitUsers = userRepository.findByStatusContaining("wait");
+        for (Users u : waitUsers) {
             if (u.getExpirationDate() != null &&
                     (u.getExpirationDate().isBefore(now) || u.getExpirationDate().isEqual(now))) {
                 userRepository.deleteById(u.getId());
             }
         }
 
-        List<User> changeUsers = userRepository.findByStatusContaining("changePass");
-        for (User u : changeUsers) {
+        List<Users> changeUsers = userRepository.findByStatusContaining("changePass");
+        for (Users u : changeUsers) {
             if (u.getExpirationDate() != null &&
                     (u.getExpirationDate().isBefore(now) || u.getExpirationDate().isEqual(now))) {
                 u.setStatus("active");
@@ -39,8 +39,8 @@ public class SweepService {
             }
         }
 
-        List<User> deletingUsers = userRepository.findByStatusContaining("deleting");
-        for (User u : deletingUsers) {
+        List<Users> deletingUsers = userRepository.findByStatusContaining("deleting");
+        for (Users u : deletingUsers) {
             if (u.getExpirationDate() != null &&
                     (u.getExpirationDate().isBefore(now) || u.getExpirationDate().isEqual(now))) {
                 u.setStatus("active");

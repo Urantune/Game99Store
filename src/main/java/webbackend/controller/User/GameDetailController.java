@@ -62,7 +62,7 @@ public class GameDetailController {
         List<Feedback> list = new ArrayList<>(feedbackService.findFeedbackByGameId(game_id));
 
         if (userId != null) {
-            User user = userService.findById(userId);
+            Users user = userService.findById(userId);
             for (Iterator<Feedback> it = list.iterator(); it.hasNext(); ) {
                 Feedback f = it.next();
                 if (f.getUserId().equals(userId)) {

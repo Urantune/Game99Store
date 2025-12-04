@@ -48,7 +48,7 @@ public class NewGameController {
     @GetMapping("/Newgame")
     public String newgame(Model model, HttpSession session) {
         UUID userId = (UUID) session.getAttribute("userId");
-        User user = null;
+        Users user = null;
         if (userId != null) {
             user = userService.getUserById(userId);
         }

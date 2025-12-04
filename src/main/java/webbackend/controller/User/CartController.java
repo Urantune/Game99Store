@@ -1,7 +1,7 @@
 package webbackend.controller.User;
 
 import webbackend.entity.Game;
-import webbackend.entity.User;
+import webbackend.entity.Users;
 import webbackend.entity.UserGame;
 import webbackend.SucDat.GameCore;
 import webbackend.SucDat.SendMailTest;
@@ -63,7 +63,7 @@ public class CartController {
         UUID userId = (UUID) session.getAttribute("userId");
         if (userId == null) return "redirect:/welcome/login";
 
-        User user = userService.findById(userId);
+        Users user = userService.findById(userId);
         Game game = gameSevice.findGameById(gameId);
         if (user == null || game == null) {
             ra.addFlashAttribute("message", "Yêu cầu không hợp lệ.");

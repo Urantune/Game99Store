@@ -46,7 +46,7 @@ public class RegisterController {
 
     @PostMapping("/register")
     @ResponseBody
-    public Map<String, Object> registerAjax(@RequestBody User user) {
+    public Map<String, Object> registerAjax(@RequestBody Users user) {
         Map<String, Object> response = new HashMap<>();
         String username = user.getUsername();
         String email = user.getEmail();

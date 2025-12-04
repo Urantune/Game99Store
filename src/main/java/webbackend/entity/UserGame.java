@@ -16,7 +16,7 @@ public class UserGame {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", columnDefinition = "uniqueidentifier")
-    private User user;
+    private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", columnDefinition = "uniqueidentifier")
@@ -42,7 +42,7 @@ public class UserGame {
 
     public UserGame() {}
 
-    public UserGame(User user, Game game, LocalDateTime purchaseDate, String status, double purchasePrice) {
+    public UserGame(Users user, Game game, LocalDateTime purchaseDate, String status, double purchasePrice) {
         this.user = user;
         this.game = game;
         this.purchaseDate = purchaseDate;
@@ -59,8 +59,8 @@ public class UserGame {
         this.staff = staff;
     }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public Users getUser() { return user; }
+    public void setUser(Users user) { this.user = user; }
 
     public Game getGame() { return game; }
     public void setGame(Game game) { this.game = game; }

@@ -1,5 +1,5 @@
 package webbackend.entity;
-//Ok
+
 
 import jakarta.persistence.*;
 

@@ -53,7 +53,7 @@ public class UserProfileController {
 
     @GetMapping("/profile/{id}")
     public String userDetail(@PathVariable UUID id, Model model, HttpSession session) {
-        User user = (User) session.getAttribute("user");
+        Users user = (Users) session.getAttribute("user");
         if (user == null) return "redirect:/welcome";
 
         List<Game> game = userGameService.showGameInProfile(id);
@@ -76,7 +76,7 @@ public class UserProfileController {
                                           @RequestParam("avatarPath") String avatarPath,
                                           HttpSession session) {
 
-        User sessionUser = (User) session.getAttribute("user");
+        Users sessionUser = (Users) session.getAttribute("user");
         if (sessionUser == null) {
             return ResponseEntity.status(401).body(Map.of("error", "Bạn chưa đăng nhập"));
         }
@@ -95,7 +95,7 @@ public class UserProfileController {
         }
 
 
-        User user = userService.findById(id);
+        Users user = userService.findById(id);
         user.setImageLinks(avatarPath.startsWith("/") ? avatarPath.substring(1) : avatarPath);
 
         userService.save(user);
@@ -110,7 +110,7 @@ public class UserProfileController {
     @ResponseBody
     public ResponseEntity<?> requestDeleteProfile(@PathVariable UUID id,
                                                   HttpSession session) {
-        User sessionUser = (User) session.getAttribute("user");
+        Users sessionUser = (Users) session.getAttribute("user");
         if (sessionUser == null) {
             return ResponseEntity.status(401).body(Map.of(
                     "success", false,
@@ -125,7 +125,7 @@ public class UserProfileController {
             ));
         }
 
-        User user = userService.findById(id);
+        Users user = userService.findById(id);
         if (user == null) {
             return ResponseEntity.status(404).body(Map.of(
                     "success", false,

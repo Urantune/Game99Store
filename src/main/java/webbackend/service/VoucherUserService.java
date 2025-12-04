@@ -3,7 +3,7 @@ package webbackend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import webbackend.entity.User;
+import webbackend.entity.Users;
 import webbackend.entity.VoucherUser;
 import webbackend.entity.Vouncher;
 import webbackend.repository.VoucherUserRepository;
@@ -20,7 +20,7 @@ public class VoucherUserService {
     @Autowired
     private UserService userService;
 
-    public VoucherUser getVoucherUserByVouncherAndUser(Vouncher vouncher, User user) {
+    public VoucherUser getVoucherUserByVouncherAndUser(Vouncher vouncher, Users user) {
         return voucherUserRepository.findByVouncherAndUser(vouncher, user);
     }
 
@@ -43,7 +43,7 @@ public class VoucherUserService {
 
 
         for (UUID uid : userIds) {
-            User u = userService.findById(uid);
+            Users u = userService.findById(uid);
             if (u == null) continue;
 
             VoucherUser vu = new VoucherUser(u, vouncher, LocalDateTime.now());

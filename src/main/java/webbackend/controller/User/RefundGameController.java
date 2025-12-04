@@ -55,7 +55,7 @@ public class RefundGameController {
                                  Model model,
                                  HttpSession session) {
 
-        User sessionUser = (User) session.getAttribute("user");
+        Users sessionUser = (Users) session.getAttribute("user");
         if (sessionUser == null) {
             return "redirect:/welcome/login";
         }
@@ -80,12 +80,12 @@ public class RefundGameController {
             reason = "No reason provided";
         }
 
-        User sessionUser = (User) session.getAttribute("user");
+        Users sessionUser = (Users) session.getAttribute("user");
         if (sessionUser == null) {
             return "redirect:/welcome/login";
         }
 
-        User user = userService.findById(sessionUser.getId());
+        Users user = userService.findById(sessionUser.getId());
         Game game = gameSevice.findGameById(gameId);
 
         UserGame ug = userGameService.findByGameAndUser(game, user);

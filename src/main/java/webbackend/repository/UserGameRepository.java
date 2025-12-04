@@ -1,7 +1,7 @@
 package webbackend.repository;
 
 import webbackend.entity.Game;
-import webbackend.entity.User;
+import webbackend.entity.Users;
 import webbackend.entity.UserGame;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,8 +18,8 @@ import java.util.UUID;
 @Repository
 public interface UserGameRepository extends JpaRepository<UserGame, UUID> {
 
-    List<UserGame> findByUser(User user);
-    List<UserGame> findByUserAndStatus(User user, String status);
+    List<UserGame> findByUser(Users user);
+    List<UserGame> findByUserAndStatus(Users user, String status);
     @Query("""
         SELECT ug.game
         FROM UserGame ug
@@ -57,16 +57,16 @@ public interface UserGameRepository extends JpaRepository<UserGame, UUID> {
     List<Game> findGamesByUserAndStatus(@Param("userId") UUID userId,
                                         @Param("status") String status);
 
-        boolean existsUserGameByUserAndGame(User user, Game game);
+        boolean existsUserGameByUserAndGame(Users user, Game game);
 
-        UserGame findByGameAndUser(Game game, User user);
+        UserGame findByGameAndUser(Game game, Users user);
 
 
 
 
     @Modifying
     @Transactional
-        void deleteAllByUser(User user);
+        void deleteAllByUser(Users user);
 
     @Modifying
     @Transactional
@@ -75,16 +75,16 @@ public interface UserGameRepository extends JpaRepository<UserGame, UUID> {
 
     @Modifying
     @Transactional
-    void deleteByUserAndGame(User user, Game game);
+    void deleteByUserAndGame(Users user, Game game);
 
     List<UserGame> findByUserAndPurchaseDateAndStatus(
-            User user,
+            Users user,
             LocalDateTime purchaseDate,
             String status
     );
 
 
-    List<UserGame> findByUserAndStatusIn(User user, Collection<String> status);
+    List<UserGame> findByUserAndStatusIn(Users user, Collection<String> status);
 
 
     List<UserGame> findByStatusOrderByPurchaseDateDesc(String status);

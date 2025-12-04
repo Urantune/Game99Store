@@ -50,7 +50,7 @@ public class CategoryController {
     @GetMapping("/category/{product}")
     public String category(@PathVariable("product") String product, Model model, HttpSession session) {
         UUID userId = (UUID) session.getAttribute("userId");
-        User user = null;
+        Users user = null;
         if (userId != null) {
             user = userService.getUserById(userId);
         }

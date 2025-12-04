@@ -1,7 +1,7 @@
 package webbackend.controller.User;
 
 import jakarta.servlet.http.HttpSession;
-import webbackend.entity.User;
+import webbackend.entity.Users;
 import webbackend.entity.UserGame;
 import webbackend.service.*;
 import jakarta.annotation.PostConstruct;
@@ -17,7 +17,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +53,7 @@ public class VerryController {
             throw new RuntimeException(e);
         }
 
-        User user = userService.findById(id);
+        Users user = userService.findById(id);
         if (user == null) {
             System.out.println("OK");
             return "HTML/About";
@@ -87,7 +86,7 @@ public class VerryController {
     public String doneAccount(@PathVariable UUID id,
                               @PathVariable String code,
                               Model model) {
-        User user = userService.findById(id);
+        Users user = userService.findById(id);
         if (user == null) {
             return "HTML/About";
         }
@@ -116,7 +115,7 @@ public class VerryController {
             throw new RuntimeException(e);
         }
 
-        User user = userService.findById(id);
+        Users user = userService.findById(id);
         if (user == null) {
             return "HTML/About";
         }
@@ -160,7 +159,7 @@ public class VerryController {
             return "redirect:/veryAccount/donePass/" + id + "/" + code;
         }
 
-        User user = userService.findById(id);
+        Users user = userService.findById(id);
         if (user == null) {
             ra.addFlashAttribute("error", "Tài khoản không tồn tại");
             return "redirect:/welcome";
@@ -180,7 +179,7 @@ public class VerryController {
     public String checkAccount(@RequestParam String username,
                                @RequestParam String password,
                                @RequestParam UUID gameUuid) {
-        User u = userService.findByUsername(username);
+        Users u = userService.findByUsername(username);
         if (u != null
                 && "active".equalsIgnoreCase(u.getStatus())
                 && passwordEncoder.matches(password, u.getPassword())) {
@@ -276,7 +275,7 @@ public class VerryController {
             throw new RuntimeException(e);
         }
 
-        User user = userService.findById(id);
+        Users user = userService.findById(id);
         System.out.println("OK");
         if (user == null) return "HTML/About";
 
@@ -314,7 +313,7 @@ public class VerryController {
             RedirectAttributes ra,
             HttpSession session) {
 
-        User user = userService.findById(id);
+        Users user = userService.findById(id);
         if (user == null) return "redirect:/welcome";
 
         user.setStatus("deleted");

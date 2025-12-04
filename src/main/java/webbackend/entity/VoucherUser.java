@@ -16,14 +16,14 @@ public class VoucherUser {
     private UUID id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voucher_id")
     private Vouncher vouncher;
     private LocalDateTime date_received;
     public VoucherUser() {
     }
-    public VoucherUser(User user, Vouncher vouncher, LocalDateTime date_received) {
+    public VoucherUser(Users user, Vouncher vouncher, LocalDateTime date_received) {
         this.user = user;
         this.vouncher = vouncher;
         this.date_received = date_received;
@@ -37,11 +37,11 @@ public class VoucherUser {
         this.id = id;
     }
 
-    public User getUser() {
+    public Users getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Users user) {
         this.user = user;
     }
 

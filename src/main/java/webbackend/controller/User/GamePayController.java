@@ -50,7 +50,7 @@ public class GamePayController {
     @GetMapping("/gamePay")
     public String gamePay(Model model, HttpSession session) {
         if (session.getAttribute("user") == null) return "redirect:/welcome/about";
-        User user = (User) session.getAttribute("user");
+        Users user = (Users) session.getAttribute("user");
 
         List<UserGame> userGames = userGameService.getGamesByUser(user);
         userGames.sort(Comparator.comparing(UserGame::getPurchaseDate));

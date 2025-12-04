@@ -70,7 +70,7 @@ public class CheckoutController {
             selectedIds = idsInSession;
         }
 
-        User user = userService.findById(sessionUserId);
+        Users user = userService.findById(sessionUserId);
         if (user == null) return "redirect:/welcome/login";
 
         List<Game> payable = new ArrayList<>();

@@ -1,6 +1,6 @@
 package webbackend.service;
 
-import webbackend.entity.User;
+import webbackend.entity.Users;
 import webbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,11 @@ public class UserService {
     private UserRepository userRepository;
 
 
-    public User saveUser(User user) {
+    public Users saveUser(Users user) {
         return userRepository.save(user);
     }
 
-    public List<User> findAll() {
+    public List<Users> findAll() {
         return userRepository.findAll();
     }
 
@@ -36,12 +36,12 @@ public class UserService {
                 .anyMatch(u -> u.getUsername().equalsIgnoreCase(username));
     }
 
-    public User findByUsername(String username) {
+    public Users findByUsername(String username) {
 
         return userRepository.findByUsername(username);
     }
 
-    public User save(User user) {
+    public Users save(Users user) {
         return userRepository.save(user);
     }
 
@@ -49,15 +49,15 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User findById(UUID id) {
+    public Users findById(UUID id) {
         return userRepository.findUserById(id);
     }
 
-    public User findUserByStatus(String status) {
+    public Users findUserByStatus(String status) {
         return userRepository.findByStatus(status);
     }
 
-    public User getUserById(UUID id){
+    public Users getUserById(UUID id){
         return userRepository.findUserById(id);
     }
 }

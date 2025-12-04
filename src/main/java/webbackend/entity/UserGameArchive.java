@@ -3,7 +3,6 @@ package webbackend.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Locale;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +16,7 @@ public class UserGameArchive {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
     @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
@@ -39,7 +38,7 @@ public class UserGameArchive {
 
     }
 
-    public UserGameArchive(User user, Game game, Admin staff, LocalDate purchaseDate, LocalDate expireDate, double originalPrice, Vouncher vouncher, String status) {
+    public UserGameArchive(Users user, Game game, Admin staff, LocalDate purchaseDate, LocalDate expireDate, double originalPrice, Vouncher vouncher, String status) {
         this.user = user;
         this.game = game;
         this.staff = staff;
@@ -59,11 +58,11 @@ public class UserGameArchive {
         this.id = id;
     }
 
-    public User getUser() {
+    public Users getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Users user) {
         this.user = user;
     }
 

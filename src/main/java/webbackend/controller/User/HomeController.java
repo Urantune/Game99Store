@@ -55,8 +55,7 @@ public class HomeController {
         if (!model.containsAttribute("showForm")) {
             model.addAttribute("showForm", "");
         }
-        System.out.println(gameCore.imageLinkGame(listgame.get(0)).getMainImage());
-
+        // System.out.println(gameCore.imageLinkGame(listgame.get(0)).getMainImage());
 
         model.addAttribute("gameMain", gameSevice.findGameByStatus("main"));
         model.addAttribute("listGame", listgame);
@@ -65,14 +64,13 @@ public class HomeController {
 
 
         UUID userId = (UUID) session.getAttribute("userId");
-        User user = null;
+        Users user = null;
 
         if (userId != null) {
             user = userService.getUserById(userId);
         }
 
         model.addAttribute("user", user);
-
         return "HTML/Index";
     }
 

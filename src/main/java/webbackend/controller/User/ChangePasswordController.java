@@ -50,7 +50,7 @@ public class ChangePasswordController {
     @GetMapping("/changepass")
     public String changePass(Model model, HttpSession session) {
         if (session.getAttribute("user") == null) return "redirect:/welcome/about";
-        User user = userService.findById(UUID.fromString("6CE0FCF6-B584-4A63-AEDF-FAED48E78665"));
+        Users user = userService.findById(UUID.fromString("6CE0FCF6-B584-4A63-AEDF-FAED48E78665"));
         LocalDateTime timeEnd = LocalDateTime.now().plusMinutes(1);
 
         int day = timeEnd.getDayOfMonth();

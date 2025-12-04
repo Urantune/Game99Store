@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -32,7 +31,7 @@ public class SuccestfullPaymentController {
 
     @GetMapping("/user-bill")
     public String userBill(Model model, HttpSession session) {
-        User sessionUser = (User) session.getAttribute("user");
+        Users sessionUser = (Users) session.getAttribute("user");
         if (sessionUser == null) {
             return "redirect:/welcome/about";
         }
@@ -97,7 +96,7 @@ public class SuccestfullPaymentController {
             LocalDateTime billDateTime,
             HttpSession session) {
 
-        User sessionUser = (User) session.getAttribute("user");
+        Users sessionUser = (Users) session.getAttribute("user");
         if (sessionUser == null) {
             return "redirect:/welcome/login";
         }
@@ -136,7 +135,7 @@ public class SuccestfullPaymentController {
 
         if (userId != null && selectedIds != null && !selectedIds.isEmpty()) {
 
-            User user = userService.findById(userId);
+            Users user = userService.findById(userId);
 
             Vouncher voucher = null;
             if (voucherId != null) {
@@ -212,7 +211,7 @@ public class SuccestfullPaymentController {
             LocalDateTime billDateTime,
             HttpSession session) {
 
-        User sessionUser = (User) session.getAttribute("user");
+        Users sessionUser = (Users) session.getAttribute("user");
         if (sessionUser == null) return "redirect:/welcome/login";
 
         // 1. Lấy tất cả item của bill đang waitPay
@@ -244,7 +243,7 @@ public class SuccestfullPaymentController {
         }
 
         // 3. Check số dư
-        User user = sessionUser;
+        Users user = sessionUser;
         if (user.getPrice() < totalPay) {
             System.out.println(">>> NOT ENOUGH BALANCE. Need = " + totalPay + ", have = " + user.getPrice());
             return "redirect:/welcome/user-bill";

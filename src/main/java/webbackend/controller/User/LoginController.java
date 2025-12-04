@@ -52,7 +52,7 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestParam String username,
                                    @RequestParam String password,
                                    HttpSession session) {
-        User user = userService.findByUsername(username);
+        Users user = userService.findByUsername(username);
         if (user == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Tài khoản không tồn tại!"));
         }

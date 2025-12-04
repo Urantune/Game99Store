@@ -1,7 +1,6 @@
 package webbackend.controller.Staff;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -77,7 +75,7 @@ public class BillManageController {
         Map<String, StaffController.BillView> billMap = new LinkedHashMap<>();
 
         for (UserGame ug : pendingGames) {
-            User user = ug.getUser();
+            Users user = ug.getUser();
             Game game = ug.getGame();
             if (user == null || game == null || ug.getPurchaseDate() == null) continue;
 

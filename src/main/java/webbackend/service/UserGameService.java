@@ -2,7 +2,7 @@ package webbackend.service;
 
 
 import webbackend.entity.Game;
-import webbackend.entity.User;
+import webbackend.entity.Users;
 import webbackend.entity.UserGame;
 import webbackend.repository.UserGameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class UserGameService {
 
 
 
-    public boolean findUserGameByUserAndGame(User user, Game game){
+    public boolean findUserGameByUserAndGame(Users user, Game game){
         return userGameRepository.existsUserGameByUserAndGame(user,game);
     }
 
@@ -42,17 +42,17 @@ public class UserGameService {
         userGameRepository.save(userGame);
     }
 
-    public List<UserGame> getGamesByUser(User user) {
+    public List<UserGame> getGamesByUser(Users user) {
         return userGameRepository.findByUser(user);
     }
 
 
-    public List<UserGame> getCompletedGames(User user) {
+    public List<UserGame> getCompletedGames(Users user) {
         return userGameRepository.findByUserAndStatus(user, "owned");
     }
 
 
-    public List<UserGame> getPendingGames(User user) {
+    public List<UserGame> getPendingGames(Users user) {
         return userGameRepository.findByUserAndStatus(user, "cart");
     }
 
@@ -60,12 +60,12 @@ public class UserGameService {
         return userGameRepository.findAll();
     }
 
-    public UserGame findByGameAndUser(Game game, User user){
+    public UserGame findByGameAndUser(Game game, Users user){
         return userGameRepository.findByGameAndUser(game,user);
     }
 
 
-    public void DeleteByUser(User user){
+    public void DeleteByUser(Users user){
         userGameRepository.deleteAllByUser(user);
     }
 
@@ -73,7 +73,7 @@ public class UserGameService {
         userGameRepository.deleteAllByGame(game);
     }
 
-    public void DeleteByUserGame(User user, Game game){
+    public void DeleteByUserGame(Users user, Game game){
         userGameRepository.deleteByUserAndGame(user,game);
     }
 
